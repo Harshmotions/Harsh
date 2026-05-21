@@ -10,6 +10,7 @@ const REEL_FILTERS = [
   { value: 'ugc', label: 'UGC' },
   { value: 'motion-graphics', label: 'Motion Graphics' },
   { value: 'brand', label: 'Brand' },
+  { value: 'ai-ad', label: 'AI Ad' },
 ];
 
 export const metadata = {

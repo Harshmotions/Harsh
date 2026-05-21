@@ -36,6 +36,7 @@ export default defineType({
           { title: 'UGC', value: 'ugc' },
           { title: 'Motion Graphics', value: 'motion-graphics' },
           { title: 'Brand', value: 'brand' },
+          { title: 'AI Ad', value: 'ai-ad' },
           // landscape
           { title: 'YouTube', value: 'youtube' },
           { title: 'Brand Films', value: 'brand-films' },
