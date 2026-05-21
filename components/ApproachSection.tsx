@@ -179,7 +179,7 @@ function PremiumCard({
       </div>
 
       {/* ── Content ── */}
-      <div style={{ position: 'relative', zIndex: 10, padding: '30px' }}>
+      <div style={{ position: 'relative', zIndex: 10, padding: '22px 24px' }}>
         {children}
       </div>
     </motion.article>
@@ -222,7 +222,7 @@ export default function ApproachSection({ steps }: ApproachSectionProps) {
             <PremiumCard key={i} delay={i * 0.12} index={i}>
 
               {/* ── Step icon — PNG from /public ── */}
-              <div className="mb-6" style={{ display: 'flex', alignItems: 'center' }}>
+              <div className="mb-3" style={{ display: 'flex', alignItems: 'flex-start' }}>
                 <Image
                   src={STEP_ICONS[i]}
                   alt={step.title}
