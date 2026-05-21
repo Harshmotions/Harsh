@@ -7,7 +7,7 @@ import type { Project } from '@/lib/types';
 const REEL_FILTERS = [
   { value: 'all', label: 'All' },
   { value: 'performance-ads', label: 'Performance Ads' },
-  { value: 'ugc', label: 'UGC' },
+  { value: 'ugc', label: 'UGC (AI Gen)' },
   { value: 'motion-graphics', label: 'Motion Graphics' },
   { value: 'brand', label: 'Brand' },
   { value: 'ai-ad', label: 'AI Ad' },

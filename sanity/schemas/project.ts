@@ -33,7 +33,7 @@ export default defineType({
         list: [
           // reels
           { title: 'Performance Ads', value: 'performance-ads' },
-          { title: 'UGC', value: 'ugc' },
+          { title: 'UGC (AI Gen)', value: 'ugc' },
           { title: 'Motion Graphics', value: 'motion-graphics' },
           { title: 'Brand', value: 'brand' },
           { title: 'AI Ad', value: 'ai-ad' },
