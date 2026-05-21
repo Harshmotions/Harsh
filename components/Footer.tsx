@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Container from '@/components/ui/Container';
 
 interface FooterProps {
@@ -19,7 +20,8 @@ export default function Footer({
     >
       <Container>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div className="font-display font-bold text-lg tracking-tight">
+          <div className="font-display font-bold text-lg tracking-tight flex items-center gap-2">
+            <Image src="/favicon.ico" alt="" width={20} height={20} style={{ borderRadius: 4 }} />
             Harsh<span className="text-accent">.</span>
           </div>
 

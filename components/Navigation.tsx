@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -58,8 +59,9 @@ export default function Navigation() {
           <div className="mx-auto max-w-7xl px-6 md:px-12 h-16 flex items-center justify-between">
             <Link
               href="/"
-              className="font-display text-text font-bold text-lg tracking-tight"
+              className="font-display text-text font-bold text-lg tracking-tight flex items-center gap-2"
             >
+              <Image src="/favicon.ico" alt="" width={20} height={20} style={{ borderRadius: 4 }} />
               Harsh<span className="text-accent">.</span>
             </Link>
 
