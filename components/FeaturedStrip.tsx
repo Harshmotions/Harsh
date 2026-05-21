@@ -1,79 +1,32 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef } from 'react';
-import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
 import { motion } from 'framer-motion';
 import Container from '@/components/ui/Container';
 import ProjectCard from '@/components/ProjectCard';
 import type { Project } from '@/lib/types';
-
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 interface FeaturedStripProps {
   projects: Project[];
   onCardClick?: (project: Project) => void;
 }
 
-// useLayoutEffect on server warns; alias to useEffect for SSR safety.
-const useIsoLayoutEffect =
-  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
-
 export default function FeaturedStrip({
   projects,
   onCardClick,
 }: FeaturedStripProps) {
-  const pinRef = useRef<HTMLDivElement | null>(null);
-  const trackRef = useRef<HTMLDivElement | null>(null);
+  const reels = projects.filter((p) => p.type === 'reel').slice(0, 4);
+  const landscape = projects.filter((p) => p.type === 'landscape').slice(0, 4);
 
-  useIsoLayoutEffect(() => {
-    if (!pinRef.current || !trackRef.current) return;
-    if (projects.length === 0) return;
-
-    // Respect reduced motion — skip pinning entirely
-    const reducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches;
-    if (reducedMotion) return;
-
-    const pin = pinRef.current;
-    const track = trackRef.current;
-
-    const ctx = gsap.context(() => {
-      // Distance the track must travel horizontally to fully reveal all cards.
-      // Recompute on resize via ScrollTrigger's invalidateOnRefresh.
-      const getDistance = () =>
-        Math.max(0, track.scrollWidth - window.innerWidth);
-
-      gsap.to(track, {
-        x: () => -getDistance(),
-        ease: 'none',
-        scrollTrigger: {
-          trigger: pin,
-          start: 'top top',
-          end: () => `+=${getDistance()}`,
-          pin: true,
-          scrub: 1,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      });
-    }, pin);
-
-    return () => ctx.revert();
-  }, [projects.length]);
-
-  if (projects.length === 0) return null;
+  if (reels.length === 0 && landscape.length === 0) return null;
 
   return (
     <section
       id="featured"
-      className="relative py-14 md:py-20"
+      className="py-14 md:py-20"
       style={{ borderTop: '1px solid var(--border)' }}
     >
       <Container>
+        {/* Section header */}
         <motion.p
           initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -88,40 +41,84 @@ export default function FeaturedStrip({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.7 }}
-          className="font-display font-semibold text-text mb-10"
+          className="font-display font-semibold text-text mb-12"
           style={{
             fontSize: 'clamp(32px, 4.5vw, 64px)',
             lineHeight: 1,
             letterSpacing: '-0.02em',
-            maxWidth: '800px',
           }}
         >
           Recent edits that moved the needle.
         </motion.h2>
-      </Container>
 
-      {/* Pinned wrapper — full viewport height during scroll */}
-      <div
-        ref={pinRef}
-        className="relative overflow-hidden"
-        style={{ height: '100svh' }}
-      >
-        <div className="h-full flex items-center">
-          <div
-            ref={trackRef}
-            className="flex items-center gap-6 md:gap-8 pl-6 md:pl-12 pr-[20vw] will-change-transform"
-          >
-            {projects.map((p, i) => (
-              <ProjectCard
-                key={p._id}
-                project={p}
-                index={i}
-                onClick={() => onCardClick?.(p)}
-              />
-            ))}
+        {/* ── Vertical Reels grid (9:16) ── */}
+        {reels.length > 0 && (
+          <div className="mb-16">
+            <motion.p
+              initial={{ opacity: 0, y: 6 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.5 }}
+              className="font-body text-text-muted text-xs uppercase tracking-[0.18em] mb-5"
+            >
+              Vertical · 9:16
+            </motion.p>
+            <div className="grid grid-cols-2 gap-4 md:gap-6">
+              {reels.map((p, i) => (
+                <motion.div
+                  key={p._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.55, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <ProjectCard
+                    project={p}
+                    index={i}
+                    onClick={() => onCardClick?.(p)}
+                    variant="reel"
+                    widthClass="w-full"
+                  />
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
+        )}
+
+        {/* ── Landscape grid (16:9) ── */}
+        {landscape.length > 0 && (
+          <div>
+            <motion.p
+              initial={{ opacity: 0, y: 6 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.5 }}
+              className="font-body text-text-muted text-xs uppercase tracking-[0.18em] mb-5"
+            >
+              Landscape · 16:9
+            </motion.p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+              {landscape.map((p, i) => (
+                <motion.div
+                  key={p._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.55, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <ProjectCard
+                    project={p}
+                    index={i}
+                    onClick={() => onCardClick?.(p)}
+                    variant="landscape"
+                    widthClass="w-full"
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
+      </Container>
     </section>
   );
 }

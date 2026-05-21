@@ -135,6 +135,13 @@ body.modal-open .custom-cursor {
   display: none;
 }
 
+/* Hide custom cursor on touch / no-hover devices (phones, tablets) */
+@media (hover: none) {
+  .custom-cursor {
+    display: none !important;
+  }
+}
+
 /* Belt-and-braces: fullscreen element → native cursor */
 :fullscreen,
 :fullscreen *,
