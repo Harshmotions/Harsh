@@ -1,21 +1,36 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Cursor() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
 
+  // Only render on true pointer/mouse devices.
+  // (hover: hover) AND (pointer: fine) = real mouse. Excludes all touch devices,
+  // including those that incorrectly report hover support.
+  const [isMouseDevice, setIsMouseDevice] = useState(false);
+
   useEffect(() => {
-    // Disable on touch devices
-    if (!window.matchMedia('(hover: hover)').matches) return;
+    const isTouch =
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0;
+    const hasFinePointer = window.matchMedia(
+      '(hover: hover) and (pointer: fine)',
+    ).matches;
+
+    if (isTouch || !hasFinePointer) return; // touch device — bail out, render nothing
+    setIsMouseDevice(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMouseDevice) return;
 
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
 
-    // Make cursors visible
     dot.style.opacity = '1';
     ring.style.opacity = '1';
 
@@ -24,7 +39,6 @@ export default function Cursor() {
     let ringX = 0;
     let ringY = 0;
 
-    // Cursor state
     let isPlay = false;
     let isPointer = false;
     let isDown = false;
@@ -33,17 +47,11 @@ export default function Cursor() {
       current + (target - current) * factor;
 
     const loop = () => {
-      // Dot follows mouse 1:1
       dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
-
-      // Ring lerps behind
       ringX = lerp(ringX, mouseX, 0.15);
       ringY = lerp(ringY, mouseY, 0.15);
-
-      // Build ring transform
       const scale = isDown ? 0.8 : 1;
       ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%) scale(${scale})`;
-
       rafRef.current = requestAnimationFrame(loop);
     };
 
@@ -54,38 +62,34 @@ export default function Cursor() {
 
     const onMouseDown = () => {
       isDown = true;
-      // Brief scale flash
       setTimeout(() => { isDown = false; }, 150);
     };
 
     const applyState = () => {
-      const dotEl = dot;
-      const ringEl = ring;
-
       if (isPlay) {
-        dotEl.style.opacity = '0';
-        ringEl.style.width = '64px';
-        ringEl.style.height = '64px';
-        ringEl.style.background = 'rgba(212,168,75,0.2)';
-        ringEl.style.borderColor = 'transparent';
-        ringEl.style.mixBlendMode = 'normal';
-        ringEl.querySelector('.ring-label')?.classList.remove('hidden');
+        dot.style.opacity = '0';
+        ring.style.width = '64px';
+        ring.style.height = '64px';
+        ring.style.background = 'rgba(212,168,75,0.2)';
+        ring.style.borderColor = 'transparent';
+        ring.style.mixBlendMode = 'normal';
+        ring.querySelector('.ring-label')?.classList.remove('hidden');
       } else if (isPointer) {
-        dotEl.style.opacity = '1';
-        ringEl.style.width = '48px';
-        ringEl.style.height = '48px';
-        ringEl.style.background = 'rgba(240,237,232,0.1)';
-        ringEl.style.borderColor = 'rgba(240,237,232,0.6)';
-        ringEl.style.mixBlendMode = 'difference';
-        ringEl.querySelector('.ring-label')?.classList.add('hidden');
+        dot.style.opacity = '1';
+        ring.style.width = '48px';
+        ring.style.height = '48px';
+        ring.style.background = 'rgba(240,237,232,0.1)';
+        ring.style.borderColor = 'rgba(240,237,232,0.6)';
+        ring.style.mixBlendMode = 'difference';
+        ring.querySelector('.ring-label')?.classList.add('hidden');
       } else {
-        dotEl.style.opacity = '1';
-        ringEl.style.width = '36px';
-        ringEl.style.height = '36px';
-        ringEl.style.background = 'transparent';
-        ringEl.style.borderColor = 'rgba(240,237,232,0.6)';
-        ringEl.style.mixBlendMode = 'normal';
-        ringEl.querySelector('.ring-label')?.classList.add('hidden');
+        dot.style.opacity = '1';
+        ring.style.width = '36px';
+        ring.style.height = '36px';
+        ring.style.background = 'transparent';
+        ring.style.borderColor = 'rgba(240,237,232,0.6)';
+        ring.style.mixBlendMode = 'normal';
+        ring.querySelector('.ring-label')?.classList.add('hidden');
       }
     };
 
@@ -93,10 +97,8 @@ export default function Cursor() {
       const target = e.target as HTMLElement;
       const playEl = target.closest('[data-cursor="play"]');
       const pointerEl = target.closest('a, button, [role="button"]');
-
       const nextPlay = !!playEl;
       const nextPointer = !nextPlay && !!pointerEl;
-
       if (nextPlay !== isPlay || nextPointer !== isPointer) {
         isPlay = nextPlay;
         isPointer = nextPointer;
@@ -104,9 +106,6 @@ export default function Cursor() {
       }
     };
 
-    // Re-evaluate cursor state on scroll — mouseover doesn't fire when the
-    // page scrolls beneath a stationary cursor, so a PLAY state can linger
-    // after a card scrolls away.
     const onScroll = () => {
       const el = document.elementFromPoint(mouseX, mouseY) as HTMLElement | null;
       if (!el) return;
@@ -134,7 +133,10 @@ export default function Cursor() {
       window.removeEventListener('scroll', onScroll, { capture: true });
       cancelAnimationFrame(rafRef.current);
     };
-  }, []);
+  }, [isMouseDevice]);
+
+  // Don't render cursor elements at all on touch/mobile devices
+  if (!isMouseDevice) return null;
 
   return (
     <>
@@ -179,7 +181,8 @@ export default function Cursor() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          transition: 'width 0.25s ease, height 0.25s ease, background 0.25s ease, border-color 0.25s ease, opacity 0.2s',
+          transition:
+            'width 0.25s ease, height 0.25s ease, background 0.25s ease, border-color 0.25s ease, opacity 0.2s',
         }}
       >
         <span
