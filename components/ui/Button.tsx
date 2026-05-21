@@ -166,7 +166,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           {/* Ambient bottom-left tint */}
           <div aria-hidden="true" style={innerTintStyle} />
           {/* Actual content — always on top */}
-          <span style={{ position: 'relative', zIndex: 4 }}>{children}</span>
+          <span style={{
+            position: 'relative',
+            zIndex: 4,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+          }}>{children}</span>
         </div>
       </motion.button>
     );
