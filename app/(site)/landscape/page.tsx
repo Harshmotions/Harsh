@@ -7,9 +7,7 @@ import type { Project } from '@/lib/types';
 const LANDSCAPE_FILTERS = [
   { value: 'all', label: 'All' },
   { value: 'youtube', label: 'YouTube' },
-  { value: 'brand-films', label: 'Brand Films' },
   { value: 'motion-graphics', label: 'Motion Graphics' },
-  { value: 'documentary', label: 'Documentary' },
 ];
 
 export const metadata = {

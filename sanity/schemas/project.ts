@@ -39,8 +39,6 @@ export default defineType({
           { title: 'AI Ad', value: 'ai-ad' },
           // landscape
           { title: 'YouTube', value: 'youtube' },
-          { title: 'Brand Films', value: 'brand-films' },
-          { title: 'Documentary', value: 'documentary' },
         ],
       },
     }),
