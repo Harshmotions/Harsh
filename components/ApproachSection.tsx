@@ -64,22 +64,26 @@ function PremiumCard({
         borderRadius: 22,
         overflow: 'hidden',
 
-        /* ── Deep glass base ── */
-        background: 'rgba(7, 6, 5, 0.97)',
-
-        /* ── Layered glass border: thin amber outline, no uniform opacity ── */
-        border: '1px solid rgba(212,168,75,0.14)',
+        /* ── Deep glass base + vertical gradient glass stroke ──
+             padding-box = card fill, border-box = gradient stroke.
+             Bottom: warm white (0.55 opacity) → Top: same tone, near transparent (0.02).
+             Single color family, only opacity changes — fades into darkness. */
+        border: '1px solid transparent',
+        background: [
+          'linear-gradient(rgba(7,6,5,0.97), rgba(7,6,5,0.97)) padding-box',
+          'linear-gradient(to top, rgba(255,248,228,0.55) 0%, rgba(255,248,228,0.08) 55%, rgba(255,248,228,0.02) 100%) border-box',
+        ].join(', '),
 
         /* ── Multi-layer floating shadow system ──
              Cards feel suspended, not attached to the page. */
         boxShadow: [
-          '0 0 0 1px rgba(212,168,75,0.06)',        // micro amber outline
-          '0 1px 0 0 rgba(255,255,255,0.05)',        // top surface catch-light
-          '0 4px 12px rgba(0,0,0,0.55)',             // near shadow — tight depth
-          '0 12px 32px rgba(0,0,0,0.50)',            // mid shadow — lift
-          '0 28px 64px rgba(0,0,0,0.42)',            // far shadow — float
-          '0 48px 96px rgba(0,0,0,0.30)',            // atmospheric spread
-          '0 0 80px rgba(212,168,75,0.04)',           // ambient amber haze
+          '0 1px 0 0 rgba(255,255,255,0.05)',         // top surface catch-light
+          '0 4px 12px rgba(0,0,0,0.55)',              // near shadow — tight depth
+          '0 12px 32px rgba(0,0,0,0.50)',             // mid shadow — lift
+          '0 28px 64px rgba(0,0,0,0.42)',             // far shadow — float
+          '0 48px 96px rgba(0,0,0,0.30)',             // atmospheric spread
+          '0 0 18px rgba(255,248,228,0.04)',           // soft warm outer border bloom
+          '0 0 60px rgba(212,168,75,0.04)',            // ambient amber haze
         ].join(', '),
       }}
     >
@@ -190,13 +194,13 @@ function PremiumCard({
           position: 'absolute', inset: 0,
           borderRadius: 22,
           boxShadow: [
-            'inset 0 1px 0 rgba(255,255,255,0.10)',       // top edge catch-light
-            'inset 0 -1px 0 rgba(212,168,75,0.32)',       // bottom amber edge glow
-            'inset 1px 0 0 rgba(255,255,255,0.04)',       // left edge, subtle
-            'inset -1px 0 0 rgba(255,255,255,0.03)',      // right edge, slightly less
-            'inset 2px 2px 0 rgba(255,255,255,0.03)',     // top-left corner brighter
-            'inset -2px 2px 0 rgba(255,255,255,0.02)',    // top-right corner
-            'inset 0 0 40px rgba(212,168,75,0.04)',       // inner ambient amber bloom
+            'inset 0 1px 0 rgba(255,255,255,0.07)',       // top inner highlight (subtle — border above already lit)
+            'inset 0 -1px 0 rgba(255,248,228,0.18)',      // bottom inner rim — warm white echo
+            'inset 1px 0 0 rgba(255,255,255,0.03)',       // left edge
+            'inset -1px 0 0 rgba(255,255,255,0.02)',      // right edge
+            'inset 3px 3px 0 rgba(255,255,255,0.025)',    // top-left corner brighter
+            'inset -3px 3px 0 rgba(255,255,255,0.018)',   // top-right corner
+            'inset 0 0 35px rgba(212,168,75,0.04)',       // inner ambient amber bloom
           ].join(', '),
           pointerEvents: 'none',
           zIndex: 8,
