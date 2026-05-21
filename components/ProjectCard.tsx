@@ -99,33 +99,36 @@ export default function ProjectCard({
           </div>
         )}
 
-        {/* Role tag bottom-left pill */}
-        {project.roleTag && (
-          <div className="absolute bottom-4 left-4">
-            <span
-              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-body font-medium"
-              style={{
-                background: 'rgba(10,10,10,0.7)',
-                color: 'var(--text)',
-                backdropFilter: 'blur(8px)',
-                WebkitBackdropFilter: 'blur(8px)',
-                border: '1px solid var(--border)',
-              }}
-            >
-              {project.roleTag}
-            </span>
-          </div>
-        )}
-
-        {/* Retainer badge bottom-right */}
-        {project.isRetainer && (
-          <div className="absolute bottom-4 right-4">
-            <span
-              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-body font-semibold"
-              style={{ background: 'var(--accent)', color: 'var(--bg)' }}
-            >
-              Retainer
-            </span>
+        {/* Role tag + Retainer — single bottom bar, wraps on narrow cards */}
+        {(project.roleTag || project.isRetainer) && (
+          <div className="absolute bottom-4 left-4 right-4 flex flex-row flex-wrap gap-2 items-end">
+            {project.roleTag && (
+              <span
+                className="inline-flex items-center px-3 py-1 rounded-full text-xs font-body font-medium"
+                style={{
+                  background: 'rgba(10,10,10,0.7)',
+                  color: 'var(--text)',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  border: '1px solid var(--border)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {project.roleTag}
+              </span>
+            )}
+            {project.isRetainer && (
+              <span
+                className="inline-flex items-center px-3 py-1 rounded-full text-xs font-body font-semibold"
+                style={{
+                  background: 'var(--accent)',
+                  color: 'var(--bg)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Retainer
+              </span>
+            )}
           </div>
         )}
       </div>
