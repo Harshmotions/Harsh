@@ -1,26 +1,181 @@
 @import "tailwindcss";
 
+/* ─── Design Tokens ─────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #0A0A0A;
+  --surface: #141414;
+  --surface-hover: #1A1A1A;
+  --border: #1F1F1F;
+  --text: #F0EDE8;
+  --text-muted: #8A8580;
+  --accent: #D4A84B;
+  --accent-hover: #E0B860;
+
+  /* Glow helpers */
+  --glow-amber-sm: 0 0 14px rgba(212,168,75,0.35);
+  --glow-amber-md: 0 0 28px rgba(212,168,75,0.5);
+  --glow-amber-lg: 0 0 48px rgba(212,168,75,0.6);
 }
 
+/* ─── Tailwind v4 Theme Integration ─────────────── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+
+  --font-display: var(--font-sora);
+  --font-body: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ─── Base ───────────────────────────────────────── */
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  scroll-behavior: auto; /* Lenis handles smooth scroll */
+}
+
+/* Ambient gradient — warm amber glow top-centre + bottom-right corner */
+.site-shell {
+  background:
+    radial-gradient(ellipse 90% 40% at 50% -5%,  rgba(212,168,75,0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 55% at 95% 105%, rgba(212,168,75,0.05) 0%, transparent 55%);
+  min-height: 100dvh;
+}
+
+/* ─── Card gradient helper ───────────────────────── */
+/* Use on any card that should have the glass/gradient treatment.
+   Outer wrapper creates the glow border via ::before pseudo-element;
+   inner content sits on top. */
+.card-gradient {
+  position: relative;
+  background: linear-gradient(160deg, rgba(22,20,16,0.97) 0%, rgba(12,11,9,0.98) 100%);
+  border-radius: 16px;
+  isolation: isolate;
+  transition: box-shadow 0.35s ease;
+  box-shadow:
+    0 4px 24px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.card-gradient::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 17px;
+  background: linear-gradient(
+    135deg,
+    rgba(212,168,75,0.25) 0%,
+    rgba(212,168,75,0.07) 50%,
+    rgba(212,168,75,0.20) 100%
+  );
+  z-index: -1;
+  transition: opacity 0.35s ease;
+  opacity: 1;
+}
+.card-gradient:hover::before {
+  background: linear-gradient(
+    135deg,
+    rgba(212,168,75,0.55) 0%,
+    rgba(212,168,75,0.15) 50%,
+    rgba(212,168,75,0.45) 100%
+  );
+}
+.card-gradient:hover {
+  box-shadow:
+    0 0 28px rgba(212,168,75,0.14),
+    0 8px 32px rgba(0,0,0,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* ─── Project card hover glow ───────────────────── */
+/* .card-inner is the image container inside ProjectCard */
+.card-inner {
+  transition: border-color 0.35s ease, box-shadow 0.35s ease;
+}
+button:hover .card-inner,
+button:focus-visible .card-inner {
+  border-color: rgba(212,168,75,0.45) !important;
+  box-shadow:
+    0 0 24px rgba(212,168,75,0.16),
+    0 8px 32px rgba(0,0,0,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+
+/* ─── Custom cursor ──────────────────────────────── */
+/* Scoped to .site-shell so /studio gets its native cursor */
+.site-shell,
+.site-shell * {
+  cursor: none;
+}
+
+/* Restore pointer cursor on touch devices */
+@media (hover: none) {
+  .site-shell,
+  .site-shell * {
+    cursor: auto;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* When modal open: hide amber cursor, restore native so Mux hide-on-inactivity works */
+body.modal-open .site-shell,
+body.modal-open .site-shell * {
+  cursor: auto;
+}
+
+body.modal-open .custom-cursor {
+  display: none;
+}
+
+/* Belt-and-braces: fullscreen element → native cursor */
+:fullscreen,
+:fullscreen *,
+:-webkit-full-screen,
+:-webkit-full-screen * {
+  cursor: auto;
+}
+
+/* ─── Focus Rings ────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ─── Typography Base ────────────────────────────── */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-sora), system-ui, sans-serif;
+}
+
+/* ─── Prefers-Reduced-Motion ─────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Scrollbar ──────────────────────────────────── */
+.site-shell ::-webkit-scrollbar {
+  width: 4px;
+}
+.site-shell ::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+.site-shell ::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
 }
