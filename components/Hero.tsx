@@ -64,7 +64,7 @@ export default function Hero({ headline, subline }: HeroProps) {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-6"
           >
-            Freelance Video Editor · Maharashtra, India
+            Freelance Video Editor · India
           </motion.p>
 
           <motion.h1

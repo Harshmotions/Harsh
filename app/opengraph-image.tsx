@@ -100,7 +100,7 @@ export default function Image() {
               display: 'flex',
             }}
           >
-            Freelance Video Editor · Maharashtra, India
+            Freelance Video Editor · India
           </span>
         </div>
       </div>
