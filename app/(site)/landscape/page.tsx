@@ -8,6 +8,7 @@ const LANDSCAPE_FILTERS = [
   { value: 'all', label: 'All' },
   { value: 'youtube', label: 'YouTube' },
   { value: 'motion-graphics', label: 'Motion Graphics' },
+  { value: 'ai-ad', label: 'AI Ad' },
 ];
 
 export const metadata = {
