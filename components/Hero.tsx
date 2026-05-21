@@ -35,10 +35,10 @@ const DOTS = [
 /* ── Stars config ─────────────────────────────────────────────────────────
    4 stars, each wiggling gently in a small radius. */
 const STARS = [
-  { top: '10%', left: '6%',  size: 20, duration: 8,  delay: 0   },
-  { top: '18%', left: '88%', size: 14, duration: 10, delay: 1.5 },
-  { top: '62%', left: '80%', size: 22, duration: 9,  delay: 0.8 },
-  { top: '72%', left: '14%', size: 13, duration: 11, delay: 2.0 },
+  { top: '10%', left: '6%',  size: 50, duration: 8,  delay: 0   },
+  { top: '18%', left: '88%', size: 35, duration: 10, delay: 1.5 },
+  { top: '62%', left: '80%', size: 55, duration: 9,  delay: 0.8 },
+  { top: '72%', left: '14%', size: 33, duration: 11, delay: 2.0 },
 ];
 
 export default function Hero({ headline, subline }: HeroProps) {
