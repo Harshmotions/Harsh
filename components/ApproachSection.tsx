@@ -226,11 +226,11 @@ export default function ApproachSection({ steps }: ApproachSectionProps) {
                 <Image
                   src={STEP_ICONS[i]}
                   alt={step.title}
-                  width={52}
-                  height={52}
+                  width={104}
+                  height={104}
                   style={{
-                    width: 52,
-                    height: 52,
+                    width: 104,
+                    height: 104,
                     objectFit: 'contain',
                     filter: [
                       'drop-shadow(0 0 8px rgba(212,168,75,0.60))',
