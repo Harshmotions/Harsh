@@ -59,7 +59,7 @@ function PremiumCard({
   const noiseId = `card-grain-${index}`;
 
   return (
-    <div className="card-glow-wrapper">
+    <div className="card-glow-wrapper h-full">
       {/* Layer: large atmospheric glow behind card */}
       <div aria-hidden="true" className="card-ambient-glow" />
       {/* Layer: medium soft rotating ring */}
@@ -77,6 +77,7 @@ function PremiumCard({
         zIndex: 1,
         borderRadius: 22,
         overflow: 'hidden',
+        height: '100%',
 
         /* ── Outer shell: same radial gradient border as buttons ──
              Top-right: warm white → Bottom-left: near-black.
