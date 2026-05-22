@@ -11,7 +11,7 @@ interface ContactSectionProps {
   emailAddress?: string;
 }
 
-const FALLBACK_HEADLINE = "If you're shipping something soon, I should hear about it.";
+const FALLBACK_HEADLINE = "If you're planning something cool, I should hear about it.";
 
 export default function ContactSection({
   headline,
