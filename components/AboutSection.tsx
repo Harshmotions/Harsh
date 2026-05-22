@@ -96,11 +96,14 @@ function LogoTicker({ clients }: { clients: ClientRef[] }) {
   return (
     <div className="logo-marquee-outer py-6">
       <div className="logo-marquee-track">
-        {doubled.map((c, i) => (
+        {doubled.map((c, i) => {
+          // SharkFunded logo has heavy built-in whitespace — tighter padding + bigger render
+          const isSharkFunded = c.name === 'SharkFunded';
+          return (
           <div
             key={`${c._id}-${i}`}
             style={{
-              padding: '0 52px',
+              padding: isSharkFunded ? '0 12px' : '0 52px',
               flexShrink: 0,
               display: 'flex',
               alignItems: 'center',
@@ -113,9 +116,9 @@ function LogoTicker({ clients }: { clients: ClientRef[] }) {
                 src={c.logoUrl}
                 alt={c.name}
                 style={{
-                  height: 48,
+                  height: isSharkFunded ? 72 : 48,
                   width: 'auto',
-                  maxWidth: 160,
+                  maxWidth: isSharkFunded ? 220 : 160,
                   objectFit: 'contain',
                   opacity: 0.82,
                   display: 'block',
@@ -136,7 +139,7 @@ function LogoTicker({ clients }: { clients: ClientRef[] }) {
               </span>
             )}
           </div>
-        ))}
+        );})}
       </div>
     </div>
   );
