@@ -90,13 +90,13 @@ const portableComponents: PortableTextComponents = {
 
 /* ── Seamless logo ticker ─────────────────────────────────────────────────── */
 function LogoTicker({ clients }: { clients: ClientRef[] }) {
-  // Duplicate twice so the track is 2× wide — animate by -50% for seamless tile
-  const doubled = [...clients, ...clients];
+  // 4× copies so the track is always wider than the container on any screen — animate by -25%
+  const quadrupled = [...clients, ...clients, ...clients, ...clients];
 
   return (
-    <div className="logo-marquee-outer py-6">
+    <div className="logo-marquee-outer">
       <div className="logo-marquee-track">
-        {doubled.map((c, i) => {
+        {quadrupled.map((c, i) => {
           // SharkFunded logo has heavy built-in whitespace — tighter padding + bigger render
           const isSharkFunded = c.name === 'SharkFunded';
           return (
@@ -234,7 +234,7 @@ export default function AboutSection({
           </motion.div>
         </div>
 
-        {/* "Trusted by" label — stays inside Container */}
+        {/* "Trusted by" label + ticker — fully inside Container so it respects the separator line */}
         {clients && clients.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -244,24 +244,16 @@ export default function AboutSection({
             className="mt-12 pt-10"
             style={{ borderTop: '1px solid var(--border)' }}
           >
-            <p className="font-body text-text-muted text-xs uppercase tracking-[0.2em]">
+            <p className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-6">
               Trusted by
             </p>
+            {/* overflow:hidden on this wrapper clips the ticker at the container boundary */}
+            <div style={{ overflow: 'hidden', margin: '0 -4px' }}>
+              <LogoTicker clients={clients} />
+            </div>
           </motion.div>
         )}
       </Container>
-
-      {/* Logo ticker — full section width so fade masks hit the edges */}
-      {clients && clients.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 1, delay: 0.4 }}
-        >
-          <LogoTicker clients={clients} />
-        </motion.div>
-      )}
     </section>
   );
 }
