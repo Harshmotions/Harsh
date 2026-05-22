@@ -59,6 +59,14 @@ function PremiumCard({
   const noiseId = `card-grain-${index}`;
 
   return (
+    <div className="card-glow-wrapper">
+      {/* Layer: large atmospheric glow behind card */}
+      <div aria-hidden="true" className="card-ambient-glow" />
+      {/* Layer: medium soft rotating ring */}
+      <div aria-hidden="true" className="card-medium-glow" />
+      {/* Layer: sharp tight white edge */}
+      <div aria-hidden="true" className="card-white-glow" />
+
     <motion.article
       initial={{ opacity: 0, y: 32 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -66,6 +74,7 @@ function PremiumCard({
       transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
       style={{
         position: 'relative',
+        zIndex: 1,
         borderRadius: 22,
         overflow: 'hidden',
 
@@ -183,6 +192,7 @@ function PremiumCard({
         {children}
       </div>
     </motion.article>
+    </div>
   );
 }
 

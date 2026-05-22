@@ -88,6 +88,60 @@ const portableComponents: PortableTextComponents = {
   },
 };
 
+/* ── Seamless logo ticker ─────────────────────────────────────────────────── */
+function LogoTicker({ clients }: { clients: ClientRef[] }) {
+  // Duplicate twice so the track is 2× wide — animate by -50% for seamless tile
+  const doubled = [...clients, ...clients];
+
+  return (
+    <div className="logo-marquee-outer py-6">
+      <div className="logo-marquee-track">
+        {doubled.map((c, i) => (
+          <div
+            key={`${c._id}-${i}`}
+            style={{
+              padding: '0 52px',
+              flexShrink: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {c.logoUrl ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={c.logoUrl}
+                alt={c.name}
+                style={{
+                  height: 48,
+                  width: 'auto',
+                  maxWidth: 160,
+                  objectFit: 'contain',
+                  opacity: 0.82,
+                  display: 'block',
+                }}
+              />
+            ) : (
+              <span
+                style={{
+                  fontFamily: 'var(--font-sora, sans-serif)',
+                  fontSize: '1.1rem',
+                  fontWeight: 600,
+                  color: 'rgba(240,237,232,0.70)',
+                  letterSpacing: '-0.02em',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {c.name}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function AboutSection({
   body,
   tools,
@@ -177,7 +231,7 @@ export default function AboutSection({
           </motion.div>
         </div>
 
-        {/* Client logos row */}
+        {/* "Trusted by" label — stays inside Container */}
         {clients && clients.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -187,43 +241,24 @@ export default function AboutSection({
             className="mt-12 pt-10"
             style={{ borderTop: '1px solid var(--border)' }}
           >
-            <p className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-8">
+            <p className="font-body text-text-muted text-xs uppercase tracking-[0.2em]">
               Trusted by
             </p>
-            <div className="flex flex-wrap items-center gap-x-12 gap-y-6">
-              {clients.map((c) =>
-                c.logoUrl ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
-                    key={c._id}
-                    src={c.logoUrl}
-                    alt={c.name}
-                    width={120}
-                    height={40}
-                    loading="lazy"
-                    decoding="async"
-                    className="h-8 md:h-10 w-auto opacity-50 hover:opacity-100 transition-opacity duration-300"
-                    style={{ filter: 'grayscale(100%)' }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.filter = 'grayscale(0%)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.filter = 'grayscale(100%)';
-                    }}
-                  />
-                ) : (
-                  <span
-                    key={c._id}
-                    className="font-display text-text-muted hover:text-text transition-colors text-base"
-                  >
-                    {c.name}
-                  </span>
-                ),
-              )}
-            </div>
           </motion.div>
         )}
       </Container>
+
+      {/* Logo ticker — full section width so fade masks hit the edges */}
+      {clients && clients.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 1, delay: 0.4 }}
+        >
+          <LogoTicker clients={clients} />
+        </motion.div>
+      )}
     </section>
   );
 }
