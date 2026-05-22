@@ -103,7 +103,7 @@ function LogoTicker({ clients }: { clients: ClientRef[] }) {
           <div
             key={`${c._id}-${i}`}
             style={{
-              padding: isSharkFunded ? '0 12px' : '0 52px',
+              padding: isSharkFunded ? '0 12px' : '0 36px',
               flexShrink: 0,
               display: 'flex',
               alignItems: 'center',
@@ -244,13 +244,10 @@ export default function AboutSection({
             className="mt-12 pt-10"
             style={{ borderTop: '1px solid var(--border)' }}
           >
-            <p className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-6">
+            <p className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-6 text-center">
               Trusted by
             </p>
-            {/* overflow:hidden on this wrapper clips the ticker at the container boundary */}
-            <div style={{ overflow: 'hidden', margin: '0 -4px' }}>
-              <LogoTicker clients={clients} />
-            </div>
+            <LogoTicker clients={clients} />
           </motion.div>
         )}
       </Container>

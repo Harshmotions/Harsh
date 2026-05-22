@@ -136,17 +136,25 @@
   content: '';
   position: absolute;
   top: 0; bottom: 0;
-  width: 160px;
+  width: 220px;
   z-index: 2;
   pointer-events: none;
 }
 .logo-marquee-outer::before {
   left: 0;
-  background: linear-gradient(to right, var(--bg) 0%, transparent 100%);
+  background: linear-gradient(to right,
+    var(--bg) 0%,
+    var(--bg) 30%,
+    transparent 100%
+  );
 }
 .logo-marquee-outer::after {
   right: 0;
-  background: linear-gradient(to left, var(--bg) 0%, transparent 100%);
+  background: linear-gradient(to left,
+    var(--bg) 0%,
+    var(--bg) 30%,
+    transparent 100%
+  );
 }
 
 .logo-marquee-track {
