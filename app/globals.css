@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* ─── Button border spin ─────────────────────────── */
+@keyframes btn-border-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
 /* ─── Design Tokens ─────────────────────────────── */
 :root {
   --bg: #0A0A0A;

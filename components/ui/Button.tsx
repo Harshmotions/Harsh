@@ -42,11 +42,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       position: 'relative',
       display: 'inline-flex',
       alignItems: 'stretch',
-      background: isPrimary
-        ? /* warm white top-right → near-black bottom-left */
-          'radial-gradient(circle 90px at 82% -12%, rgba(255,248,220,0.90), rgba(10,8,4,0.97))'
-        : /* amber top-right → very dark */
-          'radial-gradient(circle 80px at 82% -12%, rgba(212,168,75,0.65), rgba(14,11,5,0.96))',
+      overflow: 'hidden',
+      /* Dark fallback — spinning div provides the animated border color */
+      background: isPrimary ? 'rgba(10,8,4,0.97)' : 'rgba(14,11,5,0.96)',
       boxShadow: isPrimary
         ? [
             '0 4px 16px rgba(0,0,0,0.50)',
@@ -155,6 +153,23 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={`font-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${className}`}
         {...props}
       >
+        {/* Spinning border — conic-gradient rotates to create animated border glow */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            width: '250%',
+            height: '250%',
+            top: '50%',
+            left: '50%',
+            zIndex: 0,
+            animation: 'btn-border-spin 4s linear infinite',
+            background: isPrimary
+              ? 'conic-gradient(from 0deg, rgba(10,8,4,0.97) 0%, rgba(10,8,4,0.97) 50%, rgba(212,168,75,0.60) 65%, rgba(255,248,220,0.88) 75%, rgba(212,168,75,0.60) 85%, rgba(10,8,4,0.97) 95%)'
+              : 'conic-gradient(from 0deg, rgba(14,11,5,0.96) 0%, rgba(14,11,5,0.96) 50%, rgba(212,168,75,0.35) 65%, rgba(212,168,75,0.62) 75%, rgba(212,168,75,0.35) 85%, rgba(14,11,5,0.96) 95%)',
+          }}
+        />
+
         {/* Catch-light: top-right glow */}
         <div aria-hidden="true" style={catchLightStyle} />
 
