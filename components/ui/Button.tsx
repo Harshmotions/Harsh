@@ -30,31 +30,21 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = 'primary', className = '', children, ...props }, ref) => {
     const isPrimary = variant === 'primary';
 
-    /* ── Outer shell — the gradient "border" ── */
+    /* ── Outer shell — border handled by CSS class (btn-animated-*) ── */
     const outerStyle: React.CSSProperties = {
       cursor: 'pointer',
       fontSize: '0.875rem',
       fontWeight: 600,
       letterSpacing: '0.03em',
-      borderRadius: 14,
-      border: 'none',
-      padding: 2,
       position: 'relative',
       display: 'inline-flex',
       alignItems: 'stretch',
-      overflow: 'hidden',
-      /* Dark fallback — spinning div provides the animated border color */
-      background: isPrimary ? 'rgba(10,8,4,0.97)' : 'rgba(14,11,5,0.96)',
       boxShadow: isPrimary
         ? [
             '0 4px 16px rgba(0,0,0,0.50)',
             '0 1px 0 rgba(255,255,255,0.06)',
-            '0 0 0 1px rgba(212,168,75,0.10)',
           ].join(', ')
-        : [
-            '0 4px 14px rgba(0,0,0,0.40)',
-            '0 0 0 1px rgba(212,168,75,0.08)',
-          ].join(', '),
+        : '0 4px 14px rgba(0,0,0,0.40)',
       transition: 'filter 0.2s ease',
     };
 
@@ -94,7 +84,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     /* ── Inner dark content surface ── */
     const innerStyle: React.CSSProperties = {
       padding: isPrimary ? '13px 28px' : '12px 26px',
-      borderRadius: 12,
+      borderRadius: 9999,
+      overflow: 'hidden',
       color: isPrimary
         ? 'rgba(255,248,215,0.96)'
         : 'rgba(240,237,232,0.90)',
@@ -150,36 +141,25 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         style={outerStyle}
         whileHover={hoverAnim}
         whileTap={{ scale: 0.97 }}
-        className={`font-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${className}`}
+        className={`font-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${isPrimary ? 'btn-animated-primary' : 'btn-animated-ghost'} ${className}`}
         {...props}
       >
-        {/* Spinning border — conic-gradient rotates to create animated border glow */}
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            width: '250%',
-            height: '250%',
-            top: '50%',
-            left: '50%',
-            zIndex: 0,
-            animation: 'btn-border-spin 4s linear infinite',
-            background: isPrimary
-              ? 'conic-gradient(from 0deg, rgba(10,8,4,0.97) 0%, rgba(10,8,4,0.97) 50%, rgba(212,168,75,0.60) 65%, rgba(255,248,220,0.88) 75%, rgba(212,168,75,0.60) 85%, rgba(10,8,4,0.97) 95%)'
-              : 'conic-gradient(from 0deg, rgba(14,11,5,0.96) 0%, rgba(14,11,5,0.96) 50%, rgba(212,168,75,0.35) 65%, rgba(212,168,75,0.62) 75%, rgba(212,168,75,0.35) 85%, rgba(14,11,5,0.96) 95%)',
-          }}
-        />
+        {/* Layer 1: Sharp tight edge glow */}
+        <div aria-hidden="true" className="btn-white-glow" />
+        {/* Layer 2: Medium soft rotating glow ring */}
+        <div aria-hidden="true" className="btn-medium-glow" />
 
-        {/* Catch-light: top-right glow */}
-        <div aria-hidden="true" style={catchLightStyle} />
-
-        {/* Blob: bottom-left amber bloom */}
-        <div aria-hidden="true" style={blobStyle} />
-
-        {/* Inner content surface */}
+        {/* Inner content surface — overflow:hidden clips blob + catchLight to pill */}
         <div style={innerStyle}>
+          {/* Catch-light: top-right glow */}
+          <div aria-hidden="true" style={catchLightStyle} />
+
+          {/* Blob: bottom-left amber bloom */}
+          <div aria-hidden="true" style={blobStyle} />
+
           {/* Ambient bottom-left tint */}
           <div aria-hidden="true" style={innerTintStyle} />
+
           {/* Actual content — always on top */}
           <span style={{
             position: 'relative',
