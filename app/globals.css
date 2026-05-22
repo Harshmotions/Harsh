@@ -136,7 +136,7 @@
   content: '';
   position: absolute;
   top: 0; bottom: 0;
-  width: 220px;
+  width: 35%;
   z-index: 2;
   pointer-events: none;
 }
@@ -144,7 +144,7 @@
   left: 0;
   background: linear-gradient(to right,
     var(--bg) 0%,
-    var(--bg) 30%,
+    var(--bg) 45%,
     transparent 100%
   );
 }
@@ -152,7 +152,7 @@
   right: 0;
   background: linear-gradient(to left,
     var(--bg) 0%,
-    var(--bg) 30%,
+    var(--bg) 45%,
     transparent 100%
   );
 }
