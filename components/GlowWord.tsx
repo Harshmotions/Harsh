@@ -4,134 +4,120 @@ import { useRef, useEffect } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   GlowWord — cursor-reactive neon bloom for a single inline word.
+   GlowWord — neon-sign bloom effect for a single inline word.
 
-   Layer stack (inside the filter, inner → outer):
-     1. White hot core   — appears only when cursor is within PROXIMITY_PX
-     2. Tight warm bloom — #FFF8A8, always breathing, flares on proximity
-     3. Mid amber bloom  — #D4A84B, main neon colour
-     4. Wide halo        — soft amber, volumetric spread
-     5. Far diffusion    — near-invisible ambient spill
+   Visual model (from outer to inner):
+     ∞. Downward light pool  — always on, casts "floor light" below the word
+     5. Far atmospheric haze — wide amber cloud, very subtle
+     4. Wide halo            — main volumetric spread
+     3. Mid amber bloom      — primary neon colour
+     2. Tight warm bloom     — bright amber-white right at letterform edges
+     1. White edge glow      — the "tube" surface, near-white hot
 
-   Each layer's x/y shadow offset tracks the cursor direction so the
-   light source feels like it's *beside* the word, not just in front.
-
-   Breathing is driven by a requestAnimationFrame loop (not CSS keyframes)
-   so it can be cleanly combined with the reactive spring values at runtime.
+   Text is near-white (#FFFBF0) — colour comes from the bloom, not the fill.
+   Breathing oscillates the whole stack; cursor proximity flares it.
 ───────────────────────────────────────────────────────────────────────────── */
 
-const PROXIMITY_PX    = 150;   // px radius at which cursor starts activating glow
-const BREATH_PERIOD   = 2600;  // ms for one full breath cycle
-const BREATH_MIN      = 0.18;  // resting glow floor (0–1)
-const BREATH_RANGE    = 0.24;  // swing above floor
+const PROXIMITY_PX  = 160;
+const BREATH_PERIOD = 2400;   // ms per cycle
+const BREATH_MIN    = 0.30;   // resting floor  (higher = always-visible glow)
+const BREATH_RANGE  = 0.40;   // swing amplitude (bigger = more dramatic pulse)
 
 export default function GlowWord({ children }: { children: React.ReactNode }) {
   const wordRef = useRef<HTMLSpanElement>(null);
   const rafRef  = useRef<number>(0);
 
   /* ── Raw motion values ───────────────────────────────────────────────── */
-  const rawProx   = useMotionValue(0);              // 0–1, cursor proximity
-  const rawBreath = useMotionValue(BREATH_MIN);     // 0–1, breathing oscillation
-  const rawOX     = useMotionValue(0);              // shadow x-offset toward cursor
-  const rawOY     = useMotionValue(0);              // shadow y-offset toward cursor
+  const rawProx   = useMotionValue(0);
+  const rawBreath = useMotionValue(BREATH_MIN);
+  const rawOX     = useMotionValue(0);
+  const rawOY     = useMotionValue(0);
 
-  /* ── Springs — physics feel ──────────────────────────────────────────── */
-  const prox   = useSpring(rawProx,   { stiffness: 80,  damping: 18, mass: 0.8 });
-  const breath = useSpring(rawBreath, { stiffness: 22,  damping: 10, mass: 1.2 });
-  const ox     = useSpring(rawOX,     { stiffness: 60,  damping: 15, mass: 0.8 });
-  const oy     = useSpring(rawOY,     { stiffness: 60,  damping: 15, mass: 0.8 });
+  /* ── Springs ─────────────────────────────────────────────────────────── */
+  const prox   = useSpring(rawProx,   { stiffness: 75,  damping: 18, mass: 0.8 });
+  const breath = useSpring(rawBreath, { stiffness: 18,  damping: 9,  mass: 1.4 });
+  const ox     = useSpring(rawOX,     { stiffness: 55,  damping: 14, mass: 0.9 });
+  const oy     = useSpring(rawOY,     { stiffness: 55,  damping: 14, mass: 0.9 });
 
-  /* ── Breathing loop ──────────────────────────────────────────────────── */
+  /* ── Breathing RAF loop ──────────────────────────────────────────────── */
   useEffect(() => {
     let start: number | null = null;
-
     const tick = (ts: number) => {
       if (!start) start = ts;
-      const phase = ((ts - start) % BREATH_PERIOD) / BREATH_PERIOD; // 0 → 1
+      const phase = ((ts - start) % BREATH_PERIOD) / BREATH_PERIOD;
       rawBreath.set(BREATH_MIN + BREATH_RANGE * (0.5 + 0.5 * Math.sin(phase * 2 * Math.PI)));
       rafRef.current = requestAnimationFrame(tick);
     };
-
     rafRef.current = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafRef.current);
   }, [rawBreath]);
 
-  /* ── Cursor proximity tracking ───────────────────────────────────────── */
+  /* ── Cursor proximity ────────────────────────────────────────────────── */
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
       const el = wordRef.current;
       if (!el) return;
-
       const rect = el.getBoundingClientRect();
-      const cx   = rect.left + rect.width  / 2;
-      const cy   = rect.top  + rect.height / 2;
-      const dx   = e.clientX - cx;
-      const dy   = e.clientY - cy;
+      const cx = rect.left + rect.width  / 2;
+      const cy = rect.top  + rect.height / 2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
       const dist = Math.hypot(dx, dy);
-      const p    = Math.max(0, 1 - dist / PROXIMITY_PX);
-
+      const p = Math.max(0, 1 - dist / PROXIMITY_PX);
       rawProx.set(p);
-
-      // Directional offset: up to 5px, scaled by proximity
       if (p > 0.02 && dist > 0) {
-        rawOX.set((dx / dist) * p * 5);
-        rawOY.set((dy / dist) * p * 5);
+        rawOX.set((dx / dist) * p * 6);
+        rawOY.set((dy / dist) * p * 6);
       } else {
         rawOX.set(0);
         rawOY.set(0);
       }
     };
-
     window.addEventListener('mousemove', onMove, { passive: true });
     return () => window.removeEventListener('mousemove', onMove);
   }, [rawProx, rawOX, rawOY]);
 
-  /* ── Layered bloom filter ────────────────────────────────────────────── */
+  /* ── 6-layer neon bloom filter ───────────────────────────────────────── */
   const glowFilter = useTransform(
     [prox, breath, ox, oy],
     ([p, b, x, y]: number[]) => {
-      // Proximity overrides breath intensity; blend at low proximity
-      const base = Math.max(b, p * 0.9);
-      const f    = (n: number) => n.toFixed(2);
+      // Proximity flares breath on top
+      const t = Math.min(1, Math.max(b, b + p * 0.85));
+      const f = (n: number) => n.toFixed(2);
 
-      const layers: string[] = [];
+      // ── Layer 1: white tube edge ──────────────────────────────────────
+      const l1r = (1.5 + t * 4).toFixed(1);
+      const l1a = (0.70 + t * 0.30).toFixed(3);
+      const l1 = `drop-shadow(${f(x * 0.15)}px ${f(y * 0.15)}px ${l1r}px rgba(255,255,255,${l1a}))`;
 
-      // 1. White-hot core — only when cursor enters radius
-      if (p > 0.04) {
-        const r = (1 + p * 5).toFixed(1);
-        const a = (p * 0.88).toFixed(3);
-        layers.push(`drop-shadow(${f(x * 0.2)}px ${f(y * 0.2)}px ${r}px rgba(255,255,255,${a}))`);
-      }
+      // ── Layer 2: tight warm bloom (#FFF8A0) ───────────────────────────
+      const l2r = (4 + t * 14).toFixed(1);
+      const l2a = (0.55 + t * 0.42).toFixed(3);
+      const l2 = `drop-shadow(${f(x * 0.3)}px ${f(y * 0.3)}px ${l2r}px rgba(255,248,160,${l2a}))`;
 
-      // 2. Tight warm bloom
-      {
-        const r = (3  + base * 12).toFixed(1);
-        const a = (0.32 + base * 0.55).toFixed(3);
-        layers.push(`drop-shadow(${f(x * 0.4)}px ${f(y * 0.4)}px ${r}px rgba(255,248,168,${a}))`);
-      }
+      // ── Layer 3: mid amber (#D4A84B) ──────────────────────────────────
+      const l3r = (12 + t * 26).toFixed(1);
+      const l3a = (0.50 + t * 0.45).toFixed(3);
+      const l3 = `drop-shadow(${f(x * 0.55)}px ${f(y * 0.55)}px ${l3r}px rgba(212,168,75,${l3a}))`;
 
-      // 3. Mid amber bloom
-      {
-        const r = (10 + base * 22).toFixed(1);
-        const a = (0.38 + base * 0.50).toFixed(3);
-        layers.push(`drop-shadow(${f(x * 0.6)}px ${f(y * 0.6)}px ${r}px rgba(212,168,75,${a}))`);
-      }
+      // ── Layer 4: wide halo ────────────────────────────────────────────
+      const l4r = (28 + t * 42).toFixed(1);
+      const l4a = (0.28 + t * 0.32).toFixed(3);
+      const l4 = `drop-shadow(${f(x * 0.75)}px ${f(y * 0.75)}px ${l4r}px rgba(212,168,75,${l4a}))`;
 
-      // 4. Wide halo
-      {
-        const r = (22 + base * 34).toFixed(1);
-        const a = (0.18 + base * 0.28).toFixed(3);
-        layers.push(`drop-shadow(${f(x * 0.8)}px ${f(y * 0.8)}px ${r}px rgba(212,168,75,${a}))`);
-      }
+      // ── Layer 5: far atmospheric haze ─────────────────────────────────
+      const l5r = (55 + t * 65).toFixed(1);
+      const l5a = (0.10 + t * 0.14).toFixed(3);
+      const l5 = `drop-shadow(${f(x)}px ${f(y)}px ${l5r}px rgba(184,132,30,${l5a}))`;
 
-      // 5. Far atmospheric diffusion
-      {
-        const r = (42 + base * 50).toFixed(1);
-        const a = (0.07 + base * 0.10).toFixed(3);
-        layers.push(`drop-shadow(${f(x)}px ${f(y)}px ${r}px rgba(212,168,75,${a}))`);
-      }
+      // ── Layer 6: downward light pool (always on, floor illumination) ──
+      // Fixed downward offset, scales with glow intensity
+      const l6y  = (16 + t * 30).toFixed(1);
+      const l6r  = (30 + t * 55).toFixed(1);
+      const l6a  = (0.18 + t * 0.22).toFixed(3);
+      const l6 = `drop-shadow(0px ${l6y}px ${l6r}px rgba(212,168,75,${l6a}))`;
 
-      return layers.join(' ');
+      return [l1, l2, l3, l4, l5, l6].join(' ');
     },
   );
 
@@ -139,12 +125,9 @@ export default function GlowWord({ children }: { children: React.ReactNode }) {
     <motion.span
       ref={wordRef}
       style={{
-        /* ── Gradient text — identical to the original Hero span ── */
-        background:             'linear-gradient(to bottom, #D4A84B 0%, #FFF0A8 100%)',
-        WebkitBackgroundClip:   'text',
-        WebkitTextFillColor:    'transparent',
-        backgroundClip:         'text',
-        /* ── Dynamic bloom ── */
+        /* Near-white "neon tube" — colour is in the bloom, not the fill */
+        color: '#FFFBF0',
+        WebkitTextFillColor: '#FFFBF0',
         filter: glowFilter,
         display: 'inline',
       }}
