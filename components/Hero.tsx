@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import Container from '@/components/ui/Container';
+import GlowWord from '@/components/GlowWord';
 import MagneticButton from '@/components/MagneticButton';
 import Button from '@/components/ui/Button';
 
@@ -202,17 +203,7 @@ export default function Hero({ headline, subline }: HeroProps) {
             {tail && (
               <>
                 {' '}
-                <span
-                  style={{
-                    background: 'linear-gradient(to bottom, #D4A84B 0%, #FFF0A8 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    filter: 'drop-shadow(0 0 32px rgba(212,168,75,0.35))',
-                  }}
-                >
-                  {tail}
-                </span>
+                <GlowWord>{tail}</GlowWord>
               </>
             )}
           </motion.h1>
