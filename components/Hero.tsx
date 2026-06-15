@@ -15,20 +15,6 @@ const DEFAULT_HEADLINE = 'Motion that moves money.';
 const DEFAULT_SUBLINE =
   'Video that earns attention and drives results — for brands that measure what works.';
 
-/* Thin ↗ arrow tile — clean stroke, same arrow concept as the cursor but works as a tile */
-const ARROW_SVG = encodeURIComponent(
-  `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path d="M7 21L21 7M15 7h6v6" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`
-);
-
-/* Section background — dark navy + rich dark blue center, no bright spotlight */
-const HERO_BG = [
-  /* Edge vignette */
-  `radial-gradient(ellipse 115% 115% at 50% 50%, transparent 42%, rgba(6,11,20,0.90) 76%, #060B14 100%)`,
-  /* Dark blue radial in center — matches the depth of other site sections */
-  `radial-gradient(ellipse 80% 60% at 50% 40%, rgba(20,48,130,0.72) 0%, rgba(12,28,85,0.48) 48%, transparent 70%)`,
-  /* Base */
-  `#060B14`,
-].join(', ');
 
 export default function Hero({ headline, subline }: HeroProps) {
   const text = headline ?? DEFAULT_HEADLINE;
@@ -39,24 +25,14 @@ export default function Hero({ headline, subline }: HeroProps) {
   return (
     <section
       className="relative flex items-center overflow-hidden"
-      style={{ minHeight: '100svh', background: HERO_BG }}
+      style={{
+        minHeight: '100svh',
+        backgroundImage: 'url(/hero-bg.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
     >
-      {/* Arrow tile ring — masked so arrows only appear in the ring around the text,
-          invisible in the center text zone and at the outer edges */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `url("data:image/svg+xml,${ARROW_SVG}")`,
-          backgroundSize: '28px 28px',
-          backgroundRepeat: 'repeat',
-          WebkitMaskImage: 'radial-gradient(ellipse 88% 68% at 50% 44%, transparent 26%, black 42%, black 60%, transparent 76%)',
-          maskImage: 'radial-gradient(ellipse 88% 68% at 50% 44%, transparent 26%, black 42%, black 60%, transparent 76%)',
-          pointerEvents: 'none',
-          zIndex: 1,
-        }}
-      />
       {/* ── Main content — centered ────────────────────────────────── */}
       <Container className="w-full relative z-10">
         <div className="max-w-4xl mx-auto text-center">
