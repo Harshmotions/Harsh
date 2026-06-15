@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const links = [
   { href: '/', label: 'Home' },
   { href: '/reels', label: 'Reels' },
-  { href: '/landscape', label: 'Landscape' },
+  { href: '/landscape', label: 'Long-form' },
 ];
 
 export default function Navigation() {
@@ -83,7 +83,12 @@ export default function Navigation() {
 
             <Link
               href={contactHref}
-              className="font-body text-sm font-medium px-5 py-2 rounded-full border border-border hover:border-accent hover:text-accent transition-colors"
+              className="font-body text-sm font-medium px-5 py-2 rounded-full transition-colors hover:opacity-90"
+              style={{
+                background: 'rgba(212,168,75,0.12)',
+                border: '1px solid rgba(212,168,75,0.35)',
+                color: 'var(--accent)',
+              }}
             >
               Get in touch
             </Link>

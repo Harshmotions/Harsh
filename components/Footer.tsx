@@ -18,6 +18,31 @@ export default function Footer({
       className="py-8 mt-16"
     >
       <Container>
+        {/* CTA row */}
+        {emailAddress && (
+          <div
+            className="mb-8 pb-8 text-center"
+            style={{ borderBottom: '1px solid var(--border)' }}
+          >
+            <p
+              className="font-display font-semibold text-text mb-3"
+              style={{
+                fontSize: 'clamp(18px, 2.2vw, 28px)',
+                letterSpacing: '-0.02em',
+              }}
+            >
+              Ready to move your numbers?
+            </p>
+            <a
+              href={`mailto:${emailAddress}`}
+              className="font-body text-sm transition-colors hover:opacity-80"
+              style={{ color: 'var(--accent)' }}
+            >
+              {emailAddress} →
+            </a>
+          </div>
+        )}
+
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="font-display font-bold text-lg tracking-tight">
             Harsh<span className="text-accent">.</span>

@@ -73,8 +73,30 @@ export default function ProjectCard({
         />
         <div
           className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-          style={{ background: 'rgba(212,168,75,0.12)' }}
+          style={{ background: 'rgba(212,168,75,0.10)' }}
         />
+
+        {/* Play affordance */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+          <div
+            style={{
+              width: 52,
+              height: 52,
+              borderRadius: '50%',
+              background: 'rgba(10,10,10,0.55)',
+              border: '1px solid rgba(212,168,75,0.50)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M4.5 2.5l9 5.5-9 5.5V2.5z" fill="var(--accent)" />
+            </svg>
+          </div>
+        </div>
 
         {/* Numbered overlay */}
         {typeof index === 'number' && (

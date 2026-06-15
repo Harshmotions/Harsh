@@ -14,7 +14,7 @@ interface HeroProps {
 
 const DEFAULT_HEADLINE = 'Motion that moves money.';
 const DEFAULT_SUBLINE =
-  'Performance ads, motion graphics, and AI-driven creative for brands that measure what works.';
+  'Video that earns attention and drives results — for brands that measure what works.';
 
 /* ── Floating dots config ──────────────────────────────────────────────────
    Hardcoded so positions are stable (no Math.random in render).

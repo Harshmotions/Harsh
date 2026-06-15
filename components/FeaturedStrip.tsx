@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Container from '@/components/ui/Container';
 import ProjectCard from '@/components/ProjectCard';
@@ -95,7 +96,7 @@ export default function FeaturedStrip({
               transition={{ duration: 0.5 }}
               className="font-body text-text-muted text-xs uppercase tracking-[0.18em] mb-5"
             >
-              Landscape · 16:9
+              Long-form · 16:9
             </motion.p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               {landscape.map((p, i) => (
@@ -118,6 +119,41 @@ export default function FeaturedStrip({
             </div>
           </div>
         )}
+
+        {/* Mid-page CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-16 pt-14 flex flex-col items-center text-center gap-5"
+          style={{ borderTop: '1px solid var(--border)' }}
+        >
+          <p className="font-body text-text-muted text-xs uppercase tracking-[0.2em]">
+            Want results like this?
+          </p>
+          <h3
+            className="font-display font-semibold text-text max-w-xl"
+            style={{
+              fontSize: 'clamp(22px, 2.8vw, 36px)',
+              lineHeight: 1.15,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            Let&apos;s make your next campaign impossible to scroll past.
+          </h3>
+          <Link
+            href="#contact"
+            className="font-body text-sm font-medium px-6 py-2.5 rounded-full transition-colors hover:opacity-90"
+            style={{
+              background: 'rgba(212,168,75,0.12)',
+              border: '1px solid rgba(212,168,75,0.35)',
+              color: 'var(--accent)',
+            }}
+          >
+            Start a project →
+          </Link>
+        </motion.div>
       </Container>
     </section>
   );

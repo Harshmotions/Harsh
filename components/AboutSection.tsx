@@ -234,6 +234,38 @@ export default function AboutSection({
           </motion.div>
         </div>
 
+        {/* Stats row */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+          className="mt-10 pt-10 grid grid-cols-3 gap-6 text-center"
+          style={{ borderTop: '1px solid var(--border)' }}
+        >
+          {([
+            { value: '4+', label: 'Years' },
+            { value: '50+', label: 'Projects' },
+            { value: '12+', label: 'Clients' },
+          ] as const).map(({ value, label }) => (
+            <div key={label}>
+              <p
+                className="font-display font-bold"
+                style={{
+                  fontSize: 'clamp(28px, 4vw, 48px)',
+                  letterSpacing: '-0.02em',
+                  color: 'var(--accent)',
+                }}
+              >
+                {value}
+              </p>
+              <p className="font-body text-text-muted text-xs uppercase tracking-[0.15em] mt-1">
+                {label}
+              </p>
+            </div>
+          ))}
+        </motion.div>
+
         {/* "Trusted by" label + ticker — fully inside Container so it respects the separator line */}
         {clients && clients.length > 0 && (
           <motion.div
