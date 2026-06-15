@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   },
 };
 import HomeFeaturedClient from '@/components/HomeFeaturedClient';
+import ImpactStats from '@/components/ImpactStats';
 import AboutSection from '@/components/AboutSection';
 import ApproachSection from '@/components/ApproachSection';
 import ContactSection from '@/components/ContactSection';
@@ -34,6 +35,7 @@ export default async function Home() {
         headline={settings?.heroHeadline}
         subline={settings?.heroSubline}
       />
+      <ImpactStats />
       <HomeFeaturedClient projects={featured} />
       <AboutSection
         body={settings?.aboutBody}
