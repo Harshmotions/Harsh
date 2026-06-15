@@ -15,19 +15,18 @@ const DEFAULT_HEADLINE = 'Motion that moves money.';
 const DEFAULT_SUBLINE =
   'Video that earns attention and drives results — for brands that measure what works.';
 
-/* Cursor-shaped tile — same path as cursor.svg, dark fill shows against bright center */
+/* Cursor-shaped tile — white fill, transparent background, scales to tile size */
 const CURSOR_TILE = encodeURIComponent(
-  `<svg xmlns="http://www.w3.org/2000/svg" width="271" height="271" viewBox="0 0 271 271"><g clip-path="url(#c)"><path d="M311 16L271 56V282.505H191V136L28 299L-28.5684 242.432L136.863 77H0V-3H216.863L254.432 -40.5684L311 16Z" fill="rgba(6,11,20,0.65)"/></g><defs><clipPath id="c"><rect width="271" height="271"/></clipPath></defs></svg>`
+  `<svg xmlns="http://www.w3.org/2000/svg" width="271" height="271" viewBox="0 0 271 271"><g clip-path="url(#c)"><path d="M311 16L271 56V282.505H191V136L28 299L-28.5684 242.432L136.863 77H0V-3H216.863L254.432 -40.5684L311 16Z" fill="rgba(255,255,255,0.30)"/></g><defs><clipPath id="c"><rect width="271" height="271"/></clipPath></defs></svg>`
 );
 
+/* Section background — gradient only, tiles handled separately via masked div */
 const HERO_BG = [
-  /* Edge vignette — top layer, darkens corners/edges over tiles */
-  `radial-gradient(ellipse 115% 115% at 50% 50%, transparent 44%, rgba(6,11,20,0.90) 78%, #060B14 100%)`,
-  /* Cursor-shaped arrow tiles at 28px — dark fill contrasts against bright gradient below */
-  `url("data:image/svg+xml,${CURSOR_TILE}") 0 0 / 28px 28px repeat`,
-  /* Bright central ripple — water-ripple wave spreading from center spotlight */
+  /* Edge vignette */
+  `radial-gradient(ellipse 115% 115% at 50% 50%, transparent 44%, rgba(6,11,20,0.92) 78%, #060B14 100%)`,
+  /* Bright central ripple — water-ripple wave */
   `radial-gradient(ellipse 82% 62% at 50% 38%, rgba(220,235,255,0.96) 0%, rgba(147,197,253,0.92) 10%, rgba(79,142,247,0.85) 26%, rgba(37,78,165,0.62) 44%, rgba(15,35,100,0.25) 60%, transparent 73%)`,
-  /* Dark navy base */
+  /* Dark base */
   `#060B14`,
 ].join(', ');
 
@@ -42,6 +41,22 @@ export default function Hero({ headline, subline }: HeroProps) {
       className="relative flex items-center overflow-hidden"
       style={{ minHeight: '100svh', background: HERO_BG }}
     >
+      {/* Arrow tile ring — masked so arrows only appear in the ring around the text,
+          invisible in the center text zone and at the outer edges */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: `url("data:image/svg+xml,${CURSOR_TILE}")`,
+          backgroundSize: '32px 32px',
+          backgroundRepeat: 'repeat',
+          WebkitMaskImage: 'radial-gradient(ellipse 105% 80% at 50% 44%, transparent 24%, black 40%, black 68%, transparent 84%)',
+          maskImage: 'radial-gradient(ellipse 105% 80% at 50% 44%, transparent 24%, black 40%, black 68%, transparent 84%)',
+          pointerEvents: 'none',
+          zIndex: 1,
+        }}
+      />
       {/* ── Main content — centered ────────────────────────────────── */}
       <Container className="w-full relative z-10">
         <div className="max-w-4xl mx-auto text-center">
