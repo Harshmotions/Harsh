@@ -15,18 +15,18 @@ const DEFAULT_HEADLINE = 'Motion that moves money.';
 const DEFAULT_SUBLINE =
   'Video that earns attention and drives results — for brands that measure what works.';
 
-/* Cursor-shaped tile — white fill, transparent background, scales to tile size */
-const CURSOR_TILE = encodeURIComponent(
-  `<svg xmlns="http://www.w3.org/2000/svg" width="271" height="271" viewBox="0 0 271 271"><g clip-path="url(#c)"><path d="M311 16L271 56V282.505H191V136L28 299L-28.5684 242.432L136.863 77H0V-3H216.863L254.432 -40.5684L311 16Z" fill="rgba(255,255,255,0.30)"/></g><defs><clipPath id="c"><rect width="271" height="271"/></clipPath></defs></svg>`
+/* Thin ↗ arrow tile — clean stroke, same arrow concept as the cursor but works as a tile */
+const ARROW_SVG = encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path d="M7 21L21 7M15 7h6v6" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`
 );
 
-/* Section background — gradient only, tiles handled separately via masked div */
+/* Section background — dark navy + rich dark blue center, no bright spotlight */
 const HERO_BG = [
   /* Edge vignette */
-  `radial-gradient(ellipse 115% 115% at 50% 50%, transparent 44%, rgba(6,11,20,0.92) 78%, #060B14 100%)`,
-  /* Bright central ripple — water-ripple wave */
-  `radial-gradient(ellipse 82% 62% at 50% 38%, rgba(220,235,255,0.96) 0%, rgba(147,197,253,0.92) 10%, rgba(79,142,247,0.85) 26%, rgba(37,78,165,0.62) 44%, rgba(15,35,100,0.25) 60%, transparent 73%)`,
-  /* Dark base */
+  `radial-gradient(ellipse 115% 115% at 50% 50%, transparent 42%, rgba(6,11,20,0.90) 76%, #060B14 100%)`,
+  /* Dark blue radial in center — matches the depth of other site sections */
+  `radial-gradient(ellipse 80% 60% at 50% 40%, rgba(20,48,130,0.72) 0%, rgba(12,28,85,0.48) 48%, transparent 70%)`,
+  /* Base */
   `#060B14`,
 ].join(', ');
 
@@ -48,11 +48,11 @@ export default function Hero({ headline, subline }: HeroProps) {
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: `url("data:image/svg+xml,${CURSOR_TILE}")`,
-          backgroundSize: '32px 32px',
+          backgroundImage: `url("data:image/svg+xml,${ARROW_SVG}")`,
+          backgroundSize: '28px 28px',
           backgroundRepeat: 'repeat',
-          WebkitMaskImage: 'radial-gradient(ellipse 105% 80% at 50% 44%, transparent 24%, black 40%, black 68%, transparent 84%)',
-          maskImage: 'radial-gradient(ellipse 105% 80% at 50% 44%, transparent 24%, black 40%, black 68%, transparent 84%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 88% 68% at 50% 44%, transparent 26%, black 42%, black 60%, transparent 76%)',
+          maskImage: 'radial-gradient(ellipse 88% 68% at 50% 44%, transparent 26%, black 42%, black 60%, transparent 76%)',
           pointerEvents: 'none',
           zIndex: 1,
         }}
