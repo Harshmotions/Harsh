@@ -15,21 +15,19 @@ const DEFAULT_HEADLINE = 'Motion that moves money.';
 const DEFAULT_SUBLINE =
   'Video that earns attention and drives results — for brands that measure what works.';
 
-/* Arrow pattern + radial glow — computed once at module level */
-const ARROW_SVG = encodeURIComponent(
-  `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><path d="M7 21L21 7M15 7h6v6" stroke="rgba(79,142,247,0.20)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+/* Cursor-shaped tile — same path as cursor.svg, dark fill shows against bright center */
+const CURSOR_TILE = encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="271" height="271" viewBox="0 0 271 271"><g clip-path="url(#c)"><path d="M311 16L271 56V282.505H191V136L28 299L-28.5684 242.432L136.863 77H0V-3H216.863L254.432 -40.5684L311 16Z" fill="rgba(6,11,20,0.65)"/></g><defs><clipPath id="c"><rect width="271" height="271"/></clipPath></defs></svg>`
 );
 
 const HERO_BG = [
-  /* Bright central blue glow — the "spotlight" */
-  `radial-gradient(ellipse 75% 55% at 50% 38%, rgba(79,142,247,0.45) 0%, rgba(37,78,165,0.26) 40%, transparent 68%)`,
-  /* Soft secondary bloom lower */
-  `radial-gradient(ellipse 55% 40% at 50% 68%, rgba(147,197,253,0.18) 0%, transparent 55%)`,
-  /* Edge vignette to keep borders dark */
-  `radial-gradient(ellipse 110% 110% at 50% 50%, transparent 55%, rgba(6,11,20,0.80) 85%, #060B14 100%)`,
-  /* Arrow tile pattern */
-  `url("data:image/svg+xml,${ARROW_SVG}") repeat`,
-  /* Base dark navy */
+  /* Edge vignette — top layer, darkens corners/edges over tiles */
+  `radial-gradient(ellipse 115% 115% at 50% 50%, transparent 44%, rgba(6,11,20,0.90) 78%, #060B14 100%)`,
+  /* Cursor-shaped arrow tiles at 28px — dark fill contrasts against bright gradient below */
+  `url("data:image/svg+xml,${CURSOR_TILE}") 0 0 / 28px 28px repeat`,
+  /* Bright central ripple — water-ripple wave spreading from center spotlight */
+  `radial-gradient(ellipse 82% 62% at 50% 38%, rgba(220,235,255,0.96) 0%, rgba(147,197,253,0.92) 10%, rgba(79,142,247,0.85) 26%, rgba(37,78,165,0.62) 44%, rgba(15,35,100,0.25) 60%, transparent 73%)`,
+  /* Dark navy base */
   `#060B14`,
 ].join(', ');
 
@@ -77,8 +75,11 @@ export default function Hero({ headline, subline }: HeroProps) {
                     fontFamily: 'var(--font-playfair)',
                     fontStyle: 'italic',
                     fontWeight: 700,
-                    color: 'var(--accent)',
-                    filter: 'drop-shadow(0 0 28px rgba(79,142,247,0.55))',
+                    background: 'linear-gradient(90deg, var(--accent) 0%, #ffffff 100%)',
+                    WebkitBackgroundClip: 'text',
+                    backgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    color: 'transparent',
                   }}
                 >
                   {tail}

@@ -102,8 +102,8 @@ export default function Cursor() {
       <img
         src="/cursor.svg"
         alt=""
-        width={32}
-        height={32}
+        width={16}
+        height={16}
         style={{ transform: 'scaleX(-1)', display: 'block' }}
       />
       <span
