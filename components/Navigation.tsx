@@ -70,7 +70,7 @@ export default function Navigation() {
                     href={l.href}
                     className="font-body text-sm transition-colors"
                     style={{
-                      color: active ? 'var(--text)' : 'var(--text-muted)',
+                      color: active ? '#ffffff' : 'rgba(255,255,255,0.60)',
                     }}
                   >
                     {l.label}
