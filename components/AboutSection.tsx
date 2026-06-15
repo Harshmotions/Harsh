@@ -245,7 +245,7 @@ export default function AboutSection({
         >
           {([
             { value: '4+', label: 'Years' },
-            { value: '50+', label: 'Projects' },
+            { value: '400+', label: 'Projects' },
             { value: '12+', label: 'Clients' },
           ] as const).map(({ value, label }) => (
             <div key={label}>

@@ -15,7 +15,7 @@ const STATS = [
     description: 'Brands with a consistent signature look',
   },
   {
-    value: '50+',
+    value: '400+',
     label: 'Videos Delivered',
     description: 'Across ads, motion, and long-form',
   },
