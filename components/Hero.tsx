@@ -61,8 +61,8 @@ export default function Hero({ headline, subline }: HeroProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="font-display font-bold"
-            style={{ color: '#ffffff' }}
             style={{
+              color: '#ffffff',
               fontSize: 'clamp(48px, 8vw, 118px)',
               lineHeight: 0.95,
               letterSpacing: '-0.03em',
@@ -95,8 +95,7 @@ export default function Hero({ headline, subline }: HeroProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="font-body mt-6 mx-auto max-w-xl"
-            style={{ color: 'rgba(255,255,255,0.75)' }}
-            style={{ fontSize: '1.0625rem' }}
+            style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1.0625rem' }}
           >
             {subline ?? DEFAULT_SUBLINE}
           </motion.p>
