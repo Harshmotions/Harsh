@@ -43,25 +43,36 @@ export default function Navigation() {
       {!hidden && (
         <motion.nav
           key="nav"
-          initial={{ y: -80, opacity: 0 }}
+          initial={{ y: -64, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -80, opacity: 0 }}
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed top-0 left-0 right-0 z-50"
-          style={{
-            background: 'transparent',
-            borderBottom: 'none',
-          }}
+          exit={{ y: -64, opacity: 0 }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed top-0 left-0 right-0 z-50 flex justify-center"
+          style={{ paddingTop: '14px' }}
         >
-          <div className="mx-auto max-w-7xl px-6 md:px-12 h-16 flex items-center justify-between">
+          <div
+            className="flex items-center gap-2"
+            style={{
+              background: 'rgba(6,11,20,0.72)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid rgba(79,142,247,0.14)',
+              borderRadius: '9999px',
+              padding: '6px 6px 6px 20px',
+              boxShadow: '0 4px 32px rgba(0,0,0,0.40), 0 0 0 1px rgba(255,255,255,0.04) inset',
+            }}
+          >
+            {/* Logo */}
             <Link
               href="/"
-              className="font-display text-text font-bold text-lg tracking-tight"
+              className="font-display font-bold text-base tracking-tight mr-4"
+              style={{ color: '#ffffff' }}
             >
-              Harsh<span className="text-accent">.</span>
+              Harsh<span style={{ color: 'var(--accent)' }}>.</span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-8">
+            {/* Nav links — desktop only */}
+            <div className="hidden md:flex items-center gap-1">
               {links.map((l) => {
                 const active = pathname === l.href;
                 return (
@@ -70,7 +81,10 @@ export default function Navigation() {
                     href={l.href}
                     className="font-body text-sm transition-colors"
                     style={{
-                      color: active ? '#ffffff' : 'rgba(255,255,255,0.60)',
+                      color: active ? '#ffffff' : 'rgba(255,255,255,0.58)',
+                      padding: '6px 14px',
+                      borderRadius: '9999px',
+                      background: active ? 'rgba(79,142,247,0.10)' : 'transparent',
                     }}
                   >
                     {l.label}
@@ -79,13 +93,18 @@ export default function Navigation() {
               })}
             </div>
 
+            {/* CTA pill */}
             <Link
               href={contactHref}
-              className="font-body text-sm font-medium px-5 py-2 rounded-full transition-colors hover:opacity-90"
+              className="font-body text-sm font-medium transition-opacity hover:opacity-85"
               style={{
-                background: 'rgba(255,107,43,0.10)',
+                background: 'rgba(255,107,43,0.12)',
                 border: '1px solid rgba(255,107,43,0.40)',
                 color: 'var(--cta)',
+                padding: '7px 18px',
+                borderRadius: '9999px',
+                marginLeft: '4px',
+                whiteSpace: 'nowrap',
               }}
             >
               Get in touch

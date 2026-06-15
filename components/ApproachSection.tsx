@@ -28,7 +28,7 @@ const FALLBACK_STEPS: ApproachStep[] = [
 ];
 
 /* PNG icons per step — matches filenames in /public */
-const STEP_ICONS = ['/Brief.png', '/Concept.png', '/Cut.png'];
+const STEP_ICONS = ['/Brief2.png', '/Concept2.png', '/Cut2.png'];
 
 /**
  * PremiumCard — cinematic glassmorphism surface with button-consistent
