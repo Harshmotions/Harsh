@@ -85,9 +85,9 @@ export default function Navigation() {
               href={contactHref}
               className="font-body text-sm font-medium px-5 py-2 rounded-full transition-colors hover:opacity-90"
               style={{
-                background: 'rgba(79,142,247,0.10)',
-                border: '1px solid rgba(79,142,247,0.35)',
-                color: 'var(--accent)',
+                background: 'rgba(255,107,43,0.10)',
+                border: '1px solid rgba(255,107,43,0.40)',
+                color: 'var(--cta)',
               }}
             >
               Get in touch

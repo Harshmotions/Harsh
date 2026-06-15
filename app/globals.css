@@ -171,6 +171,8 @@
   --text-muted: #6B7A99;
   --accent: #4F8EF7;
   --accent-hover: #6BA3FF;
+  --cta: #FF6B2B;
+  --cta-hover: #FF8A50;
 
   --glow-blue-sm: 0 0 14px rgba(79,142,247,0.35);
   --glow-blue-md: 0 0 28px rgba(79,142,247,0.5);
@@ -187,6 +189,8 @@
   --color-text-muted: var(--text-muted);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
+  --color-cta: var(--cta);
+  --color-cta-hover: var(--cta-hover);
 
   --font-display: var(--font-sora);
   --font-body: var(--font-inter);

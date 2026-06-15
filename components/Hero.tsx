@@ -105,7 +105,7 @@ export default function Hero({ headline, subline }: HeroProps) {
           >
             <MagneticButton>
               <Link href="/reels">
-                <Button variant="primary">View Reels</Button>
+                <Button variant="cta">View Reels</Button>
               </Link>
             </MagneticButton>
             <MagneticButton>

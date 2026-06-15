@@ -97,16 +97,15 @@ export default function Cursor() {
         gap: '3px',
       }}
     >
-      {/* ↗ Arrow — matches the hero background pattern */}
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-        <path
-          d="M4 18L18 4M12 4h6v6"
-          stroke="var(--accent)"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
+      {/* Custom cursor — flipped horizontally to match standard pointer direction */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/cursor.svg"
+        alt=""
+        width={32}
+        height={32}
+        style={{ transform: 'scaleX(-1)', display: 'block' }}
+      />
       <span
         className="cursor-label"
         style={{
