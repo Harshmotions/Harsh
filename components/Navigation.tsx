@@ -49,8 +49,8 @@ export default function Navigation() {
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           className="fixed top-0 left-0 right-0 z-50"
           style={{
-            background: '#052560',
-            borderBottom: '1px solid rgba(255,255,255,0.10)',
+            background: 'transparent',
+            borderBottom: 'none',
           }}
         >
           <div className="mx-auto max-w-7xl px-6 md:px-12 h-16 flex items-center justify-between">

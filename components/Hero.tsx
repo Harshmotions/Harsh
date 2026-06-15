@@ -25,14 +25,23 @@ export default function Hero({ headline, subline }: HeroProps) {
   return (
     <section
       className="relative flex items-center overflow-hidden"
-      style={{
-        minHeight: '100svh',
-        backgroundImage: 'url(/hero-bg.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }}
+      style={{ minHeight: '100svh' }}
     >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/hero-bg.png"
+        alt=""
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          transform: 'scale(1.15)',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
       {/* ── Main content — centered ────────────────────────────────── */}
       <Container className="w-full relative z-10">
         <div className="max-w-4xl mx-auto text-center">
