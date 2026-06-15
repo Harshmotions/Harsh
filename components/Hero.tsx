@@ -41,7 +41,8 @@ export default function Hero({ headline, subline }: HeroProps) {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-6"
+            className="font-body text-xs uppercase tracking-[0.2em] mb-6"
+            style={{ color: 'rgba(255,255,255,0.70)' }}
           >
             Freelance Video Editor · India
           </motion.p>
@@ -50,7 +51,8 @@ export default function Hero({ headline, subline }: HeroProps) {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display font-bold text-text"
+            className="font-display font-bold"
+            style={{ color: '#ffffff' }}
             style={{
               fontSize: 'clamp(48px, 8vw, 118px)',
               lineHeight: 0.95,
@@ -83,7 +85,8 @@ export default function Hero({ headline, subline }: HeroProps) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="font-body text-text-muted mt-6 mx-auto max-w-xl"
+            className="font-body mt-6 mx-auto max-w-xl"
+            style={{ color: 'rgba(255,255,255,0.75)' }}
             style={{ fontSize: '1.0625rem' }}
           >
             {subline ?? DEFAULT_SUBLINE}
