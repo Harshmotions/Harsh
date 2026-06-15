@@ -146,8 +146,8 @@ export default function FeaturedStrip({
             href="#contact"
             className="font-body text-sm font-medium px-6 py-2.5 rounded-full transition-colors hover:opacity-90"
             style={{
-              background: 'rgba(212,168,75,0.12)',
-              border: '1px solid rgba(212,168,75,0.35)',
+              background: 'rgba(79,142,247,0.10)',
+              border: '1px solid rgba(79,142,247,0.35)',
               color: 'var(--accent)',
             }}
           >

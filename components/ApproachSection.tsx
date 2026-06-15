@@ -84,8 +84,8 @@ function PremiumCard({
              padding-box = card fill, border-box = gradient stroke. */
         border: '1px solid transparent',
         background: [
-          'linear-gradient(rgba(7,6,5,0.97), rgba(7,6,5,0.97)) padding-box',
-          'radial-gradient(circle 130px at 80% -15%, rgba(255,248,220,0.58) 0%, rgba(212,168,75,0.20) 32%, rgba(14,11,5,0.96) 68%) border-box',
+          'linear-gradient(rgba(6,11,20,0.97), rgba(6,11,20,0.97)) padding-box',
+          'radial-gradient(circle 130px at 80% -15%, rgba(147,197,253,0.55) 0%, rgba(79,142,247,0.20) 32%, rgba(6,11,20,0.96) 68%) border-box',
         ].join(', '),
 
         /* ── Multi-layer floating shadow — cards suspended not attached ── */
@@ -95,8 +95,8 @@ function PremiumCard({
           '0 12px 32px rgba(0,0,0,0.50)',
           '0 28px 64px rgba(0,0,0,0.42)',
           '0 48px 96px rgba(0,0,0,0.30)',
-          '0 0 18px rgba(255,248,228,0.04)',
-          '0 0 60px rgba(212,168,75,0.04)',
+          '0 0 18px rgba(147,197,253,0.04)',
+          '0 0 60px rgba(79,142,247,0.08)',
         ].join(', '),
       }}
     >
@@ -111,7 +111,7 @@ function PremiumCard({
       {/* ── Layer 2: Volumetric core bloom ── */}
       <div aria-hidden="true" style={{
         position: 'absolute', inset: 0,
-        background: 'radial-gradient(ellipse 105% 80% at 50% 125%, rgba(212,168,75,0.58) 0%, rgba(196,152,40,0.35) 22%, rgba(160,112,16,0.18) 42%, rgba(100,68,6,0.07) 60%, transparent 75%)',
+        background: 'radial-gradient(ellipse 105% 80% at 50% 125%, rgba(79,142,247,0.58) 0%, rgba(59,117,230,0.35) 22%, rgba(37,78,165,0.18) 42%, rgba(20,50,120,0.07) 60%, transparent 75%)',
         filter: 'blur(3px)',
         pointerEvents: 'none', zIndex: 2,
       }} />
@@ -119,7 +119,7 @@ function PremiumCard({
       {/* ── Layer 3: Upward diffusion ── */}
       <div aria-hidden="true" style={{
         position: 'absolute', inset: 0,
-        background: 'radial-gradient(ellipse 85% 65% at 50% 115%, rgba(212,168,75,0.24) 0%, rgba(184,136,26,0.12) 38%, rgba(120,84,10,0.05) 60%, transparent 75%)',
+        background: 'radial-gradient(ellipse 85% 65% at 50% 115%, rgba(79,142,247,0.24) 0%, rgba(37,78,165,0.12) 38%, rgba(24,56,128,0.05) 60%, transparent 75%)',
         filter: 'blur(18px)',
         pointerEvents: 'none', zIndex: 3,
       }} />
@@ -127,7 +127,7 @@ function PremiumCard({
       {/* ── Layer 4: Volumetric fog ── */}
       <div aria-hidden="true" style={{
         position: 'absolute', inset: 0,
-        background: 'radial-gradient(ellipse 75% 55% at 50% 100%, rgba(212,168,75,0.13) 0%, rgba(184,136,26,0.06) 48%, transparent 72%)',
+        background: 'radial-gradient(ellipse 75% 55% at 50% 100%, rgba(79,142,247,0.13) 0%, rgba(37,78,165,0.06) 48%, transparent 72%)',
         filter: 'blur(32px)',
         pointerEvents: 'none', zIndex: 4,
       }} />
@@ -135,7 +135,7 @@ function PremiumCard({
       {/* ── Layer 5: Bottom-left halo ── */}
       <div aria-hidden="true" style={{
         position: 'absolute', inset: 0,
-        background: 'radial-gradient(ellipse 58% 48% at -6% 108%, rgba(200,155,40,0.30) 0%, rgba(180,130,20,0.12) 48%, transparent 70%)',
+        background: 'radial-gradient(ellipse 58% 48% at -6% 108%, rgba(59,117,230,0.30) 0%, rgba(37,78,165,0.12) 48%, transparent 70%)',
         filter: 'blur(20px)',
         pointerEvents: 'none', zIndex: 5,
       }} />
@@ -143,7 +143,7 @@ function PremiumCard({
       {/* ── Layer 6: Bottom-right halo ── */}
       <div aria-hidden="true" style={{
         position: 'absolute', inset: 0,
-        background: 'radial-gradient(ellipse 58% 48% at 106% 108%, rgba(212,168,75,0.24) 0%, rgba(184,136,26,0.09) 48%, transparent 70%)',
+        background: 'radial-gradient(ellipse 58% 48% at 106% 108%, rgba(79,142,247,0.24) 0%, rgba(37,78,165,0.09) 48%, transparent 70%)',
         filter: 'blur(20px)',
         pointerEvents: 'none', zIndex: 6,
       }} />
@@ -151,7 +151,7 @@ function PremiumCard({
       {/* ── Layer 7: Top surface vignette ── */}
       <div aria-hidden="true" style={{
         position: 'absolute', inset: 0,
-        background: 'linear-gradient(to bottom, rgba(7,6,5,0.90) 0%, rgba(7,6,5,0.60) 28%, rgba(7,6,5,0.20) 52%, rgba(7,6,5,0.06) 68%, transparent 82%)',
+        background: 'linear-gradient(to bottom, rgba(6,11,20,0.90) 0%, rgba(6,11,20,0.60) 28%, rgba(6,11,20,0.20) 52%, rgba(6,11,20,0.06) 68%, transparent 82%)',
         pointerEvents: 'none', zIndex: 7,
       }} />
 
@@ -161,12 +161,12 @@ function PremiumCard({
         borderRadius: 22,
         boxShadow: [
           'inset 0 1px 0 rgba(255,255,255,0.07)',
-          'inset 0 -1px 0 rgba(255,248,228,0.18)',
+          'inset 0 -1px 0 rgba(147,197,253,0.18)',
           'inset 1px 0 0 rgba(255,255,255,0.03)',
           'inset -1px 0 0 rgba(255,255,255,0.02)',
           'inset 3px 3px 0 rgba(255,255,255,0.025)',
           'inset -3px 3px 0 rgba(255,255,255,0.018)',
-          'inset 0 0 35px rgba(212,168,75,0.04)',
+          'inset 0 0 35px rgba(79,142,247,0.04)',
         ].join(', '),
         pointerEvents: 'none', zIndex: 8,
       }} />
@@ -244,9 +244,9 @@ export default function ApproachSection({ steps }: ApproachSectionProps) {
                     height: 52,
                     objectFit: 'contain',
                     filter: [
-                      'drop-shadow(0 0 8px rgba(212,168,75,0.60))',
-                      'drop-shadow(0 0 20px rgba(212,168,75,0.30))',
-                      'drop-shadow(0 0 40px rgba(212,168,75,0.12))',
+                      'drop-shadow(0 0 8px rgba(79,142,247,0.60))',
+                      'drop-shadow(0 0 20px rgba(79,142,247,0.30))',
+                      'drop-shadow(0 0 40px rgba(79,142,247,0.12))',
                     ].join(' '),
                   }}
                 />

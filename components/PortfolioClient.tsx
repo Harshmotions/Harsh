@@ -111,7 +111,7 @@ export default function PortfolioClient({
           <span
             style={{
               color: 'var(--accent)',
-              textShadow: '0 0 32px rgba(212,168,75,0.4)',
+              textShadow: '0 0 32px rgba(79,142,247,0.4)',
             }}
           >.</span>
         </motion.h1>

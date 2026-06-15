@@ -38,34 +38,31 @@ export default function ImpactStats() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.6 }}
-          className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-10"
+          className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-8"
         >
           Impact, not just output
         </motion.p>
 
-        <div className="flex flex-col md:flex-row">
+        {/* Button-card grid: 4-col desktop, 2×2 mobile */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {STATS.map(({ value, label, description }, i) => (
             <motion.div
               key={label}
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className={[
-                'flex-1 flex flex-col gap-2',
-                'py-8 md:py-0',
-                'md:px-8',
-                i === 0 ? 'md:pl-0' : '',
-                i === STATS.length - 1 ? 'md:pr-0' : '',
-                'border-b border-border last:border-b-0 md:border-b-0',
-                i > 0 ? 'md:border-l border-border' : '',
-              ].join(' ')}
+              transition={{ duration: 0.55, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col gap-1.5 rounded-xl p-4 md:p-5"
+              style={{
+                border: '1px solid var(--border)',
+                background: 'var(--surface)',
+              }}
             >
               <span
                 className="font-display font-bold"
                 style={{
-                  fontSize: 'clamp(36px, 4.5vw, 56px)',
-                  letterSpacing: '-0.03em',
+                  fontSize: 'clamp(26px, 3.2vw, 40px)',
+                  letterSpacing: '-0.02em',
                   lineHeight: 1,
                   color: 'var(--accent)',
                 }}
@@ -74,13 +71,13 @@ export default function ImpactStats() {
               </span>
               <span
                 className="font-display font-semibold text-text"
-                style={{ fontSize: '1.0625rem', lineHeight: 1.2 }}
+                style={{ fontSize: '0.9375rem', lineHeight: 1.2 }}
               >
                 {label}
               </span>
               <span
                 className="font-body text-text-muted"
-                style={{ fontSize: '0.8125rem', lineHeight: 1.45 }}
+                style={{ fontSize: '0.75rem', lineHeight: 1.4 }}
               >
                 {description}
               </span>

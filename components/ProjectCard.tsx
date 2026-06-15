@@ -48,7 +48,7 @@ export default function ProjectCard({
         className={`card-inner relative overflow-hidden rounded-2xl ${aspectClass}`}
         style={{
           background: 'var(--surface)',
-          border: '1px solid rgba(212,168,75,0.14)',
+          border: '1px solid rgba(79,142,247,0.14)',
           boxShadow: [
             '0 4px 20px rgba(0,0,0,0.45)',
             'inset 0 1px 0 rgba(255,255,255,0.04)',
@@ -73,7 +73,7 @@ export default function ProjectCard({
         />
         <div
           className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-          style={{ background: 'rgba(212,168,75,0.10)' }}
+          style={{ background: 'rgba(79,142,247,0.10)' }}
         />
 
         {/* Play affordance */}
@@ -84,7 +84,7 @@ export default function ProjectCard({
               height: 52,
               borderRadius: '50%',
               background: 'rgba(10,10,10,0.55)',
-              border: '1px solid rgba(212,168,75,0.50)',
+              border: '1px solid rgba(79,142,247,0.50)',
               backdropFilter: 'blur(8px)',
               WebkitBackdropFilter: 'blur(8px)',
               display: 'flex',

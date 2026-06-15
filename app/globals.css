@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* ─── Button animated border ─────────────────────── */
+/* ─── Animated glow properties (used by approach cards) ── */
 @property --btn-angle {
   syntax: '<angle>';
   inherits: false;
@@ -20,103 +20,6 @@
 @keyframes btn-ambient-breathe {
   0%, 100% { opacity: 0.38; transform: scale(1); }
   50%       { opacity: 0.62; transform: scale(1.03); }
-}
-
-/* ── Primary — amber sweep ───────────────────────── */
-.btn-animated-primary {
-  border-radius: 9999px !important;
-  border: 2px solid transparent !important;
-  padding: 0 !important;
-  background:
-    linear-gradient(#0A0805, #0A0805) padding-box,
-    conic-gradient(
-      from var(--btn-angle),
-      transparent 0%,
-      transparent 73%,
-      rgba(212,168,75,0.55) 80%,
-      rgba(255,248,220,0.92) 86%,
-      rgba(212,168,75,0.55) 92%,
-      transparent 100%
-    ) border-box !important;
-  animation: btn-border-rotate 4s linear infinite;
-}
-
-/* ── Ghost — softer amber sweep ─────────────────── */
-.btn-animated-ghost {
-  border-radius: 9999px !important;
-  border: 2px solid transparent !important;
-  padding: 0 !important;
-  background:
-    linear-gradient(#080704, #080704) padding-box,
-    conic-gradient(
-      from var(--btn-angle),
-      transparent 0%,
-      transparent 73%,
-      rgba(212,168,75,0.30) 80%,
-      rgba(212,168,75,0.62) 86%,
-      rgba(212,168,75,0.30) 92%,
-      transparent 100%
-    ) border-box !important;
-  animation: btn-border-rotate 4s linear infinite;
-}
-
-/* ── Layer 3: Large atmospheric ambient glow (::before, behind button) */
-.btn-animated-primary::before,
-.btn-animated-ghost::before {
-  content: '';
-  position: absolute;
-  inset: -20px;
-  border-radius: 9999px;
-  pointer-events: none;
-  z-index: -1;
-  filter: blur(24px);
-  animation: btn-ambient-breathe 3.5s ease-in-out infinite;
-  mix-blend-mode: screen;
-}
-.btn-animated-primary::before {
-  background: radial-gradient(
-    ellipse 110% 180% at 50% 50%,
-    rgba(255,255,255,0.10) 0%,
-    rgba(255,248,220,0.07) 35%,
-    rgba(212,168,75,0.04) 58%,
-    transparent 72%
-  );
-}
-.btn-animated-ghost::before {
-  background: radial-gradient(
-    ellipse 110% 180% at 50% 50%,
-    rgba(255,255,255,0.07) 0%,
-    rgba(212,168,75,0.04) 42%,
-    transparent 66%
-  );
-}
-
-/* ── Layer 4: Warm amber underlighting (::after, behind button) */
-.btn-animated-primary::after,
-.btn-animated-ghost::after {
-  content: '';
-  position: absolute;
-  inset: -10px;
-  border-radius: 9999px;
-  pointer-events: none;
-  z-index: -1;
-  filter: blur(12px);
-  mix-blend-mode: screen;
-}
-.btn-animated-primary::after {
-  background: radial-gradient(
-    ellipse at 28% 110%,
-    rgba(212,168,75,0.18) 0%,
-    rgba(255,200,80,0.08) 45%,
-    transparent 68%
-  );
-}
-.btn-animated-ghost::after {
-  background: radial-gradient(
-    ellipse at 28% 110%,
-    rgba(212,168,75,0.10) 0%,
-    transparent 58%
-  );
 }
 
 /* ─── Logo ticker marquee ────────────────────────── */
@@ -157,7 +60,6 @@
   );
 }
 
-/* Desktop: narrow visible window — ~30% centre showing */
 @media (min-width: 768px) {
   .logo-marquee-outer::before,
   .logo-marquee-outer::after {
@@ -196,7 +98,6 @@
   border-radius: 22px;
 }
 
-/* Large atmospheric behind-card diffusion */
 .card-ambient-glow {
   position: absolute;
   inset: -28px;
@@ -208,14 +109,13 @@
   mix-blend-mode: screen;
   background: radial-gradient(
     ellipse 100% 120% at 50% 55%,
-    rgba(255,255,255,0.09) 0%,
-    rgba(255,248,220,0.05) 38%,
-    rgba(212,168,75,0.03) 60%,
+    rgba(255,255,255,0.07) 0%,
+    rgba(147,197,253,0.04) 38%,
+    rgba(79,142,247,0.02) 60%,
     transparent 74%
   );
 }
 
-/* Medium soft rotating ring */
 .card-medium-glow {
   position: absolute;
   inset: -5px;
@@ -239,7 +139,6 @@
   mix-blend-mode: screen;
 }
 
-/* Sharp tight white edge */
 .card-white-glow {
   position: absolute;
   inset: -2px;
@@ -262,68 +161,20 @@
   z-index: 0;
 }
 
-/* ── Layer 2: Medium soft rotating glow ring ─────── */
-.btn-medium-glow {
-  position: absolute;
-  inset: -5px;
-  border-radius: 9999px;
-  border: 4px solid transparent;
-  background:
-    transparent padding-box,
-    conic-gradient(
-      from var(--btn-glow-angle),
-      transparent 0%,
-      transparent 77%,
-      rgba(255,255,255,0.04) 82%,
-      rgba(255,255,255,0.22) 87.5%,
-      rgba(255,255,255,0.04) 93%,
-      transparent 97%
-    ) border-box;
-  filter: blur(7px);
-  animation: btn-glow-rotate 3s linear infinite;
-  pointer-events: none;
-  z-index: 4;
-  mix-blend-mode: screen;
-}
-
-/* ── Layer 1: Sharp tight edge glow (existing, sharpened) */
-.btn-white-glow {
-  position: absolute;
-  inset: -2px;
-  border-radius: 9999px;
-  border: 2px solid transparent;
-  background:
-    transparent padding-box,
-    conic-gradient(
-      from var(--btn-glow-angle),
-      transparent 0%,
-      transparent 81%,
-      rgba(255,255,255,0.20) 85%,
-      rgba(255,255,255,0.92) 87.5%,
-      rgba(255,255,255,0.20) 90%,
-      transparent 94%
-    ) border-box;
-  filter: blur(1.5px);
-  animation: btn-glow-rotate 3s linear infinite;
-  pointer-events: none;
-  z-index: 5;
-}
-
 /* ─── Design Tokens ─────────────────────────────── */
 :root {
-  --bg: #0A0A0A;
-  --surface: #141414;
-  --surface-hover: #1A1A1A;
-  --border: #1F1F1F;
+  --bg: #060B14;
+  --surface: #0A1020;
+  --surface-hover: #0F1828;
+  --border: #1E2D4A;
   --text: #F0EDE8;
-  --text-muted: #8A8580;
-  --accent: #D4A84B;
-  --accent-hover: #E0B860;
+  --text-muted: #6B7A99;
+  --accent: #4F8EF7;
+  --accent-hover: #6BA3FF;
 
-  /* Glow helpers */
-  --glow-amber-sm: 0 0 14px rgba(212,168,75,0.35);
-  --glow-amber-md: 0 0 28px rgba(212,168,75,0.5);
-  --glow-amber-lg: 0 0 48px rgba(212,168,75,0.6);
+  --glow-blue-sm: 0 0 14px rgba(79,142,247,0.35);
+  --glow-blue-md: 0 0 28px rgba(79,142,247,0.5);
+  --glow-blue-lg: 0 0 48px rgba(79,142,247,0.6);
 }
 
 /* ─── Tailwind v4 Theme Integration ─────────────── */
@@ -339,6 +190,7 @@
 
   --font-display: var(--font-sora);
   --font-body: var(--font-inter);
+  --font-playfair: var(--font-playfair);
 }
 
 /* ─── Base ───────────────────────────────────────── */
@@ -350,29 +202,24 @@ body {
   font-size: 16px;
   line-height: 1.6;
   letter-spacing: -0.01em;
-  scroll-behavior: auto; /* Lenis handles smooth scroll */
+  scroll-behavior: auto;
 }
 
-/* Ambient gradient — warm amber glow top-centre + bottom-right corner */
+/* Site shell — clean dark navy, no pattern (hero handles its own bg) */
 .site-shell {
-  background:
-    radial-gradient(ellipse 90% 40% at 50% -5%,  rgba(212,168,75,0.09) 0%, transparent 60%),
-    radial-gradient(ellipse 55% 55% at 95% 105%, rgba(212,168,75,0.05) 0%, transparent 55%);
+  background: var(--bg);
   min-height: 100dvh;
 }
 
 /* ─── Card gradient helper ───────────────────────── */
-/* Use on any card that should have the glass/gradient treatment.
-   Outer wrapper creates the glow border via ::before pseudo-element;
-   inner content sits on top. */
 .card-gradient {
   position: relative;
-  background: linear-gradient(160deg, rgba(22,20,16,0.97) 0%, rgba(12,11,9,0.98) 100%);
+  background: linear-gradient(160deg, rgba(10,16,32,0.97) 0%, rgba(6,11,20,0.98) 100%);
   border-radius: 16px;
   isolation: isolate;
   transition: box-shadow 0.35s ease;
   box-shadow:
-    0 4px 24px rgba(0,0,0,0.45),
+    0 4px 24px rgba(0,0,0,0.55),
     inset 0 1px 0 rgba(255,255,255,0.04);
 }
 .card-gradient::before {
@@ -382,9 +229,9 @@ body {
   border-radius: 17px;
   background: linear-gradient(
     135deg,
-    rgba(212,168,75,0.25) 0%,
-    rgba(212,168,75,0.07) 50%,
-    rgba(212,168,75,0.20) 100%
+    rgba(79,142,247,0.25) 0%,
+    rgba(79,142,247,0.07) 50%,
+    rgba(79,142,247,0.20) 100%
   );
   z-index: -1;
   transition: opacity 0.35s ease;
@@ -393,40 +240,37 @@ body {
 .card-gradient:hover::before {
   background: linear-gradient(
     135deg,
-    rgba(212,168,75,0.55) 0%,
-    rgba(212,168,75,0.15) 50%,
-    rgba(212,168,75,0.45) 100%
+    rgba(79,142,247,0.55) 0%,
+    rgba(79,142,247,0.15) 50%,
+    rgba(79,142,247,0.45) 100%
   );
 }
 .card-gradient:hover {
   box-shadow:
-    0 0 28px rgba(212,168,75,0.14),
+    0 0 28px rgba(79,142,247,0.14),
     0 8px 32px rgba(0,0,0,0.55),
     inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
 /* ─── Project card hover glow ───────────────────── */
-/* .card-inner is the image container inside ProjectCard */
 .card-inner {
   transition: border-color 0.35s ease, box-shadow 0.35s ease;
 }
 button:hover .card-inner,
 button:focus-visible .card-inner {
-  border-color: rgba(212,168,75,0.45) !important;
+  border-color: rgba(79,142,247,0.45) !important;
   box-shadow:
-    0 0 24px rgba(212,168,75,0.16),
+    0 0 24px rgba(79,142,247,0.16),
     0 8px 32px rgba(0,0,0,0.55),
     inset 0 1px 0 rgba(255,255,255,0.06) !important;
 }
 
 /* ─── Custom cursor ──────────────────────────────── */
-/* Scoped to .site-shell so /studio gets its native cursor */
 .site-shell,
 .site-shell * {
   cursor: none;
 }
 
-/* Restore pointer cursor on touch devices */
 @media (hover: none) {
   .site-shell,
   .site-shell * {
@@ -434,7 +278,6 @@ button:focus-visible .card-inner {
   }
 }
 
-/* When modal open: hide amber cursor, restore native so Mux hide-on-inactivity works */
 body.modal-open .site-shell,
 body.modal-open .site-shell * {
   cursor: auto;
@@ -444,14 +287,12 @@ body.modal-open .custom-cursor {
   display: none;
 }
 
-/* Hide custom cursor on touch / no-hover devices (phones, tablets) */
 @media (hover: none) {
   .custom-cursor {
     display: none !important;
   }
 }
 
-/* Belt-and-braces: fullscreen element → native cursor */
 :fullscreen,
 :fullscreen *,
 :-webkit-full-screen,
