@@ -37,25 +37,25 @@ const projectProjection = groq`
   publishedAt
 `;
 
-/** Featured projects for the home page strip. */
+/** Featured projects for the home page strip. Excludes the hero-only showreel. */
 export const FEATURED_PROJECTS_QUERY = groq`
-  *[_type == "project" && isFeatured == true]
+  *[_type == "project" && isFeatured == true && category != "showreel"]
     | order(order asc, publishedAt desc) {
     ${projectProjection}
   }
 `;
 
-/** All reels — used by /reels grid. */
+/** All reels — used by /reels grid. Excludes the hero-only showreel. */
 export const REELS_QUERY = groq`
-  *[_type == "project" && type == "reel"]
+  *[_type == "project" && type == "reel" && category != "showreel"]
     | order(order asc, publishedAt desc) {
     ${projectProjection}
   }
 `;
 
-/** All landscape projects — used by /landscape grid. */
+/** All landscape projects — used by /landscape grid. Excludes the hero-only showreel. */
 export const LANDSCAPE_QUERY = groq`
-  *[_type == "project" && type == "landscape"]
+  *[_type == "project" && type == "landscape" && category != "showreel"]
     | order(order asc, publishedAt desc) {
     ${projectProjection}
   }
@@ -74,6 +74,21 @@ export const SITE_SETTINGS_QUERY = groq`
     emailAddress,
     instagramUrl,
     linkedinUrl
+  }
+`;
+
+/** Hero showcase video — the project tagged with the "Showreel" category in Studio. */
+export const HERO_VIDEO_QUERY = groq`
+  *[_type == "project" && category == "showreel"]
+    | order(order asc, publishedAt desc) [0]{
+    _id,
+    title,
+    muxVideo{
+      asset->{
+        playbackId,
+        status
+      }
+    }
   }
 `;
 

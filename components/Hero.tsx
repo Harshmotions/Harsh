@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import MuxPlayer from '@mux/mux-player-react';
 import Container from '@/components/ui/Container';
 import MagneticButton from '@/components/MagneticButton';
 import Button from '@/components/ui/Button';
@@ -9,6 +10,7 @@ import Button from '@/components/ui/Button';
 interface HeroProps {
   headline?: string;
   subline?: string;
+  videoPlaybackId?: string;
 }
 
 const DEFAULT_HEADLINE = 'Motion that moves money.';
@@ -16,7 +18,7 @@ const DEFAULT_SUBLINE =
   'Video that earns attention and drives results — for brands that measure what works.';
 
 
-export default function Hero({ headline, subline }: HeroProps) {
+export default function Hero({ headline, subline, videoPlaybackId }: HeroProps) {
   const text = headline ?? DEFAULT_HEADLINE;
   const lastSpace = text.lastIndexOf(' ');
   const head = lastSpace > 0 ? text.slice(0, lastSpace) : text;
@@ -25,7 +27,11 @@ export default function Hero({ headline, subline }: HeroProps) {
   return (
     <section
       className="relative flex items-center overflow-hidden"
-      style={{ minHeight: '100svh' }}
+      style={{
+        minHeight: '100svh',
+        paddingTop: 'clamp(78px, 8vw, 96px)',
+        paddingBottom: '64px',
+      }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -45,6 +51,77 @@ export default function Hero({ headline, subline }: HeroProps) {
       {/* ── Main content — centered ────────────────────────────────── */}
       <Container className="w-full relative z-10">
         <div className="max-w-4xl mx-auto text-center">
+
+          {/* ── Showreel — glass-framed, always looping ─────────────── */}
+          {videoPlaybackId && (
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                position: 'relative',
+                margin: '0 auto 36px',
+                maxWidth: 920,
+                borderRadius: 32,
+                padding: 6,
+                background:
+                  'linear-gradient(150deg, rgba(255,255,255,0.20) 0%, rgba(79,142,247,0.14) 45%, rgba(255,255,255,0.05) 100%)',
+                backdropFilter: 'blur(18px)',
+                WebkitBackdropFilter: 'blur(18px)',
+                border: '1px solid rgba(147,197,253,0.30)',
+                boxShadow: [
+                  'inset 0 1px 0 rgba(255,255,255,0.18)',
+                  '0 30px 70px rgba(0,0,0,0.55)',
+                  '0 0 60px rgba(79,142,247,0.20)',
+                  '0 0 130px rgba(79,142,247,0.10)',
+                ].join(', '),
+              }}
+            >
+              {/* glass sheen line along the top edge */}
+              <div
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  top: 6,
+                  left: 24,
+                  right: 24,
+                  height: 1,
+                  background:
+                    'linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)',
+                  zIndex: 2,
+                  pointerEvents: 'none',
+                }}
+              />
+              <div
+                style={{
+                  position: 'relative',
+                  borderRadius: 26,
+                  overflow: 'hidden',
+                  aspectRatio: '16 / 9',
+                  background: '#04070d',
+                }}
+              >
+                <MuxPlayer
+                  playbackId={videoPlaybackId}
+                  streamType="on-demand"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  metadata={{
+                    video_title: 'Hero Showreel',
+                    player_name: 'harsh-portfolio-hero',
+                  }}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    '--controls': 'none',
+                    '--media-object-fit': 'cover',
+                  }}
+                />
+              </div>
+            </motion.div>
+          )}
 
           <motion.p
             initial={{ opacity: 0, y: 12 }}

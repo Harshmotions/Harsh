@@ -39,7 +39,9 @@ export type ProjectCategory =
   // landscape
   | 'youtube'
   | 'brand-films'
-  | 'documentary';
+  | 'documentary'
+  // hero only — never shown in /reels or /landscape grids
+  | 'showreel';
 
 export interface ClientRef {
   _id: string;
@@ -64,6 +66,12 @@ export interface Project {
   isFeatured: boolean;
   order?: number;
   publishedAt: string;
+}
+
+export interface HeroVideo {
+  _id: string;
+  title: string;
+  muxVideo: MuxVideo;
 }
 
 export interface ApproachStep {

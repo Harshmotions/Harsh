@@ -39,6 +39,8 @@ export default defineType({
           { title: 'AI Ad', value: 'ai-ad' },
           // landscape
           { title: 'YouTube', value: 'youtube' },
+          // hero only — never shown in /reels or /landscape grids
+          { title: 'Showreel (Hero only)', value: 'showreel' },
         ],
       },
     }),
