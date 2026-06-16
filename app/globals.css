@@ -92,6 +92,131 @@
   animation-play-state: paused;
 }
 
+/* ─── Approach card — illuminated edge-lit panel ───────────────── */
+.approach-card-wrapper {
+  position: relative;
+  height: 100%;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.approach-card-wrapper:hover {
+  transform: translateY(-5px);
+}
+
+/* Soft blue bloom bleeding outside the card boundary */
+.approach-card-bloom {
+  position: absolute;
+  inset: -34px;
+  border-radius: 50px;
+  background: radial-gradient(
+    ellipse 70% 70% at 50% 45%,
+    rgba(79, 142, 247, 0.22) 0%,
+    rgba(79, 142, 247, 0.10) 42%,
+    transparent 72%
+  );
+  filter: blur(30px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.65;
+  transform: scale(1);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.approach-card-wrapper:hover .approach-card-bloom {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Gradient-lit stroke, brighter near the corners, embedded under the surface */
+.approach-card-edge {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  border-radius: 32px;
+  padding: 1.4px;
+  background: conic-gradient(
+    from 0deg,
+    rgba(79, 142, 247, 0.16) 0deg,
+    rgba(147, 197, 253, 0.80) 45deg,
+    rgba(79, 142, 247, 0.16) 90deg,
+    rgba(147, 197, 253, 0.80) 135deg,
+    rgba(79, 142, 247, 0.16) 180deg,
+    rgba(147, 197, 253, 0.80) 225deg,
+    rgba(79, 142, 247, 0.16) 270deg,
+    rgba(147, 197, 253, 0.80) 315deg,
+    rgba(79, 142, 247, 0.16) 360deg
+  );
+  filter: brightness(1) saturate(1);
+  transition: filter 0.45s ease;
+}
+
+.approach-card-wrapper:hover .approach-card-edge {
+  filter: brightness(1.35) saturate(1.1);
+}
+
+/* Dark navy-to-blue surface; inset glows hug the rim, center stays dark */
+.approach-card-surface {
+  position: relative;
+  height: 100%;
+  border-radius: 30.6px;
+  overflow: hidden;
+  padding: 28px 26px;
+  background: linear-gradient(165deg, #0d1a34 0%, #070d1a 55%, #04070d 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(147, 197, 253, 0.08),
+    inset 0 0 22px 0 rgba(79, 142, 247, 0.20),
+    inset 0 0 52px 6px rgba(79, 142, 247, 0.12),
+    inset 0 0 96px 14px rgba(40, 80, 170, 0.10);
+  transition: box-shadow 0.45s ease;
+}
+
+.approach-card-wrapper:hover .approach-card-surface {
+  box-shadow:
+    inset 0 0 0 1px rgba(147, 197, 253, 0.14),
+    inset 0 0 26px 0 rgba(79, 142, 247, 0.30),
+    inset 0 0 64px 8px rgba(79, 142, 247, 0.20),
+    inset 0 0 120px 18px rgba(40, 80, 170, 0.16);
+}
+
+/* Corner-weighted highlights — top-left primary, bottom-right secondary */
+.approach-card-corner-tl {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle 140px at 12% 8%,
+    rgba(147, 197, 253, 0.30) 0%,
+    rgba(79, 142, 247, 0.08) 45%,
+    transparent 74%
+  );
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.45s ease;
+}
+
+.approach-card-wrapper:hover .approach-card-corner-tl {
+  opacity: 1;
+}
+
+.approach-card-corner-br {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle 120px at 92% 96%,
+    rgba(79, 142, 247, 0.20) 0%,
+    rgba(37, 78, 165, 0.06) 48%,
+    transparent 74%
+  );
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.45s ease;
+}
+
+.approach-card-wrapper:hover .approach-card-corner-br {
+  opacity: 0.85;
+}
+
 /* ─── Design Tokens ─────────────────────────────── */
 :root {
   --bg: #060B14;

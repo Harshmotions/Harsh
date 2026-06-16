@@ -31,8 +31,9 @@ const FALLBACK_STEPS: ApproachStep[] = [
 const STEP_ICONS = ['/Brief2.png', '/Concept2.png', '/Cut2.png'];
 
 /**
- * PremiumCard — glossy glass tile: deep navy radial fill with a soft
- * top-left highlight, lighting up to a bright rim-glow on hover.
+ * PremiumCard — illuminated edge-lit panel: dark navy center, light
+ * concentrated at the inside rim (brightest near the corners), with a
+ * soft blue bloom bleeding outside the card on hover.
  */
 function PremiumCard({
   children,
@@ -42,39 +43,22 @@ function PremiumCard({
   delay?: number;
 }) {
   return (
-    <motion.article
+    <motion.div
+      className="approach-card-wrapper"
       initial={{ opacity: 0, y: 32 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{
-        borderColor: 'rgba(147,197,253,0.85)',
-        boxShadow: [
-          '0 0 0 1px rgba(147,197,253,0.55)',
-          '0 0 36px rgba(79,142,247,0.55)',
-          '0 0 80px rgba(79,142,247,0.30)',
-          'inset 0 1px 0 rgba(255,255,255,0.18)',
-        ].join(', '),
-        transition: { duration: 0.4, ease: 'easeOut' },
-      }}
-      style={{
-        position: 'relative',
-        height: '100%',
-        borderRadius: 28,
-        padding: '28px 26px',
-        overflow: 'hidden',
-        border: '1px solid rgba(79,142,247,0.14)',
-        background:
-          'radial-gradient(circle at 26% 16%, rgba(94,160,255,0.32) 0%, rgba(28,52,104,0.55) 32%, rgba(6,11,20,0.98) 68%)',
-        boxShadow: [
-          'inset 0 1px 0 rgba(255,255,255,0.08)',
-          'inset 0 -24px 48px rgba(0,0,0,0.50)',
-          '0 24px 48px rgba(0,0,0,0.40)',
-        ].join(', '),
-      }}
     >
-      {children}
-    </motion.article>
+      <div aria-hidden="true" className="approach-card-bloom" />
+      <div className="approach-card-edge">
+        <div className="approach-card-surface">
+          <div aria-hidden="true" className="approach-card-corner-tl" />
+          <div aria-hidden="true" className="approach-card-corner-br" />
+          <div style={{ position: 'relative', zIndex: 1 }}>{children}</div>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
@@ -124,7 +108,7 @@ export default function ApproachSection({ steps }: ApproachSectionProps) {
                     width: 52,
                     height: 52,
                     objectFit: 'contain',
-                    filter: 'drop-shadow(0 0 10px rgba(79,142,247,0.45))',
+                    filter: 'hue-rotate(215deg) saturate(1.6) brightness(0.95) contrast(1.05) drop-shadow(0 0 10px rgba(79,142,247,0.45))',
                   }}
                 />
               </div>
