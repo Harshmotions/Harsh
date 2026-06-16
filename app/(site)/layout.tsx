@@ -1,6 +1,7 @@
 import Cursor from '@/components/Cursor';
 import SmoothScroll from '@/components/SmoothScroll';
 import Navigation from '@/components/Navigation';
+import PageTransition from '@/components/PageTransition';
 import Footer from '@/components/Footer';
 import { sanityFetch } from '@/lib/sanity';
 import { SITE_SETTINGS_QUERY } from '@/lib/queries';
@@ -17,7 +18,7 @@ export default async function SiteLayout({
     <div className="site-shell">
       <SmoothScroll>
         <Navigation />
-        {children}
+        <PageTransition>{children}</PageTransition>
         <Footer
           instagramUrl={settings?.instagramUrl}
           linkedinUrl={settings?.linkedinUrl}

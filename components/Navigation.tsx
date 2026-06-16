@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { lenisInstance } from '@/components/SmoothScroll';
 
 const links = [
   { href: '/', label: 'Home' },
@@ -62,9 +63,15 @@ export default function Navigation() {
               boxShadow: '0 4px 32px rgba(0,0,0,0.40), 0 0 0 1px rgba(255,255,255,0.04) inset',
             }}
           >
-            {/* Logo */}
+            {/* Logo — smooth-scrolls to top if already home, else navigates with a fade */}
             <Link
               href="/"
+              onClick={(e) => {
+                if (pathname === '/') {
+                  e.preventDefault();
+                  lenisInstance?.scrollTo(0, { duration: 1.2 });
+                }
+              }}
               className="font-display font-bold text-base tracking-tight mr-4"
               style={{ color: '#ffffff' }}
             >

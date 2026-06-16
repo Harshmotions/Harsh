@@ -203,7 +203,7 @@ export default function Hero({ headline, subline, videoPlaybackId }: HeroProps) 
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
+        className="hidden md:flex absolute bottom-10 left-1/2 -translate-x-1/2 flex-col items-center gap-3"
         aria-hidden="true"
       >
         <span
