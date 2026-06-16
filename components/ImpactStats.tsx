@@ -17,7 +17,7 @@ const STATS = [
   {
     value: '400+',
     label: 'Videos Delivered',
-    description: 'Across ads, motion, and long-form',
+    description: 'Across ads, motion, and landscape',
   },
   {
     value: '4',

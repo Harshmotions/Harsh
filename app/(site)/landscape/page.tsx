@@ -12,7 +12,7 @@ const LANDSCAPE_FILTERS = [
 ];
 
 export const metadata = {
-  title: 'Long-form',
+  title: 'Landscape',
   description:
     'Horizontal edits with room to breathe — YouTube, brand films, motion graphics, and documentary.',
   alternates: { canonical: '/landscape' },
@@ -26,7 +26,7 @@ export default async function LandscapePage() {
       <PortfolioClient
         projects={projects}
         variant="landscape"
-        title="Long-form"
+        title="Landscape"
         subline="Horizontal edits with room to breathe. YouTube, brand films, documentary."
         filters={LANDSCAPE_FILTERS}
       />

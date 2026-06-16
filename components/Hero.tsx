@@ -190,7 +190,7 @@ export default function Hero({ headline, subline, videoPlaybackId }: HeroProps) 
             </MagneticButton>
             <MagneticButton>
               <Link href="/landscape">
-                <Button variant="ghost">View Long-form</Button>
+                <Button variant="ghost">View Landscape</Button>
               </Link>
             </MagneticButton>
           </motion.div>

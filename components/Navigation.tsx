@@ -9,7 +9,7 @@ import { lenisInstance } from '@/components/SmoothScroll';
 const links = [
   { href: '/', label: 'Home' },
   { href: '/reels', label: 'Reels' },
-  { href: '/landscape', label: 'Long-form' },
+  { href: '/landscape', label: 'Landscape' },
 ];
 
 export default function Navigation() {

@@ -22,7 +22,7 @@ const FALLBACK_BODY: PortableTextBlock[] = [
       {
         _type: 'span',
         _key: '1a',
-        text: "I'm a video editor based in India with 4+ years of experience in professional video editing and motion graphics. I've worked with brands across fintech, wellness, and digital businesses, handling everything from creative campaigns to long-form content.",
+        text: "I'm a video editor based in India with 4+ years of experience in professional video editing and motion graphics. I've worked with brands across fintech, wellness, and digital businesses, handling everything from creative campaigns to landscape content.",
         marks: [],
       },
     ],
@@ -36,7 +36,7 @@ const FALLBACK_BODY: PortableTextBlock[] = [
       {
         _type: 'span',
         _key: '2a',
-        text: "Currently, my focus is on AI creative ads and films, premium SaaS-style motion graphics, and long-form editing. I work with both retainer and project-based clients, creating content designed not just to look polished, but to drive attention, engagement, and ultimately contribute to growth and revenue.",
+        text: "Currently, my focus is on AI creative ads and films, premium SaaS-style motion graphics, and landscape editing. I work with both retainer and project-based clients, creating content designed not just to look polished, but to drive attention, engagement, and ultimately contribute to growth and revenue.",
         marks: [],
       },
     ],
