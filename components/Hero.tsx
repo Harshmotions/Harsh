@@ -6,6 +6,7 @@ import MuxPlayer from '@mux/mux-player-react';
 import Container from '@/components/ui/Container';
 import MagneticButton from '@/components/MagneticButton';
 import Button from '@/components/ui/Button';
+import { lenisInstance } from '@/components/SmoothScroll';
 
 interface HeroProps {
   headline?: string;
@@ -29,7 +30,7 @@ export default function Hero({ headline, subline, videoPlaybackId }: HeroProps) 
       className="relative flex items-center overflow-hidden"
       style={{
         minHeight: '100svh',
-        paddingTop: 'clamp(78px, 8vw, 96px)',
+        paddingTop: 'clamp(64px, 5.5vw, 78px)',
         paddingBottom: '64px',
       }}
     >
@@ -48,7 +49,7 @@ export default function Hero({ headline, subline, videoPlaybackId }: HeroProps) 
           zIndex: 0,
         }}
       />
-      {/* ── Main content — centered ────────────────────────────────── */}
+
       <Container className="w-full relative z-10">
         <div className="max-w-4xl mx-auto text-center">
 
@@ -60,7 +61,8 @@ export default function Hero({ headline, subline, videoPlaybackId }: HeroProps) 
               transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
               style={{
                 position: 'relative',
-                margin: '0 auto 36px',
+                zIndex: 2,
+                margin: '0 auto 0',
                 maxWidth: 920,
                 borderRadius: 32,
                 padding: 6,
@@ -123,15 +125,82 @@ export default function Hero({ headline, subline, videoPlaybackId }: HeroProps) 
             </motion.div>
           )}
 
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="font-body text-xs uppercase tracking-[0.2em] mb-6"
-            style={{ color: 'rgba(255,255,255,0.70)' }}
+          {/* ── Start a Project CTA — bounces out from under the video ── */}
+          <motion.div
+            initial={{ y: videoPlaybackId ? -72 : 0, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{
+              y: { type: 'spring', stiffness: 260, damping: 16, delay: 1.0 },
+              opacity: { duration: 0.01, delay: 1.0 },
+            }}
+            style={{
+              position: 'relative',
+              zIndex: 1,
+              marginTop: 22,
+              marginBottom: 36,
+              display: 'flex',
+              justifyContent: 'center',
+            }}
           >
-            Freelance Video Editor · India
-          </motion.p>
+            <motion.button
+              onClick={() => {
+                const el = document.getElementById('contact');
+                if (el) lenisInstance?.scrollTo(el, { duration: 1.2 });
+              }}
+              whileHover={{
+                borderColor: 'rgba(255,107,43,0.92)',
+                boxShadow: [
+                  '0 6px 24px rgba(0,0,0,0.65)',
+                  '0 0 38px rgba(255,107,43,0.45)',
+                  '0 0 14px rgba(255,107,43,0.30)',
+                  'inset 0 1px 0 rgba(255,255,255,0.09)',
+                ].join(', '),
+                filter: 'brightness(1.16)',
+              }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+              className="font-body"
+              style={{
+                position: 'relative',
+                overflow: 'hidden',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                letterSpacing: '0.03em',
+                borderRadius: 9999,
+                border: '1px solid rgba(255,107,43,0.62)',
+                padding: '13px 32px',
+                color: 'rgba(255,240,228,0.97)',
+                background: 'linear-gradient(170deg, #110805 0%, #060B14 55%)',
+                boxShadow: [
+                  '0 4px 18px rgba(0,0,0,0.58)',
+                  '0 0 24px rgba(255,107,43,0.22)',
+                  'inset 0 1px 0 rgba(255,255,255,0.07)',
+                  'inset 0 -1px 0 rgba(255,107,43,0.12)',
+                ].join(', '),
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {/* Pulsing glow rising from bottom-center — clipped inside pill */}
+              <motion.div
+                aria-hidden="true"
+                animate={{ opacity: [0.45, 1, 0.45] }}
+                transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: '85%',
+                  height: '180%',
+                  background:
+                    'radial-gradient(ellipse at 50% 100%, rgba(255,107,43,0.70), rgba(255,107,43,0.32) 32%, transparent 65%)',
+                  pointerEvents: 'none',
+                  zIndex: 0,
+                }}
+              />
+              <span style={{ position: 'relative', zIndex: 1 }}>Start a Project →</span>
+            </motion.button>
+          </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 24 }}
