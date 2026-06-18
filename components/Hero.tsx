@@ -30,7 +30,7 @@ export default function Hero({ headline, subline, videoPlaybackId }: HeroProps) 
       className="relative flex items-center overflow-hidden"
       style={{
         minHeight: '100svh',
-        paddingTop: 'clamp(64px, 5.5vw, 78px)',
+        paddingTop: 'clamp(80px, 5.5vw, 84px)',
         paddingBottom: '64px',
       }}
     >
@@ -240,8 +240,8 @@ export default function Hero({ headline, subline, videoPlaybackId }: HeroProps) 
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="font-body mt-6 mx-auto max-w-xl"
-            style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1.0625rem' }}
+            className="font-body mt-6 mx-auto max-w-xl line-clamp-2 md:line-clamp-none"
+            style={{ color: 'rgba(255,255,255,0.75)', fontSize: 'clamp(0.875rem, 2.4vw, 1.0625rem)' }}
           >
             {subline ?? DEFAULT_SUBLINE}
           </motion.p>
