@@ -39,6 +39,16 @@ export default function Navigation() {
 
   const contactHref = pathname === '/' ? '#contact' : '/#contact';
 
+  const handleContactClick = (e: React.MouseEvent) => {
+    if (pathname === '/') {
+      e.preventDefault();
+      const contactEl = document.getElementById('contact');
+      if (contactEl) {
+        lenisInstance?.scrollTo(contactEl, { duration: 1.2 });
+      }
+    }
+  };
+
   return (
     <AnimatePresence>
       {!hidden && (
@@ -103,6 +113,7 @@ export default function Navigation() {
             {/* CTA pill */}
             <Link
               href={contactHref}
+              onClick={handleContactClick}
               className="font-body text-sm font-medium transition-opacity hover:opacity-85"
               style={{
                 background: 'rgba(255,107,43,0.12)',

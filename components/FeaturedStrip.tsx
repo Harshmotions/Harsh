@@ -4,11 +4,18 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Container from '@/components/ui/Container';
 import ProjectCard from '@/components/ProjectCard';
+import { lenisInstance } from '@/components/SmoothScroll';
 import type { Project } from '@/lib/types';
 
 interface FeaturedStripProps {
   projects: Project[];
   onCardClick?: (project: Project) => void;
+}
+
+function scrollToContact(e: React.MouseEvent) {
+  e.preventDefault();
+  const el = document.getElementById('contact');
+  if (el) lenisInstance?.scrollTo(el, { duration: 1.2 });
 }
 
 export default function FeaturedStrip({
@@ -144,6 +151,7 @@ export default function FeaturedStrip({
           </h3>
           <Link
             href="#contact"
+            onClick={scrollToContact}
             className="font-body text-sm font-medium px-6 py-2.5 rounded-full transition-colors hover:opacity-90"
             style={{
               background: 'rgba(255,107,43,0.10)',
