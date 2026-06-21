@@ -63,7 +63,7 @@ export default function Hero({
     ctaControls.start({ y: 0, opacity: 1, transition: springIn });
   };
 
-  const handleTimeUpdate = (e: React.SyntheticEvent) => {
+  const handleTimeUpdate = (e: Event) => {
     const video = e.target as HTMLVideoElement;
     if (video.currentTime >= CTA_TIMESTAMP) triggerCta();
   };
