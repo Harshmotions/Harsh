@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { lenisInstance } from '@/components/SmoothScroll';
 
@@ -14,7 +14,9 @@ const links = [
 
 export default function Navigation() {
   const pathname = usePathname();
+  const router = useRouter();
   const [hidden, setHidden] = useState(false);
+  const pendingContactScroll = useRef(false);
 
   useEffect(() => {
     let lastY = window.scrollY;
@@ -39,13 +41,48 @@ export default function Navigation() {
 
   const contactHref = pathname === '/' ? '#contact' : '/#contact';
 
+  // After navigating in from /reels or /landscape, the contact section
+  // doesn't exist until the home page finishes mounting — poll for it
+  // instead of relying on the browser's native (Lenis-unaware) hash
+  // scroll, which silently no-ops on a client-side route change. Also
+  // wait for its position to stop moving: FeaturedStrip's GSAP pin spacer
+  // is inserted slightly after mount, which pushes #contact further down
+  // — scrolling too early lands short, on the FeaturedStrip section.
+  useEffect(() => {
+    if (pathname !== '/' || !pendingContactScroll.current) return;
+    pendingContactScroll.current = false;
+
+    let attempts = 0;
+    let stableFrames = 0;
+    let lastTop = -1;
+    let frame: number;
+    const tryScroll = () => {
+      const contactEl = document.getElementById('contact');
+      const top = contactEl ? contactEl.getBoundingClientRect().top + window.scrollY : -1;
+
+      if (contactEl && top === lastTop && stableFrames >= 4) {
+        lenisInstance?.scrollTo(contactEl, { duration: 1.2 });
+        return;
+      }
+      stableFrames = top === lastTop ? stableFrames + 1 : 0;
+      lastTop = top;
+      if (attempts++ < 90) frame = requestAnimationFrame(tryScroll);
+    };
+    frame = requestAnimationFrame(tryScroll);
+    return () => cancelAnimationFrame(frame);
+  }, [pathname]);
+
   const handleContactClick = (e: React.MouseEvent) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
     if (pathname === '/') {
-      e.preventDefault();
       const contactEl = document.getElementById('contact');
       if (contactEl) {
         lenisInstance?.scrollTo(contactEl, { duration: 1.2 });
       }
+    } else {
+      pendingContactScroll.current = true;
+      router.push('/#contact');
     }
   };
 
