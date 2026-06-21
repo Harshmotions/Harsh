@@ -21,7 +21,8 @@ const DEFAULT_SUBLINE =
   'Video that earns attention and drives results — for brands that measure what works.';
 
 
-const CTA_TIMESTAMP = 1.85; // ~150ms before the 2s mark
+const CTA_TIMESTAMP_DESKTOP = 1.85; // ~150ms before the 2s mark
+const CTA_TIMESTAMP_MOBILE = 1;
 
 const springIn = {
   y: { type: 'spring' as const, stiffness: 260, damping: 16 },
@@ -65,7 +66,8 @@ export default function Hero({
 
   const handleTimeUpdate = (e: Event) => {
     const video = e.target as HTMLVideoElement;
-    if (video.currentTime >= CTA_TIMESTAMP) triggerCta();
+    const ctaTimestamp = isMobile ? CTA_TIMESTAMP_MOBILE : CTA_TIMESTAMP_DESKTOP;
+    if (video.currentTime >= ctaTimestamp) triggerCta();
   };
 
   return (
