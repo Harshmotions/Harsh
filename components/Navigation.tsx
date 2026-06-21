@@ -58,8 +58,7 @@ export default function Navigation() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -64, opacity: 0 }}
           transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed top-0 left-0 right-0 z-50 flex justify-center"
-          style={{ paddingTop: '14px' }}
+          className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-[14px] md:pt-[20px]"
         >
           <div
             className="flex items-center gap-2"

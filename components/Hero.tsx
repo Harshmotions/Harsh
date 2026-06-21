@@ -1,7 +1,8 @@
 'use client';
 
+import { useRef } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
 import MuxPlayer from '@mux/mux-player-react';
 import Container from '@/components/ui/Container';
 import MagneticButton from '@/components/MagneticButton';
@@ -19,11 +20,32 @@ const DEFAULT_SUBLINE =
   'Video that earns attention and drives results — for brands that measure what works.';
 
 
+const CTA_TIMESTAMP = 1.85; // ~150ms before the 2s mark
+
+const springIn = {
+  y: { type: 'spring' as const, stiffness: 260, damping: 16 },
+  opacity: { duration: 0.01 },
+};
+
 export default function Hero({ headline, subline, videoPlaybackId }: HeroProps) {
   const text = headline ?? DEFAULT_HEADLINE;
   const lastSpace = text.lastIndexOf(' ');
   const head = lastSpace > 0 ? text.slice(0, lastSpace) : text;
   const tail = lastSpace > 0 ? text.slice(lastSpace + 1) : '';
+
+  const ctaControls = useAnimation();
+  const triggered = useRef(false);
+
+  const triggerCta = () => {
+    if (triggered.current) return;
+    triggered.current = true;
+    ctaControls.start({ y: 0, opacity: 1, transition: springIn });
+  };
+
+  const handleTimeUpdate = (e: React.SyntheticEvent) => {
+    const video = e.target as HTMLVideoElement;
+    if (video.currentTime >= CTA_TIMESTAMP) triggerCta();
+  };
 
   return (
     <section
@@ -110,6 +132,7 @@ export default function Hero({ headline, subline, videoPlaybackId }: HeroProps) 
                   muted
                   loop
                   playsInline
+                  onTimeUpdate={handleTimeUpdate}
                   metadata={{
                     video_title: 'Hero Showreel',
                     player_name: 'harsh-portfolio-hero',
@@ -128,18 +151,11 @@ export default function Hero({ headline, subline, videoPlaybackId }: HeroProps) 
           {/* ── Start a Project CTA — bounces out from under the video ── */}
           <motion.div
             initial={{ y: videoPlaybackId ? -72 : 0, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{
-              y: { type: 'spring', stiffness: 260, damping: 16, delay: 1.0 },
-              opacity: { duration: 0.01, delay: 1.0 },
-            }}
+            animate={ctaControls}
+            className="flex justify-center mt-9 mb-9 md:mt-[44px] md:mb-[44px]"
             style={{
               position: 'relative',
               zIndex: 1,
-              marginTop: 22,
-              marginBottom: 36,
-              display: 'flex',
-              justifyContent: 'center',
             }}
           >
             <motion.button
@@ -254,7 +270,7 @@ export default function Hero({ headline, subline, videoPlaybackId }: HeroProps) 
           >
             <MagneticButton>
               <Link href="/reels">
-                <Button variant="cta">View Reels</Button>
+                <Button variant="ghost">View Reels</Button>
               </Link>
             </MagneticButton>
             <MagneticButton>
