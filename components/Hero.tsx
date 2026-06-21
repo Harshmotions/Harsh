@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { motion, useAnimation } from 'framer-motion';
 import MuxPlayer from '@mux/mux-player-react';
@@ -12,7 +12,8 @@ import { lenisInstance } from '@/components/SmoothScroll';
 interface HeroProps {
   headline?: string;
   subline?: string;
-  videoPlaybackId?: string;
+  videoPlaybackIdDesktop?: string;
+  videoPlaybackIdMobile?: string;
 }
 
 const DEFAULT_HEADLINE = 'Motion that moves money.';
@@ -27,11 +28,31 @@ const springIn = {
   opacity: { duration: 0.01 },
 };
 
-export default function Hero({ headline, subline, videoPlaybackId }: HeroProps) {
+export default function Hero({
+  headline,
+  subline,
+  videoPlaybackIdDesktop,
+  videoPlaybackIdMobile,
+}: HeroProps) {
   const text = headline ?? DEFAULT_HEADLINE;
   const lastSpace = text.lastIndexOf(' ');
   const head = lastSpace > 0 ? text.slice(0, lastSpace) : text;
   const tail = lastSpace > 0 ? text.slice(lastSpace + 1) : '';
+
+  // Default to the desktop video for SSR/first paint, then swap on mount if
+  // the viewport is mobile-sized — avoids loading both videos at once.
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+
+  const videoPlaybackId = isMobile
+    ? videoPlaybackIdMobile ?? videoPlaybackIdDesktop
+    : videoPlaybackIdDesktop ?? videoPlaybackIdMobile;
 
   const ctaControls = useAnimation();
   const triggered = useRef(false);
@@ -126,6 +147,7 @@ export default function Hero({ headline, subline, videoPlaybackId }: HeroProps) 
                 }}
               >
                 <MuxPlayer
+                  key={videoPlaybackId}
                   playbackId={videoPlaybackId}
                   streamType="on-demand"
                   autoPlay

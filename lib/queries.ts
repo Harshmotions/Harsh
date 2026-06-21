@@ -37,9 +37,11 @@ const projectProjection = groq`
   publishedAt
 `;
 
+const NOT_SHOWREEL = groq`!(category in ["showreel-desktop", "showreel-mobile"])`;
+
 /** Featured projects for the home page strip. Excludes the hero-only showreel. */
 export const FEATURED_PROJECTS_QUERY = groq`
-  *[_type == "project" && isFeatured == true && category != "showreel"]
+  *[_type == "project" && isFeatured == true && ${NOT_SHOWREEL}]
     | order(order asc, publishedAt desc) {
     ${projectProjection}
   }
@@ -47,7 +49,7 @@ export const FEATURED_PROJECTS_QUERY = groq`
 
 /** All reels — used by /reels grid. Excludes the hero-only showreel. */
 export const REELS_QUERY = groq`
-  *[_type == "project" && type == "reel" && category != "showreel"]
+  *[_type == "project" && type == "reel" && ${NOT_SHOWREEL}]
     | order(order asc, publishedAt desc) {
     ${projectProjection}
   }
@@ -55,7 +57,7 @@ export const REELS_QUERY = groq`
 
 /** All landscape projects — used by /landscape grid. Excludes the hero-only showreel. */
 export const LANDSCAPE_QUERY = groq`
-  *[_type == "project" && type == "landscape" && category != "showreel"]
+  *[_type == "project" && type == "landscape" && ${NOT_SHOWREEL}]
     | order(order asc, publishedAt desc) {
     ${projectProjection}
   }
@@ -77,9 +79,24 @@ export const SITE_SETTINGS_QUERY = groq`
   }
 `;
 
-/** Hero showcase video — the project tagged with the "Showreel" category in Studio. */
-export const HERO_VIDEO_QUERY = groq`
-  *[_type == "project" && category == "showreel"]
+/** Hero showcase video for desktop — the project tagged "Showreel — Desktop" in Studio. */
+export const HERO_VIDEO_DESKTOP_QUERY = groq`
+  *[_type == "project" && category == "showreel-desktop"]
+    | order(order asc, publishedAt desc) [0]{
+    _id,
+    title,
+    muxVideo{
+      asset->{
+        playbackId,
+        status
+      }
+    }
+  }
+`;
+
+/** Hero showcase video for mobile — the project tagged "Showreel — Mobile" in Studio. */
+export const HERO_VIDEO_MOBILE_QUERY = groq`
+  *[_type == "project" && category == "showreel-mobile"]
     | order(order asc, publishedAt desc) [0]{
     _id,
     title,

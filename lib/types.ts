@@ -41,7 +41,8 @@ export type ProjectCategory =
   | 'brand-films'
   | 'documentary'
   // hero only — never shown in /reels or /landscape grids
-  | 'showreel';
+  | 'showreel-desktop'
+  | 'showreel-mobile';
 
 export interface ClientRef {
   _id: string;

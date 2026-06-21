@@ -40,7 +40,8 @@ export default defineType({
           // landscape
           { title: 'YouTube', value: 'youtube' },
           // hero only — never shown in /reels or /landscape grids
-          { title: 'Showreel (Hero only)', value: 'showreel' },
+          { title: 'Showreel — Desktop (Hero only)', value: 'showreel-desktop' },
+          { title: 'Showreel — Mobile (Hero only)', value: 'showreel-mobile' },
         ],
       },
     }),

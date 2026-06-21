@@ -19,16 +19,18 @@ import {
   FEATURED_PROJECTS_QUERY,
   SITE_SETTINGS_QUERY,
   CLIENTS_QUERY,
-  HERO_VIDEO_QUERY,
+  HERO_VIDEO_DESKTOP_QUERY,
+  HERO_VIDEO_MOBILE_QUERY,
 } from '@/lib/queries';
 import type { Project, SiteSettings, ClientRef, HeroVideo } from '@/lib/types';
 
 export default async function Home() {
-  const [featured, settings, clients, heroVideo] = await Promise.all([
+  const [featured, settings, clients, heroVideoDesktop, heroVideoMobile] = await Promise.all([
     sanityFetch<Project[]>({ query: FEATURED_PROJECTS_QUERY }),
     sanityFetch<SiteSettings | null>({ query: SITE_SETTINGS_QUERY }),
     sanityFetch<ClientRef[]>({ query: CLIENTS_QUERY }),
-    sanityFetch<HeroVideo | null>({ query: HERO_VIDEO_QUERY }),
+    sanityFetch<HeroVideo | null>({ query: HERO_VIDEO_DESKTOP_QUERY }),
+    sanityFetch<HeroVideo | null>({ query: HERO_VIDEO_MOBILE_QUERY }),
   ]);
 
   return (
@@ -36,7 +38,8 @@ export default async function Home() {
       <Hero
         headline={settings?.heroHeadline}
         subline={settings?.heroSubline}
-        videoPlaybackId={heroVideo?.muxVideo?.asset?.playbackId}
+        videoPlaybackIdDesktop={heroVideoDesktop?.muxVideo?.asset?.playbackId}
+        videoPlaybackIdMobile={heroVideoMobile?.muxVideo?.asset?.playbackId}
       />
       <ImpactStats />
       <HomeFeaturedClient projects={featured} />
