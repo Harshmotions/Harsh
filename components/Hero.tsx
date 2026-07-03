@@ -64,6 +64,12 @@ export default function Hero({
     ctaControls.start({ y: 0, opacity: 1, transition: springIn });
   };
 
+  // On mobile, show the CTA immediately on mount — no need to wait for video time
+  useEffect(() => {
+    if (isMobile) triggerCta();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMobile]);
+
   const handleTimeUpdate = (e: Event) => {
     const video = e.target as HTMLVideoElement;
     const ctaTimestamp = isMobile ? CTA_TIMESTAMP_MOBILE : CTA_TIMESTAMP_DESKTOP;
