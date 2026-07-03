@@ -8,6 +8,7 @@ import Container from '@/components/ui/Container';
 import MagneticButton from '@/components/MagneticButton';
 import Button from '@/components/ui/Button';
 import { lenisInstance } from '@/components/SmoothScroll';
+import HeroGridCanvas from '@/components/HeroGridCanvas';
 
 interface HeroProps {
   headline?: string;
@@ -85,19 +86,19 @@ export default function Hero({
         paddingBottom: '64px',
       }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/hero-bg.png"
-        alt=""
+      <HeroGridCanvas />
+      {/* Bottom fade — blends grid into the page below */}
+      <div
+        aria-hidden="true"
         style={{
           position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          transform: 'scale(1.15)',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '180px',
+          background: 'linear-gradient(to bottom, transparent, #060B14)',
           pointerEvents: 'none',
-          zIndex: 0,
+          zIndex: 1,
         }}
       />
 
@@ -321,13 +322,6 @@ export default function Hero({
         className="hidden md:flex absolute bottom-10 left-1/2 -translate-x-1/2 flex-col items-center gap-3"
         aria-hidden="true"
       >
-        <span
-          className="font-body text-xs uppercase tracking-[0.22em]"
-          style={{ color: 'var(--text-muted)' }}
-        >
-          The reel&apos;s worth it
-        </span>
-
         <motion.div
           animate={{
             y: [0, 8, 0],
