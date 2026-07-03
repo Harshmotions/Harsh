@@ -46,7 +46,7 @@ export default function Footer({
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div
             aria-label="motion by harsh"
-            style={{ userSelect: 'none', display: 'inline-flex', alignItems: 'baseline', gap: '3px' }}
+            style={{ userSelect: 'none', display: 'inline-flex', alignItems: 'baseline', gap: '2px' }}
           >
             <span style={{ fontFamily: 'var(--font-sora)', fontWeight: 800, color: 'var(--accent)', fontSize: '1.0625rem', letterSpacing: '-0.025em' }}>motion</span>
             <span style={{ fontFamily: 'var(--font-playfair)', fontStyle: 'italic', fontWeight: 400, color: 'rgba(255,255,255,0.80)', fontSize: '1.0625rem' }}>by</span>
