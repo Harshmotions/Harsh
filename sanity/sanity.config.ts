@@ -10,7 +10,7 @@ const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-01-01';
 
 export default defineConfig({
   name: 'harsh-portfolio',
-  title: 'Harsh Powar — Portfolio CMS',
+  title: 'motion by harsh | Portfolio CMS',
   basePath: '/studio',
   projectId,
   dataset,
@@ -35,6 +35,15 @@ export default defineConfig({
             // Document types (excluding singletons)
             S.documentTypeListItem('project').title('Projects'),
             S.documentTypeListItem('client').title('Clients'),
+            S.divider(),
+            S.listItem()
+              .title('Leads')
+              .schemaType('lead')
+              .child(
+                S.documentTypeList('lead')
+                  .title('Leads')
+                  .defaultOrdering([{ field: 'submittedAt', direction: 'desc' }]),
+              ),
           ]),
     }),
     visionTool({ defaultApiVersion: apiVersion }),

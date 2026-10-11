@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Container from '@/components/ui/Container';
@@ -16,6 +15,7 @@ interface PortfolioClientProps {
   title: string;
   subline: string;
   filters: FilterOption[];
+  whatsappNumber?: string;
 }
 
 export default function PortfolioClient({
@@ -24,6 +24,7 @@ export default function PortfolioClient({
   title,
   subline,
   filters,
+  whatsappNumber,
 }: PortfolioClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -36,7 +37,7 @@ export default function PortfolioClient({
   }, [searchParams, filters]);
 
   const [active, setActive] = useState<string>(initialFilter);
-  const [selected, setSelected] = useState<Project | null>(null);
+  const [selected, setSelected] = useState<number | null>(null);
 
   // Re-sync state if URL changes externally (e.g. back/forward).
   useEffect(() => {
@@ -58,36 +59,8 @@ export default function PortfolioClient({
   }, [active, projects]);
 
   return (
-    <main className="pt-28 pb-10 min-h-screen">
+    <main className="pt-28 md:pt-32 pb-10 min-h-screen">
       <Container>
-        <motion.div
-          initial={{ opacity: 0, x: -8 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-8"
-        >
-          <Link
-            href="/"
-            className="group inline-flex items-center gap-2 font-body text-sm text-text-muted hover:text-accent transition-colors"
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-              className="transition-transform duration-300 group-hover:-translate-x-1"
-            >
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            Back to home
-          </Link>
-        </motion.div>
-
         <motion.p
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -130,11 +103,16 @@ export default function PortfolioClient({
         <ProjectGrid
           projects={filteredProjects}
           variant={variant}
-          onCardClick={setSelected}
+          onCardClick={(p) => setSelected(filteredProjects.indexOf(p))}
         />
       </Container>
 
-      <ProjectModal project={selected} onClose={() => setSelected(null)} />
+      <ProjectModal
+        projects={filteredProjects}
+        index={selected}
+        onIndexChange={setSelected}
+        whatsappNumber={whatsappNumber}
+      />
     </main>
   );
 }

@@ -39,10 +39,13 @@ const projectProjection = groq`
 
 const NOT_SHOWREEL = groq`!(category in ["showreel-desktop", "showreel-mobile"])`;
 
-/** Featured projects for the home page strip. Excludes the hero-only showreel. */
+/**
+ * Home page work grid: featured projects first, then the latest others, so each
+ * row stays full even when fewer than 4 of a type are featured.
+ */
 export const FEATURED_PROJECTS_QUERY = groq`
-  *[_type == "project" && isFeatured == true && ${NOT_SHOWREEL}]
-    | order(order asc, publishedAt desc) {
+  *[_type == "project" && ${NOT_SHOWREEL}]
+    | order(isFeatured desc, order asc, publishedAt desc) {
     ${projectProjection}
   }
 `;
@@ -69,11 +72,10 @@ export const SITE_SETTINGS_QUERY = groq`
     heroHeadline,
     heroSubline,
     aboutBody,
-    toolsList,
+    "portraitUrl": portrait.asset->url,
     approachSteps[]{ title, description },
     contactHeadline,
     whatsappNumber,
-    emailAddress,
     instagramUrl,
     linkedinUrl
   }

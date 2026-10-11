@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { urlForImage } from '@/lib/sanity';
@@ -7,7 +8,6 @@ import type { Project } from '@/lib/types';
 
 interface ProjectCardProps {
   project: Project;
-  index?: number;
   onClick?: () => void;
   /** Card variant. Defaults to project.type. */
   variant?: 'reel' | 'landscape';
@@ -17,7 +17,6 @@ interface ProjectCardProps {
 
 export default function ProjectCard({
   project,
-  index,
   onClick,
   variant,
   widthClass,
@@ -32,15 +31,46 @@ export default function ProjectCard({
   const src = urlForImage(project.thumbnail).width(900).quality(85).url();
   const alt = project.thumbnail.alt || project.title;
 
+  const playbackId = project.muxVideo?.asset?.playbackId;
+  const previewSrc = playbackId
+    ? `https://image.mux.com/${playbackId}/animated.webp?width=${isReel ? 320 : 480}&start=0.5&end=4.5&fps=15`
+    : null;
+
+  const ref = useRef<HTMLButtonElement>(null);
+  const [previewing, setPreviewing] = useState(false);
+  // Mount the preview only once it's first wanted, then keep it so re-hovers are instant.
+  const [previewMounted, setPreviewMounted] = useState(false);
+  const [previewLoaded, setPreviewLoaded] = useState(false);
+
+  const setPreview = (on: boolean) => {
+    if (on) setPreviewMounted(true);
+    setPreviewing(on);
+  };
+
+  // Touch devices have no hover — play the preview while the card crosses
+  // the middle band of the screen, so roughly one row animates at a time.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !previewSrc || !window.matchMedia('(hover: none)').matches) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setPreview(entry.isIntersecting),
+      { rootMargin: '-40% 0px -40% 0px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [previewSrc]);
+
+  const caption = [project.client?.name, project.strategicNote].filter(Boolean).join(' · ');
+
   return (
     <motion.button
+      ref={ref}
       type="button"
       onClick={onClick}
+      onMouseEnter={() => previewSrc && setPreview(true)}
+      onMouseLeave={() => setPreview(false)}
       data-cursor="play"
-      whileHover={{
-        y: -6,
-        /* Glow intensifies on card hover */
-      }}
+      whileHover={{ y: -6 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={`group relative flex-shrink-0 ${finalWidth} text-left`}
     >
@@ -49,10 +79,7 @@ export default function ProjectCard({
         style={{
           background: 'var(--surface)',
           border: '1px solid rgba(79,142,247,0.14)',
-          boxShadow: [
-            '0 4px 20px rgba(0,0,0,0.45)',
-            'inset 0 1px 0 rgba(255,255,255,0.04)',
-          ].join(', '),
+          boxShadow: '0 4px 20px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04)',
           transition: 'border-color 0.35s ease, box-shadow 0.35s ease',
         }}
       >
@@ -60,20 +87,26 @@ export default function ProjectCard({
           src={src}
           alt={alt}
           fill
-          sizes={
-            isReel ? '(max-width: 768px) 80vw, 360px' : '(max-width: 768px) 90vw, 680px'
-          }
+          sizes={isReel ? '(max-width: 768px) 50vw, 25vw' : '(max-width: 768px) 100vw, 50vw'}
           className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
         />
 
-        {/* Amber tint on hover */}
-        <div
-          className="absolute inset-0 transition-colors duration-500 pointer-events-none"
-          style={{ background: 'transparent' }}
-        />
+        {previewMounted && previewSrc && (
+          /* Mux animated preview — a few hundred KB, far lighter than a player */
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={previewSrc}
+            alt=""
+            aria-hidden="true"
+            onLoad={() => setPreviewLoaded(true)}
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-500"
+            style={{ opacity: previewing && previewLoaded ? 1 : 0 }}
+          />
+        )}
+
         <div
           className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-          style={{ background: 'rgba(79,142,247,0.10)' }}
+          style={{ background: 'rgba(79,142,247,0.08)' }}
         />
 
         {/* Play affordance */}
@@ -98,32 +131,22 @@ export default function ProjectCard({
           </div>
         </div>
 
-        {/* Numbered overlay */}
-        {typeof index === 'number' && (
-          <span
-            className="absolute top-4 left-4 font-display text-text font-medium text-sm"
-            style={{ letterSpacing: '0.05em', opacity: 0.85 }}
-          >
-            {String(index + 1).padStart(2, '0')}
-          </span>
-        )}
-
         {/* Client logo top-right */}
         {project.client?.logoUrl && (
-          <div className="absolute top-4 right-4 h-10 w-16 flex items-center justify-end">
+          <div className="absolute top-3 right-3 md:top-4 md:right-4 h-8 md:h-10 w-14 md:w-16 flex items-center justify-end">
             {/* Logos are user-supplied; keep <img> for SVG/url flexibility. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={project.client.logoUrl}
               alt={project.client.name}
-              className="max-h-10 max-w-full object-contain opacity-80"
+              className="max-h-full max-w-full object-contain opacity-80"
             />
           </div>
         )}
 
         {/* Role tag + Retainer — single bottom bar, wraps on narrow cards */}
         {(project.roleTag || project.isRetainer) && (
-          <div className="absolute bottom-4 left-4 right-4 flex flex-row flex-wrap gap-2 items-end">
+          <div className="absolute bottom-3 left-3 right-3 md:bottom-4 md:left-4 md:right-4 flex flex-row flex-wrap gap-2 items-end">
             {project.roleTag && (
               <span
                 className="inline-flex items-center px-3 py-1 rounded-full text-xs font-body font-medium"
@@ -142,11 +165,7 @@ export default function ProjectCard({
             {project.isRetainer && (
               <span
                 className="inline-flex items-center px-3 py-1 rounded-full text-xs font-body font-semibold"
-                style={{
-                  background: 'var(--accent)',
-                  color: 'var(--bg)',
-                  whiteSpace: 'nowrap',
-                }}
+                style={{ background: 'var(--accent)', color: 'var(--bg)', whiteSpace: 'nowrap' }}
               >
                 Retainer
               </span>
@@ -155,14 +174,11 @@ export default function ProjectCard({
         )}
       </div>
 
-      {/* Title below card */}
-      <h3 className="mt-4 font-display font-semibold text-text leading-tight text-lg">
+      <h3 className="mt-3 md:mt-4 font-display font-semibold text-text leading-tight text-base md:text-lg">
         {project.title}
       </h3>
-      {project.client?.name && (
-        <p className="mt-1 font-body text-text-muted text-sm">
-          {project.client.name}
-        </p>
+      {caption && (
+        <p className="mt-1 font-body text-text-muted text-sm line-clamp-1">{caption}</p>
       )}
     </motion.button>
   );

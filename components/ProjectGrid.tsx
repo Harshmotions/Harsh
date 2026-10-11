@@ -50,7 +50,6 @@ export default function ProjectGrid({
             >
               <ProjectCard
                 project={p}
-                index={i}
                 variant={variant}
                 widthClass="w-full"
                 onClick={() => onCardClick(p)}

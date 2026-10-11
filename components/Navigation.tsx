@@ -119,7 +119,7 @@ export default function Navigation() {
                 }
               }}
               className="mr-4"
-              aria-label="motion by harsh — home"
+              aria-label="motion by harsh, home"
               style={{ userSelect: 'none', display: 'inline-flex', alignItems: 'baseline', gap: '2px' }}
             >
               <span style={{ fontFamily: 'var(--font-sora)', fontWeight: 800, color: 'var(--accent)', fontSize: '0.9rem', letterSpacing: '-0.025em' }}>motion</span>

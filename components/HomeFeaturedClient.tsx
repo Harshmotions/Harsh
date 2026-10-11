@@ -7,17 +7,29 @@ import type { Project } from '@/lib/types';
 
 interface HomeFeaturedClientProps {
   projects: Project[];
+  whatsappNumber?: string;
 }
 
-export default function HomeFeaturedClient({
-  projects,
-}: HomeFeaturedClientProps) {
-  const [selected, setSelected] = useState<Project | null>(null);
+export default function HomeFeaturedClient({ projects, whatsappNumber }: HomeFeaturedClientProps) {
+  const reels = projects.filter((p) => p.type === 'reel').slice(0, 4);
+  const landscape = projects.filter((p) => p.type === 'landscape').slice(0, 4);
+  const shown = [...reels, ...landscape];
+
+  const [selected, setSelected] = useState<number | null>(null);
 
   return (
     <>
-      <FeaturedStrip projects={projects} onCardClick={setSelected} />
-      <ProjectModal project={selected} onClose={() => setSelected(null)} />
+      <FeaturedStrip
+        reels={reels}
+        landscape={landscape}
+        onCardClick={(p) => setSelected(shown.indexOf(p))}
+      />
+      <ProjectModal
+        projects={shown}
+        index={selected}
+        onIndexChange={setSelected}
+        whatsappNumber={whatsappNumber}
+      />
     </>
   );
 }

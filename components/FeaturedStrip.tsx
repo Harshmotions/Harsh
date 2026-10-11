@@ -4,164 +4,90 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Container from '@/components/ui/Container';
 import ProjectCard from '@/components/ProjectCard';
-import { lenisInstance } from '@/components/SmoothScroll';
 import type { Project } from '@/lib/types';
 
 interface FeaturedStripProps {
-  projects: Project[];
-  onCardClick?: (project: Project) => void;
+  reels: Project[];
+  landscape: Project[];
+  onCardClick: (project: Project) => void;
 }
 
-function scrollToContact(e: React.MouseEvent) {
-  e.preventDefault();
-  const el = document.getElementById('contact');
-  if (el) lenisInstance?.scrollTo(el, { duration: 1.2 });
+const reveal = {
+  initial: { opacity: 0, y: 20 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-60px' },
+};
+
+function GroupHeader({ label, href, linkLabel }: { label: string; href: string; linkLabel: string }) {
+  return (
+    <div className="flex items-baseline justify-between gap-4 mb-5">
+      <p className="font-body text-text-muted text-xs uppercase tracking-[0.18em]">{label}</p>
+      <Link
+        href={href}
+        className="group inline-flex items-center gap-1.5 font-body text-sm text-text-muted hover:text-accent transition-colors whitespace-nowrap"
+      >
+        {linkLabel}
+        <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+      </Link>
+    </div>
+  );
 }
 
-export default function FeaturedStrip({
-  projects,
-  onCardClick,
-}: FeaturedStripProps) {
-  const reels = projects.filter((p) => p.type === 'reel').slice(0, 4);
-  const landscape = projects.filter((p) => p.type === 'landscape').slice(0, 4);
-
+export default function FeaturedStrip({ reels, landscape, onCardClick }: FeaturedStripProps) {
   if (reels.length === 0 && landscape.length === 0) return null;
 
   return (
-    <section
-      id="featured"
-      className="py-14 md:py-20"
-      style={{ borderTop: '1px solid var(--border)' }}
-    >
+    <section id="featured" className="pt-6 pb-14 md:pt-8 md:pb-20">
       <Container>
-        {/* Section header */}
         <motion.p
-          initial={{ opacity: 0, y: 8 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
+          {...reveal}
           transition={{ duration: 0.6 }}
           className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-3"
         >
           Selected Work
         </motion.p>
         <motion.h2
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
+          {...reveal}
           transition={{ duration: 0.7 }}
-          className="font-display font-semibold text-text mb-12"
-          style={{
-            fontSize: 'clamp(32px, 4.5vw, 64px)',
-            lineHeight: 1,
-            letterSpacing: '-0.02em',
-          }}
+          className="font-display font-semibold text-text mb-10 md:mb-12"
+          style={{ fontSize: 'clamp(30px, 4vw, 52px)', lineHeight: 1.02, letterSpacing: '-0.02em' }}
         >
           Recent edits that moved the needle.
         </motion.h2>
 
-        {/* ── Vertical Reels grid (9:16) ── */}
         {reels.length > 0 && (
-          <div className="mb-16">
-            <motion.p
-              initial={{ opacity: 0, y: 6 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.5 }}
-              className="font-body text-text-muted text-xs uppercase tracking-[0.18em] mb-5"
-            >
-              Vertical · 9:16
-            </motion.p>
-            <div className="grid grid-cols-2 gap-4 md:gap-6">
+          <div className="mb-14 md:mb-16">
+            <GroupHeader label="Vertical · 9:16" href="/reels" linkLabel="All reels" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
               {reels.map((p, i) => (
                 <motion.div
                   key={p._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-60px' }}
-                  transition={{ duration: 0.55, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                  {...reveal}
+                  transition={{ duration: 0.55, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <ProjectCard
-                    project={p}
-                    index={i}
-                    onClick={() => onCardClick?.(p)}
-                    variant="reel"
-                    widthClass="w-full"
-                  />
+                  <ProjectCard project={p} onClick={() => onCardClick(p)} variant="reel" widthClass="w-full" />
                 </motion.div>
               ))}
             </div>
           </div>
         )}
 
-        {/* ── Landscape grid (16:9) ── */}
         {landscape.length > 0 && (
           <div>
-            <motion.p
-              initial={{ opacity: 0, y: 6 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.5 }}
-              className="font-body text-text-muted text-xs uppercase tracking-[0.18em] mb-5"
-            >
-              Landscape · 16:9
-            </motion.p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <GroupHeader label="Landscape · 16:9" href="/landscape" linkLabel="All landscape" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-6">
               {landscape.map((p, i) => (
                 <motion.div
                   key={p._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-60px' }}
-                  transition={{ duration: 0.55, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                  {...reveal}
+                  transition={{ duration: 0.55, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <ProjectCard
-                    project={p}
-                    index={i}
-                    onClick={() => onCardClick?.(p)}
-                    variant="landscape"
-                    widthClass="w-full"
-                  />
+                  <ProjectCard project={p} onClick={() => onCardClick(p)} variant="landscape" widthClass="w-full" />
                 </motion.div>
               ))}
             </div>
           </div>
         )}
-
-        {/* Mid-page CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-16 pt-14 flex flex-col items-center text-center gap-5"
-          style={{ borderTop: '1px solid var(--border)' }}
-        >
-          <p className="font-body text-text-muted text-xs uppercase tracking-[0.2em]">
-            Want results like this?
-          </p>
-          <h3
-            className="font-display font-semibold text-text max-w-xl"
-            style={{
-              fontSize: 'clamp(22px, 2.8vw, 36px)',
-              lineHeight: 1.15,
-              letterSpacing: '-0.02em',
-            }}
-          >
-            Let&apos;s make your next campaign impossible to scroll past.
-          </h3>
-          <Link
-            href="#contact"
-            onClick={scrollToContact}
-            className="font-body text-sm font-medium px-6 py-2.5 rounded-full transition-colors hover:opacity-90"
-            style={{
-              background: 'rgba(255,107,43,0.10)',
-              border: '1px solid rgba(255,107,43,0.40)',
-              color: 'var(--cta)',
-            }}
-          >
-            Start a project →
-          </Link>
-        </motion.div>
       </Container>
     </section>
   );

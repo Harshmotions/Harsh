@@ -19,7 +19,7 @@ interface HeroProps {
 
 const DEFAULT_HEADLINE = 'Motion that moves money.';
 const DEFAULT_SUBLINE =
-  'Video that earns attention and drives results — for brands that measure what works.';
+  'Video that earns attention and drives results, for brands that measure what works.';
 
 
 const CTA_TIMESTAMP_DESKTOP = 1.85; // ~150ms before the 2s mark
@@ -71,6 +71,13 @@ export default function Hero({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMobile]);
 
+  // Fallback so the CTA never stays hidden if the showreel is slow or fails to load
+  useEffect(() => {
+    const t = setTimeout(triggerCta, 4000);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleTimeUpdate = (e: Event) => {
     const video = e.target as HTMLVideoElement;
     const ctaTimestamp = isMobile ? CTA_TIMESTAMP_MOBILE : CTA_TIMESTAMP_DESKTOP;
@@ -82,7 +89,7 @@ export default function Hero({
       className="relative flex items-center overflow-hidden"
       style={{
         minHeight: '100svh',
-        paddingTop: 'clamp(80px, 5.5vw, 84px)',
+        paddingTop: 'clamp(88px, 7vw, 100px)',
         paddingBottom: '64px',
       }}
     >
@@ -104,6 +111,29 @@ export default function Hero({
 
       <Container className="w-full relative z-10">
         <div className="max-w-4xl mx-auto text-center">
+
+          {/* ── Specialty line — says what Harsh does before anything else ── */}
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="font-body uppercase inline-flex items-center gap-2 mb-5 md:mb-6 whitespace-nowrap text-[10.5px] md:text-xs tracking-[0.14em] md:tracking-[0.2em]"
+            style={{ color: 'rgba(240,237,232,0.72)' }}
+          >
+            <span
+              aria-hidden="true"
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: '50%',
+                background: 'var(--accent)',
+                boxShadow: '0 0 10px rgba(79,142,247,0.8)',
+                flexShrink: 0,
+              }}
+            />
+            <span className="md:hidden">Ads · SaaS motion · Long-form</span>
+            <span className="hidden md:inline">Performance ads · SaaS motion · Long-form edits</span>
+          </motion.p>
 
           {/* ── Showreel — glass-framed, always looping ─────────────── */}
           {videoPlaybackId && (
@@ -183,7 +213,7 @@ export default function Hero({
           <motion.div
             initial={{ y: videoPlaybackId ? -72 : 0, opacity: 0 }}
             animate={ctaControls}
-            className="flex justify-center mt-9 mb-9 md:mt-[44px] md:mb-[44px]"
+            className="flex justify-center mt-9 mb-9 md:mt-8 md:mb-8"
             style={{
               position: 'relative',
               zIndex: 1,
@@ -256,7 +286,7 @@ export default function Hero({
             className="font-display font-bold"
             style={{
               color: '#ffffff',
-              fontSize: 'clamp(48px, 8vw, 118px)',
+              fontSize: 'clamp(48px, 6.6vw, 100px)',
               lineHeight: 0.95,
               letterSpacing: '-0.03em',
             }}

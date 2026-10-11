@@ -33,15 +33,13 @@ export default defineType({
         list: [
           // reels
           { title: 'Performance Ads', value: 'performance-ads' },
-          { title: 'UGC (AI Gen)', value: 'ugc' },
           { title: 'Motion Graphics', value: 'motion-graphics' },
           { title: 'Brand', value: 'brand' },
-          { title: 'AI Ad', value: 'ai-ad' },
           // landscape
           { title: 'YouTube', value: 'youtube' },
           // hero only — never shown in /reels or /landscape grids
-          { title: 'Showreel — Desktop (Hero only)', value: 'showreel-desktop' },
-          { title: 'Showreel — Mobile (Hero only)', value: 'showreel-mobile' },
+          { title: 'Showreel: Desktop (Hero only)', value: 'showreel-desktop' },
+          { title: 'Showreel: Mobile (Hero only)', value: 'showreel-mobile' },
         ],
       },
     }),

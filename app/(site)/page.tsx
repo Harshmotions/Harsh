@@ -2,19 +2,21 @@ import type { Metadata } from 'next';
 import Hero from '@/components/Hero';
 
 export const metadata: Metadata = {
-  title: 'Harsh Powar — Video Editor & Motion Designer',
+  title: { absolute: 'Harsh Powar | Video Editor & Motion Designer' },
   description:
-    'Performance ads, motion graphics, and AI-driven creative for brands that measure what works.',
+    'Performance ads, motion graphics, and long-form edits for brands that measure what works.',
   alternates: {
     canonical: '/',
   },
 };
+import ClientLogos from '@/components/ClientLogos';
 import HomeFeaturedClient from '@/components/HomeFeaturedClient';
 import ImpactStats from '@/components/ImpactStats';
 import AboutSection from '@/components/AboutSection';
 import ApproachSection from '@/components/ApproachSection';
 import ContactSection from '@/components/ContactSection';
 import { sanityFetch } from '@/lib/sanity';
+import { CONTACT_EMAIL } from '@/lib/site';
 import {
   FEATURED_PROJECTS_QUERY,
   SITE_SETTINGS_QUERY,
@@ -41,18 +43,15 @@ export default async function Home() {
         videoPlaybackIdDesktop={heroVideoDesktop?.muxVideo?.asset?.playbackId}
         videoPlaybackIdMobile={heroVideoMobile?.muxVideo?.asset?.playbackId}
       />
+      <ClientLogos clients={clients} />
+      <HomeFeaturedClient projects={featured} whatsappNumber={settings?.whatsappNumber} />
       <ImpactStats />
-      <HomeFeaturedClient projects={featured} />
-      <AboutSection
-        body={settings?.aboutBody}
-        tools={settings?.toolsList}
-        clients={clients}
-      />
+      <AboutSection body={settings?.aboutBody} portraitUrl={settings?.portraitUrl} />
       <ApproachSection steps={settings?.approachSteps} />
       <ContactSection
         headline={settings?.contactHeadline}
         whatsappNumber={settings?.whatsappNumber}
-        emailAddress={settings?.emailAddress}
+        emailAddress={CONTACT_EMAIL}
       />
     </main>
   );

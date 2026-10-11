@@ -26,38 +26,38 @@ const playfair = Playfair_Display({
   display: 'swap',
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://harshpowar.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.motionbyharsh.com';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Harsh Powar — Video Editor & Motion Designer',
-    template: '%s — Harsh Powar',
+    default: 'Harsh Powar | Video Editor & Motion Designer',
+    template: '%s | Harsh Powar',
   },
   description:
-    'Performance ads, motion graphics, and AI-driven creative for brands that measure what works.',
+    'Performance ads, motion graphics, and long-form edits for brands that measure what works.',
   openGraph: {
     type: 'website',
     locale: 'en_IN',
     url: SITE_URL,
     siteName: 'Harsh Powar',
-    title: 'Harsh Powar — Video Editor & Motion Designer',
+    title: 'Harsh Powar | Video Editor & Motion Designer',
     description:
-      'Performance ads, motion graphics, and AI-driven creative for brands that measure what works.',
+      'Performance ads, motion graphics, and long-form edits for brands that measure what works.',
     images: [
       {
         url: '/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'Harsh Powar — Video Editor & Motion Designer',
+        alt: 'Harsh Powar | Video Editor & Motion Designer',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Harsh Powar — Video Editor & Motion Designer',
+    title: 'Harsh Powar | Video Editor & Motion Designer',
     description:
-      'Performance ads, motion graphics, and AI-driven creative for brands that measure what works.',
+      'Performance ads, motion graphics, and long-form edits for brands that measure what works.',
     images: ['/opengraph-image'],
   },
   robots: {

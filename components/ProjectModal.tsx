@@ -7,26 +7,43 @@ import { lenisInstance } from '@/components/SmoothScroll';
 import type { Project } from '@/lib/types';
 
 interface ProjectModalProps {
-  project: Project | null;
-  onClose: () => void;
+  projects: Project[];
+  /** Index into `projects` of the open project, or null when closed. */
+  index: number | null;
+  onIndexChange: (index: number | null) => void;
+  whatsappNumber?: string;
 }
 
-export default function ProjectModal({ project, onClose }: ProjectModalProps) {
+const navBtn =
+  'font-body text-sm px-4 py-2 rounded-full transition-colors text-text-muted hover:text-text';
+
+export default function ProjectModal({
+  projects,
+  index,
+  onIndexChange,
+  whatsappNumber,
+}: ProjectModalProps) {
   const closeRef = useRef<HTMLButtonElement | null>(null);
+  const project = index !== null ? projects[index] ?? null : null;
+  const isOpen = project !== null;
+  const count = projects.length;
+
+  const close = () => onIndexChange(null);
+  const step = (delta: number) => {
+    if (index === null || count < 2) return;
+    onIndexChange((index + delta + count) % count);
+  };
 
   // Pause Lenis + lock body scroll + swap to native cursor while open.
-  // The `modal-open` body class tells globals.css to:
-  //   1. hide the custom amber cursor (which fights with Mux's controls)
-  //   2. restore native cursor inside .site-shell so Mux's own hide-on-inactivity
-  //      logic works both in the modal and in fullscreen.
+  // The `modal-open` body class tells globals.css to hide the custom cursor
+  // (which fights with Mux's controls) and restore the native one.
   useEffect(() => {
-    if (!project) return;
+    if (!isOpen) return;
 
     lenisInstance?.stop();
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     document.body.classList.add('modal-open');
-
     closeRef.current?.focus();
 
     return () => {
@@ -34,21 +51,27 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
       document.body.style.overflow = prevOverflow;
       document.body.classList.remove('modal-open');
     };
-  }, [project]);
+  }, [isOpen]);
 
-  // ESC to close
   useEffect(() => {
-    if (!project) return;
+    if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowRight') step(1);
+      else if (e.key === 'ArrowLeft') step(-1);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [project, onClose]);
+  });
 
   const playbackId = project?.muxVideo?.asset?.playbackId;
   const isReel = project?.type === 'reel';
-  const aspectClass = isReel ? 'aspect-[9/16]' : 'aspect-video';
+  const whatsappHref =
+    whatsappNumber && project
+      ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+          `Hi Harsh, I saw "${project.title}" on your site and I'd like something like it.`,
+        )}`
+      : null;
 
   return (
     <AnimatePresence>
@@ -62,88 +85,72 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 overflow-y-auto"
           style={{
             background: 'rgba(10, 10, 10, 0.85)',
             backdropFilter: 'blur(16px)',
             WebkitBackdropFilter: 'blur(16px)',
           }}
-          onClick={onClose}
+          onClick={close}
         >
-          {/* Close button */}
           <button
             ref={closeRef}
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              onClose();
+              close();
             }}
             aria-label="Close"
-            className="fixed top-6 right-6 z-10 w-12 h-12 rounded-full flex items-center justify-center transition-colors"
-            style={{
-              border: '1px solid var(--border)',
-              background: 'rgba(20,20,20,0.7)',
-            }}
+            className="fixed top-4 right-4 md:top-6 md:right-6 z-10 w-12 h-12 rounded-full flex items-center justify-center transition-colors"
+            style={{ border: '1px solid var(--border)', background: 'rgba(20,20,20,0.7)' }}
           >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              aria-hidden="true"
-            >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
               <path d="M18 6 6 18M6 6l12 12" />
             </svg>
           </button>
 
           <motion.div
-            initial={{ opacity: 0, y: 24, scale: 0.98 }}
+            key={project._id}
+            initial={{ opacity: 0, y: 16, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.98 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-5xl flex flex-col items-center gap-6"
+            className="relative w-full max-w-5xl flex flex-col items-center gap-5 my-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Player */}
+            {/* Width is capped by viewport height so the controls below always fit on screen */}
             <div
-              className={`relative w-full ${aspectClass} rounded-3xl overflow-hidden bg-bg`}
+              className={`relative w-full ${isReel ? 'aspect-[9/16]' : 'aspect-video'} rounded-3xl overflow-hidden bg-bg`}
               style={{
-                maxHeight: '80vh',
-                maxWidth: isReel ? 'min(420px, 80vw)' : '100%',
+                maxWidth: isReel
+                  ? 'min(420px, 80vw, calc(66vh * 9 / 16))'
+                  : 'min(100%, calc(66vh * 16 / 9))',
               }}
             >
               {playbackId ? (
                 <MuxPlayer
+                  key={playbackId}
                   playbackId={playbackId}
-                  metadata={{
-                    video_title: project.title,
-                    player_name: 'harsh-portfolio',
-                  }}
+                  metadata={{ video_title: project.title, player_name: 'harsh-portfolio' }}
                   streamType="on-demand"
                   autoPlay
                   style={{
                     width: '100%',
                     height: '100%',
                     '--controls-backdrop-color': 'rgba(10,10,10,0.4)',
-                    // contain (default) preserves aspect ratio — critical in fullscreen
+                    // contain preserves aspect ratio — critical in fullscreen
                     // so vertical reels letterbox instead of stretching to 16:9.
                     '--media-object-fit': 'contain',
                   }}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-text-muted font-body text-sm">
-                  Video is still processing on Mux — check back in a moment.
+                  Video is still processing. Check back in a moment.
                 </div>
               )}
             </div>
 
-            {/* Metadata */}
             <div className="text-center max-w-2xl">
-              <h2 className="font-display font-semibold text-text text-2xl md:text-3xl mb-2">
-                {project.title}
-              </h2>
+              <h2 className="font-display font-semibold text-text text-xl md:text-3xl mb-2">{project.title}</h2>
               <div className="flex items-center justify-center gap-3 flex-wrap font-body text-sm text-text-muted">
                 {project.client?.name && <span>{project.client.name}</span>}
                 {project.client?.name && project.roleTag && <span>·</span>}
@@ -161,14 +168,54 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                 )}
               </div>
               {project.strategicNote && (
-                <p
-                  className="mt-4 font-body text-text-muted text-sm md:text-base"
-                  style={{ lineHeight: 1.65 }}
-                >
+                <p className="mt-3 font-body text-text-muted text-sm md:text-base" style={{ lineHeight: 1.65 }}>
                   {project.strategicNote}
                 </p>
               )}
             </div>
+
+            {(count > 1 || whatsappHref) && (
+              <div className="flex items-center justify-center gap-2 md:gap-3 flex-wrap">
+                {count > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => step(-1)}
+                    className={navBtn}
+                    style={{ border: '1px solid var(--border)' }}
+                    aria-label="Previous project"
+                  >
+                    ← Prev
+                  </button>
+                )}
+                {whatsappHref && (
+                  <a
+                    href={whatsappHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="order-first sm:order-none w-full sm:w-auto text-center font-body text-sm font-medium px-5 py-2 rounded-full transition-opacity hover:opacity-85"
+                    style={{
+                      background: 'rgba(255,107,43,0.12)',
+                      border: '1px solid rgba(255,107,43,0.40)',
+                      color: 'var(--cta)',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    Start a project like this →
+                  </a>
+                )}
+                {count > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => step(1)}
+                    className={navBtn}
+                    style={{ border: '1px solid var(--border)' }}
+                    aria-label="Next project"
+                  >
+                    Next →
+                  </button>
+                )}
+              </div>
+            )}
           </motion.div>
         </motion.div>
       )}

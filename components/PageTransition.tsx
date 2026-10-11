@@ -5,8 +5,16 @@ import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { lenisInstance } from '@/components/SmoothScroll';
 
+// Skip the fade on the first page load: server-rendered HTML would otherwise
+// sit at opacity 0 until JS hydrates — a blank screen on slow phones.
+// Only client-side route changes after hydration fade in.
+let hasHydrated = false;
+
 export default function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  useEffect(() => {
+    hasHydrated = true;
+  }, []);
 
   // When navigating from /reels or /landscape to /#contact, clean the hash
   // from the URL and scroll via Lenis so the URL stays motionbyharsh.com/
@@ -29,7 +37,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
   return (
     <motion.div
       key={pathname}
-      initial={{ opacity: 0 }}
+      initial={hasHydrated ? { opacity: 0 } : false}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
     >

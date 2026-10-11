@@ -1,27 +1,28 @@
 import { Suspense } from 'react';
 import PortfolioClient from '@/components/PortfolioClient';
 import { sanityFetch } from '@/lib/sanity';
-import { REELS_QUERY } from '@/lib/queries';
-import type { Project } from '@/lib/types';
+import { REELS_QUERY, SITE_SETTINGS_QUERY } from '@/lib/queries';
+import type { Project, SiteSettings } from '@/lib/types';
 
 const REEL_FILTERS = [
   { value: 'all', label: 'All' },
   { value: 'performance-ads', label: 'Performance Ads' },
-  { value: 'ugc', label: 'UGC (AI Gen)' },
   { value: 'motion-graphics', label: 'Motion Graphics' },
   { value: 'brand', label: 'Brand' },
-  { value: 'ai-ad', label: 'AI Ad' },
 ];
 
 export const metadata = {
   title: 'Reels',
   description:
-    'Vertical edits built for the feed — performance ads, UGC, motion graphics, and brand content.',
+    'Vertical edits built for the feed: performance ads, motion graphics, and brand content.',
   alternates: { canonical: '/reels' },
 };
 
 export default async function ReelsPage() {
-  const projects = await sanityFetch<Project[]>({ query: REELS_QUERY });
+  const [projects, settings] = await Promise.all([
+    sanityFetch<Project[]>({ query: REELS_QUERY }),
+    sanityFetch<SiteSettings | null>({ query: SITE_SETTINGS_QUERY }),
+  ]);
 
   return (
     <Suspense fallback={null}>
@@ -29,8 +30,9 @@ export default async function ReelsPage() {
         projects={projects}
         variant="reel"
         title="Reels"
-        subline="Vertical edits built for the feed. Performance ads, UGC, motion graphics, brand."
+        subline="Vertical edits built for the feed. Performance ads, motion graphics, brand."
         filters={REEL_FILTERS}
+        whatsappNumber={settings?.whatsappNumber}
       />
     </Suspense>
   );

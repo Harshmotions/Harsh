@@ -33,7 +33,6 @@ export type ProjectType = 'reel' | 'landscape';
 export type ProjectCategory =
   // reels
   | 'performance-ads'
-  | 'ugc'
   | 'motion-graphics'
   | 'brand'
   // landscape
@@ -84,11 +83,10 @@ export interface SiteSettings {
   heroHeadline?: string;
   heroSubline?: string;
   aboutBody?: PortableTextBlock[];
-  toolsList?: string[];
+  portraitUrl?: string;
   approachSteps?: ApproachStep[];
   contactHeadline?: string;
   whatsappNumber?: string;
-  emailAddress?: string;
   instagramUrl?: string;
   linkedinUrl?: string;
 }

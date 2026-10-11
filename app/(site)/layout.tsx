@@ -5,6 +5,7 @@ import PageTransition from '@/components/PageTransition';
 import Footer from '@/components/Footer';
 import { sanityFetch } from '@/lib/sanity';
 import { SITE_SETTINGS_QUERY } from '@/lib/queries';
+import { CONTACT_EMAIL } from '@/lib/site';
 import type { SiteSettings } from '@/lib/types';
 
 export default async function SiteLayout({
@@ -22,7 +23,7 @@ export default async function SiteLayout({
         <Footer
           instagramUrl={settings?.instagramUrl}
           linkedinUrl={settings?.linkedinUrl}
-          emailAddress={settings?.emailAddress}
+          emailAddress={CONTACT_EMAIL}
         />
       </SmoothScroll>
       <Cursor />

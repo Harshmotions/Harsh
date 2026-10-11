@@ -13,10 +13,18 @@ export default defineType({
       of: [{ type: 'block' }],
     }),
     defineField({
+      name: 'portrait',
+      type: 'image',
+      title: 'Portrait (About section)',
+      description: 'A photo of you, shown next to the About text. Portrait orientation works best.',
+      options: { hotspot: true },
+    }),
+    defineField({
       name: 'toolsList',
       type: 'array',
       of: [{ type: 'string' }],
       options: { layout: 'tags' },
+      hidden: true,
     }),
     defineField({
       name: 'approachSteps',
@@ -39,7 +47,8 @@ export default defineType({
       type: 'string',
       description: 'Format: 91XXXXXXXXXX (no + or spaces)',
     }),
-    defineField({ name: 'emailAddress', type: 'string' }),
+    // The site's contact email lives in lib/site.ts; this old field is kept only so existing data doesn't warn.
+    defineField({ name: 'emailAddress', type: 'string', hidden: true }),
     defineField({ name: 'instagramUrl', type: 'url' }),
     defineField({ name: 'linkedinUrl', type: 'url' }),
   ],

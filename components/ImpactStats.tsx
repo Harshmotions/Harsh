@@ -10,19 +10,19 @@ const STATS = [
     description: 'Total reach across all client content',
   },
   {
-    value: '5',
-    label: 'Visual Identities',
-    description: 'Brands with a consistent signature look',
-  },
-  {
     value: '400+',
     label: 'Videos Delivered',
     description: 'Across ads, motion, and landscape',
   },
   {
-    value: '4',
-    label: 'Industries',
+    value: '12+',
+    label: 'Brands Served',
     description: 'Finance · SaaS · Gaming · Wellness',
+  },
+  {
+    value: '4+',
+    label: 'Years Editing',
+    description: 'Retainer and project-based work',
   },
 ] as const;
 
