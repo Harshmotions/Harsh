@@ -94,7 +94,7 @@ Add these in **Vercel → Project → Settings → Environment Variables**. Tick
 
 ## Part 4: Don't miss briefs (for Harsh)
 
-- [ ] **17. Make brief emails always land in Primary with a Gmail filter.**
+- [x] **17. Make brief emails always land in Primary with a Gmail filter.**
   Gmail on a computer → search bar → **Show search options** (the sliders icon) → *From:* `briefs@motionbyharsh.com` → **Create filter** → tick *Never send it to Spam*, *Always mark it as important*, *Categorize as: Primary* → **Create filter**. Also add `briefs@motionbyharsh.com` to your contacts.
   **Why:** Gmail filed the test brief under Promotions, where the phone app doesn't notify you. The email subject no longer contains a price (a strong Promotions signal), which helps, but only a filter guarantees Primary.
 
