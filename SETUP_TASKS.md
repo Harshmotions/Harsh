@@ -13,11 +13,11 @@ What's left to get the site fully working after the October 2026 update. Tasks a
 
 The site's code no longer mentions AI, but this content in Sanity still does, so it's still showing on motionbyharsh.com.
 
-- [ ] **A. Delete the 5 AI projects in Studio.**
+- [x] **A. Delete the 5 AI projects in Studio.**
   Studio → Projects → open each → ⋯ → Delete: "AI AD (Following Trend)" (SharkFunded), "AI Ad UGC (Cinematic)" (SharkFunded), "AI Ad UGC (Cinematic)" (MaziFinance), "AI Ad Trailer" (ISGL), "AI Ad Promo" (KYM Yoga). To remove the video files too, delete them in Studio's **Videos** tool.
   **Why:** 3 of these sit in the home page's reels row. Once they're gone, the row fills itself with your latest other reels.
 
-- [ ] **B. Edit the About text in Studio → Site Settings.**
+- [x] **B. Edit the About text in Studio → Site Settings.**
   It still says "my focus is on AI creative ads and films". Replace it with what you do now.
 
 - [ ] **C. (Optional) Upload a portrait in Studio → Site Settings → Portrait.**
@@ -60,7 +60,7 @@ Add these in **Vercel → Project → Settings → Environment Variables**. Tick
   Use digits only, with country code and no `+`, spaces or dashes (e.g. `919876543210`).
   **Why:** the site builds WhatsApp links as `https://wa.me/<number>`, in the contact section, the project popup and the brief form's "WhatsApp me" button. A `+`, a space or a missing country code sends people to the wrong place or an error page. Studio only opens when you run the site locally (`npm run dev` → `localhost:3000/studio`), because `/studio` is blocked on the live site.
 
-- [ ] **9. Check `NEXT_PUBLIC_SITE_URL` in Vercel.** It should be `https://www.motionbyharsh.com`, or not set at all.
+- [ ] **9. Fix `NEXT_PUBLIC_SITE_URL` in Vercel.** Confirmed on 2026-10-12: the live site still uses `harshpowar.com`. Set it to `https://www.motionbyharsh.com`, or delete it.
   **Why:** it controls the canonical URL, sitemap and link previews. If it's still set to the old `harshpowar.com`, Google indexes the wrong domain.
 
 ### After it's live
