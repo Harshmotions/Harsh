@@ -65,7 +65,7 @@ Add these in **Vercel → Project → Settings → Environment Variables**. Tick
 
 ### After it's live
 
-- [ ] **10. Turn on Speed Insights, then check it in a few days.** Vercel → project `harsh` → **Speed Insights** tab → *Enable* (it showed "Not Enabled" on 2026-10-12; the site already includes the tracking code, so no redeploy of code is needed). Then check it and **Analytics** after a few days of traffic.
+- [ ] **10. Check Speed Insights in a few days (Desktop and Mobile tabs).** It is already enabled and collecting (desktop score 80 on 2026-10-12, mostly from visits before that day's speed fixes). Compare after a few days of new traffic; the per-metric breakdown needs Vercel's paid Plus add-on, the free score is enough.
   **Why:** the before/after speed numbers come from a local build with placeholder content and no showreel video. Speed Insights shows what real visitors experience on their own phones, which is what Google uses for search ranking. Analytics shows actual traffic, which couldn't be checked from here.
 
 ## Part 2: Code follow-ups (Claude can do these)
