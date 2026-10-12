@@ -22,6 +22,18 @@
   50%       { opacity: 0.62; transform: scale(1.03); }
 }
 
+/* ─── Hero text entrance ─────────────────────────── */
+/* Pure CSS so the above-the-fold copy starts with the first paint instead of
+   waiting for hydration. Tune per element with --rise / --rise-duration / --rise-delay,
+   and --rise-opacity for the start opacity. */
+@keyframes hero-rise {
+  from { opacity: var(--rise-opacity, 0); transform: translateY(var(--rise, 24px)); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-rise {
+  animation: hero-rise var(--rise-duration, 0.9s) cubic-bezier(0.22, 1, 0.36, 1) var(--rise-delay, 0s) both;
+}
+
 /* ─── Logo ticker marquee ────────────────────────── */
 @keyframes logo-marquee {
   from { transform: translateX(0); }

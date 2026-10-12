@@ -1,18 +1,25 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useSyncExternalStore } from 'react';
+
+const FINE_POINTER_QUERY = '(hover: hover) and (pointer: fine)';
+
+function subscribeToPointer(onChange: () => void) {
+  const mq = window.matchMedia(FINE_POINTER_QUERY);
+  mq.addEventListener('change', onChange);
+  return () => mq.removeEventListener('change', onChange);
+}
+
+function getIsMouseDevice() {
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  return !isTouch && window.matchMedia(FINE_POINTER_QUERY).matches;
+}
 
 export default function Cursor() {
   const arrowRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
-  const [isMouseDevice, setIsMouseDevice] = useState(false);
-
-  useEffect(() => {
-    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    const hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    if (isTouch || !hasFinePointer) return;
-    setIsMouseDevice(true);
-  }, []);
+  // Server snapshot is false, so SSR and hydration render nothing.
+  const isMouseDevice = useSyncExternalStore(subscribeToPointer, getIsMouseDevice, () => false);
 
   useEffect(() => {
     if (!isMouseDevice) return;

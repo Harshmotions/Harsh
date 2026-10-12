@@ -18,8 +18,7 @@ export default async function Icon() {
           display: 'flex',
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} width={180} height={180} style={{ objectFit: 'cover' }} />
+        <img src={src} width={180} height={180} style={{ objectFit: 'cover' }} alt="" />
       </div>
     ),
     { width: 180, height: 180 },

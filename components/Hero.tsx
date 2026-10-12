@@ -2,13 +2,17 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { motion, useAnimation } from 'framer-motion';
-import MuxPlayer from '@mux/mux-player-react';
 import Container from '@/components/ui/Container';
 import MagneticButton from '@/components/MagneticButton';
 import Button from '@/components/ui/Button';
 import { lenisInstance } from '@/components/SmoothScroll';
 import HeroGridCanvas from '@/components/HeroGridCanvas';
+
+// Mux player + hls.js is ~1 MB of JS — load it in its own chunk so the rest of
+// the hero hydrates first. Its glass frame is server-rendered, so no layout shift.
+const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), { ssr: false });
 
 interface HeroProps {
   headline?: string;
@@ -113,11 +117,8 @@ export default function Hero({
         <div className="max-w-4xl mx-auto text-center">
 
           {/* ── Specialty line — says what Harsh does before anything else ── */}
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="font-body uppercase inline-flex items-center gap-2 mb-5 md:mb-6 whitespace-nowrap text-[10.5px] md:text-xs tracking-[0.14em] md:tracking-[0.2em]"
+          <p
+            className="hero-rise [--rise:8px] [--rise-duration:0.7s] font-body uppercase inline-flex items-center gap-2 mb-5 md:mb-6 whitespace-nowrap text-[10.5px] md:text-xs tracking-[0.14em] md:tracking-[0.2em]"
             style={{ color: 'rgba(240,237,232,0.72)' }}
           >
             <span
@@ -133,7 +134,7 @@ export default function Hero({
             />
             <span className="md:hidden">Ads · SaaS motion · Long-form</span>
             <span className="hidden md:inline">Performance ads · SaaS motion · Long-form edits</span>
-          </motion.p>
+          </p>
 
           {/* ── Showreel — glass-framed, always looping ─────────────── */}
           {videoPlaybackId && (
@@ -279,11 +280,12 @@ export default function Hero({
             </motion.button>
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display font-bold"
+          {/* Hero copy uses the CSS .hero-rise entrance rather than framer-motion: a
+              JS-driven fade kept the page's largest text invisible until hydration.
+              The headline slides without fading — Chrome never counts text first painted
+              at opacity 0 as the Largest Contentful Paint, even once it fades in. */}
+          <h1
+            className="hero-rise [--rise-opacity:1] [--rise-delay:0.1s] font-display font-bold"
             style={{
               color: '#ffffff',
               fontSize: 'clamp(48px, 6.6vw, 100px)',
@@ -311,24 +313,16 @@ export default function Hero({
                 </span>
               </>
             )}
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="font-body mt-6 mx-auto max-w-xl line-clamp-2 md:line-clamp-none"
+          <p
+            className="hero-rise [--rise:16px] [--rise-duration:0.7s] [--rise-delay:0.3s] font-body mt-6 mx-auto max-w-xl line-clamp-2 md:line-clamp-none"
             style={{ color: 'rgba(255,255,255,0.75)', fontSize: 'clamp(0.875rem, 2.4vw, 1.0625rem)' }}
           >
             {subline ?? DEFAULT_SUBLINE}
-          </motion.p>
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-wrap justify-center gap-4 mt-6"
-          >
+          <div className="hero-rise [--rise:12px] [--rise-duration:0.7s] [--rise-delay:0.45s] flex flex-wrap justify-center gap-4 mt-6">
             <MagneticButton>
               <Link href="/reels">
                 <Button variant="ghost">View Reels</Button>
@@ -339,7 +333,7 @@ export default function Hero({
                 <Button variant="ghost">View Landscape</Button>
               </Link>
             </MagneticButton>
-          </motion.div>
+          </div>
 
         </div>
       </Container>

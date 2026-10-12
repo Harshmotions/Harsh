@@ -1,10 +1,13 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
-import MuxPlayer from '@mux/mux-player-react';
 import { lenisInstance } from '@/components/SmoothScroll';
 import type { Project } from '@/lib/types';
+
+// Only fetched once a project is opened — keeps ~1 MB of player JS off page load.
+const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), { ssr: false });
 
 interface ProjectModalProps {
   projects: Project[];

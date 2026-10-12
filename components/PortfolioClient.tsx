@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Container from '@/components/ui/Container';
@@ -37,12 +37,15 @@ export default function PortfolioClient({
   }, [searchParams, filters]);
 
   const [active, setActive] = useState<string>(initialFilter);
+  const [syncedFilter, setSyncedFilter] = useState<string>(initialFilter);
   const [selected, setSelected] = useState<number | null>(null);
 
-  // Re-sync state if URL changes externally (e.g. back/forward).
-  useEffect(() => {
+  // Re-sync state if URL changes externally (e.g. back/forward). Adjusting state
+  // during render rather than in an effect skips an extra render pass.
+  if (syncedFilter !== initialFilter) {
+    setSyncedFilter(initialFilter);
     setActive(initialFilter);
-  }, [initialFilter]);
+  }
 
   const setFilter = useCallback(
     (value: string) => {

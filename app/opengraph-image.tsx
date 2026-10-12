@@ -55,7 +55,6 @@ export default async function Image() {
         }}
       >
         {/* Logo mark */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={logoSrc} width={96} height={96} style={{ borderRadius: 22, marginBottom: 44 }} alt="" />
 
         {/* Wordmark: motion (Sora 800, accent) · by (Playfair italic) · harsh (Sora 400) */}

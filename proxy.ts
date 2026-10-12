@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 
 /**
  * Block the Sanity Studio route on Vercel deployments.
@@ -9,7 +8,7 @@ import type { NextRequest } from 'next/server';
  *
  * Visitors who navigate to /studio on the live site get a plain 404.
  */
-export function middleware(request: NextRequest) {
+export function proxy() {
   if (process.env.VERCEL_ENV) {
     // Return a proper 404 — no redirect that leaks the studio exists
     return new NextResponse(null, { status: 404 });
