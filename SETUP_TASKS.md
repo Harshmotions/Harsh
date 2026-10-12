@@ -101,5 +101,5 @@ Add these in **Vercel → Project → Settings → Environment Variables**. Tick
 - [ ] **18. Check Resend open/click tracking is off.** Resend → **Domains** → motionbyharsh.com → **Configuration**.
   **Why:** tracking pixels and rewritten links are typical of marketing email and push Gmail towards Promotions. Briefs don't need either.
 
-- [ ] **19. Reconnect the GitHub repo in Vercel if deploys keep failing in seconds.** Vercel → `harsh` → **Settings → Git** → Disconnect, then **Connect Git Repository** → GitHub → `Harshmotions/Harsh`.
+- [x] **19. Reconnect the GitHub repo in Vercel if deploys keep failing in seconds.** Vercel → `harsh` → **Settings → Git** → Disconnect, then **Connect Git Repository** → GitHub → `Harshmotions/Harsh`.
   **Why:** by 13:45 on 2026-10-12, 4 pushes had failed with "Git information retrieval failed" and each worked on retry. Reconnecting refreshes Vercel's access to GitHub, the usual fix for this error.
