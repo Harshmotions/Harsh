@@ -9,7 +9,6 @@ export const metadata: Metadata = {
     canonical: '/',
   },
 };
-import ClientLogos from '@/components/ClientLogos';
 import HomeFeaturedClient from '@/components/HomeFeaturedClient';
 import ImpactStats from '@/components/ImpactStats';
 import AboutSection from '@/components/AboutSection';
@@ -20,17 +19,15 @@ import { CONTACT_EMAIL } from '@/lib/site';
 import {
   FEATURED_PROJECTS_QUERY,
   SITE_SETTINGS_QUERY,
-  CLIENTS_QUERY,
   HERO_VIDEO_DESKTOP_QUERY,
   HERO_VIDEO_MOBILE_QUERY,
 } from '@/lib/queries';
-import type { Project, SiteSettings, ClientRef, HeroVideo } from '@/lib/types';
+import type { Project, SiteSettings, HeroVideo } from '@/lib/types';
 
 export default async function Home() {
-  const [featured, settings, clients, heroVideoDesktop, heroVideoMobile] = await Promise.all([
+  const [featured, settings, heroVideoDesktop, heroVideoMobile] = await Promise.all([
     sanityFetch<Project[]>({ query: FEATURED_PROJECTS_QUERY }),
     sanityFetch<SiteSettings | null>({ query: SITE_SETTINGS_QUERY }),
-    sanityFetch<ClientRef[]>({ query: CLIENTS_QUERY }),
     sanityFetch<HeroVideo | null>({ query: HERO_VIDEO_DESKTOP_QUERY }),
     sanityFetch<HeroVideo | null>({ query: HERO_VIDEO_MOBILE_QUERY }),
   ]);
@@ -43,7 +40,6 @@ export default async function Home() {
         videoPlaybackIdDesktop={heroVideoDesktop?.muxVideo?.asset?.playbackId}
         videoPlaybackIdMobile={heroVideoMobile?.muxVideo?.asset?.playbackId}
       />
-      <ClientLogos clients={clients} />
       <HomeFeaturedClient projects={featured} whatsappNumber={settings?.whatsappNumber} />
       <ImpactStats />
       <AboutSection body={settings?.aboutBody} portraitUrl={settings?.portraitUrl} />

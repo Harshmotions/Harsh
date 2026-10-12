@@ -109,14 +109,3 @@ export const HERO_VIDEO_MOBILE_QUERY = groq`
     }
   }
 `;
-
-/** Public client logos for the About section row. */
-export const CLIENTS_QUERY = groq`
-  *[_type == "client" && isPublic == true]
-    | order(name asc) {
-    _id,
-    name,
-    "logoUrl": logo.asset->url,
-    isPublic
-  }
-`;
