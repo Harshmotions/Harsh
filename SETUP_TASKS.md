@@ -91,3 +91,15 @@ Add these in **Vercel → Project → Settings → Environment Variables**. Tick
 - [x] **16. (Optional) Make the `motionbyharsh.com` → `www` redirect permanent.**
   Vercel → project `harsh` → **Settings → Domains** → `motionbyharsh.com` → Edit → redirect to `www.motionbyharsh.com` with **308 Permanent** (it's currently 307 Temporary).
   **Why:** a permanent redirect tells Google the `www` address is the real one, so ranking signals aren't split between the two.
+
+## Part 4: Don't miss briefs (for Harsh)
+
+- [ ] **17. Make brief emails always land in Primary with a Gmail filter.**
+  Gmail on a computer → search bar → **Show search options** (the sliders icon) → *From:* `briefs@motionbyharsh.com` → **Create filter** → tick *Never send it to Spam*, *Always mark it as important*, *Categorize as: Primary* → **Create filter**. Also add `briefs@motionbyharsh.com` to your contacts.
+  **Why:** Gmail filed the test brief under Promotions, where the phone app doesn't notify you. The email subject no longer contains a price (a strong Promotions signal), which helps, but only a filter guarantees Primary.
+
+- [ ] **18. Check Resend open/click tracking is off.** Resend → **Domains** → motionbyharsh.com → **Configuration**.
+  **Why:** tracking pixels and rewritten links are typical of marketing email and push Gmail towards Promotions. Briefs don't need either.
+
+- [ ] **19. Reconnect the GitHub repo in Vercel if deploys keep failing in seconds.** Vercel → `harsh` → **Settings → Git** → Disconnect, then **Connect Git Repository** → GitHub → `Harshmotions/Harsh`.
+  **Why:** by 13:45 on 2026-10-12, 4 pushes had failed with "Git information retrieval failed" and each worked on retry. Reconnecting refreshes Vercel's access to GitHub, the usual fix for this error.
