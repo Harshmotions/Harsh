@@ -65,7 +65,7 @@ Add these in **Vercel → Project → Settings → Environment Variables**. Tick
 
 ### After it's live
 
-- [ ] **10. In a few days, check Vercel → Speed Insights and Analytics.**
+- [ ] **10. Turn on Speed Insights, then check it in a few days.** Vercel → project `harsh` → **Speed Insights** tab → *Enable* (it showed "Not Enabled" on 2026-10-12; the site already includes the tracking code, so no redeploy of code is needed). Then check it and **Analytics** after a few days of traffic.
   **Why:** the before/after speed numbers come from a local build with placeholder content and no showreel video. Speed Insights shows what real visitors experience on their own phones, which is what Google uses for search ranking. Analytics shows actual traffic, which couldn't be checked from here.
 
 ## Part 2: Code follow-ups (Claude can do these)
@@ -85,8 +85,8 @@ Add these in **Vercel → Project → Settings → Environment Variables**. Tick
   Cloudflare → motionbyharsh.com → **DNS** → the `A`/`CNAME` records for `motionbyharsh.com` and `www` → click the orange cloud so it turns grey. Leave the MX, TXT and Resend (`send`, `rsend`, `resend._domainkey`) records as they are.
   **Why:** right now every visit goes through Cloudflare's proxy and then Vercel's. That's an extra network hop, and Cloudflare also injects an email-protection script into every page. Vercel recommends DNS only for domains it hosts; it already provides the CDN and SSL. Email forwarding isn't affected.
 
-- [ ] **15. If a deploy fails within a few seconds again, open its build log in Vercel and send it to Claude.**
-  **Why:** on 2026-10-12, two pushes were rejected by Vercel 3–6 seconds in (before any build step) and both succeeded on retry with identical code. The log isn't readable from this PC (the Vercel CLI here is signed in to a different account), so the cause is still unknown.
+- [x] **15. Find out why some deploys failed within seconds.**
+  Cause (from the Vercel error, 2026-10-12): *"Git information retrieval failed for this deployment"*. Vercel couldn't fetch the commit from GitHub, so it stopped before building. It's a Vercel↔GitHub hiccup, not a code problem: the next push or a **Redeploy** always succeeded with identical code, and nothing was lost. It happened during a burst of quick pushes. If it starts happening often, reconnect the repo in Vercel → **Settings → Git**, and check GitHub → **Settings → Applications → Vercel** still has access to `Harshmotions/Harsh`.
 
 - [x] **16. (Optional) Make the `motionbyharsh.com` → `www` redirect permanent.**
   Vercel → project `harsh` → **Settings → Domains** → `motionbyharsh.com` → Edit → redirect to `www.motionbyharsh.com` with **308 Permanent** (it's currently 307 Temporary).
