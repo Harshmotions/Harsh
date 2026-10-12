@@ -80,7 +80,7 @@ export default function ProjectCard({
     return () => io.disconnect();
   }, [previewSrc]);
 
-  const caption = [project.client?.name, project.strategicNote].filter(Boolean).join(' · ');
+  const caption = project.strategicNote;
 
   return (
     <motion.button

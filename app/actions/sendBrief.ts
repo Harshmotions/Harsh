@@ -110,6 +110,7 @@ async function emailBrief(brief: Brief, apiKey: string) {
   const field = (label: string, value: string) => (value ? `${label}: ${value}` : '');
   const block = (...rows: string[]) => rows.filter(Boolean).join('\n');
   const body = [
+    `${brief.name} sent a project brief through motionbyharsh.com. Reply to this email to answer them directly.`,
     block(
       field('Name', brief.name),
       field('Email', brief.email),
@@ -136,7 +137,8 @@ async function emailBrief(brief: Brief, apiKey: string) {
       from: process.env.BRIEF_FROM_EMAIL || 'motion by harsh <onboarding@resend.dev>',
       to: [to],
       reply_to: brief.email,
-      subject: `New brief: ${brief.name}${brief.company ? ` (${brief.company})` : ''} · ${brief.budget}`,
+      // Plain, personal subject: prices and symbols in a subject push Gmail towards Promotions
+      subject: `Project brief from ${brief.name}${brief.company ? ` at ${brief.company}` : ''}`,
       text: body,
     }),
   });

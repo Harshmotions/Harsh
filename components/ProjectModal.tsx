@@ -158,12 +158,10 @@ export default function ProjectModal({
             <div className="text-center max-w-2xl">
               <h2 className="font-display font-semibold text-text text-xl md:text-3xl mb-2">{project.title}</h2>
               <div className="flex items-center justify-center gap-3 flex-wrap font-body text-sm text-text-muted">
-                {project.client?.name && <span>{project.client.name}</span>}
-                {project.client?.name && project.roleTag && <span>·</span>}
                 {project.roleTag && <span>{project.roleTag}</span>}
                 {project.isRetainer && (
                   <>
-                    <span>·</span>
+                    {project.roleTag && <span>·</span>}
                     <span
                       className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
                       style={{ background: 'var(--accent)', color: 'var(--bg)' }}
