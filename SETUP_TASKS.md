@@ -29,27 +29,27 @@ The new "Start a project" form sends each brief by email (Resend) and saves a co
 
 Add these in **Vercel → Project → Settings → Environment Variables**. Tick both *Production* and *Preview*.
 
-- [ ] **2. Add `SANITY_API_WRITE_TOKEN`.**
+- [x] **2. Add `SANITY_API_WRITE_TOKEN`.**
   Create it at sanity.io/manage → your project → **API** → **Tokens** → *Add API token*, with **Editor** permission.
   **Why:** the site needs write access to save briefs to Studio → Leads. This gives you a permanent record even if an email goes missing.
 
-- [ ] **3. Add `RESEND_API_KEY`.**
+- [x] **3. Add `RESEND_API_KEY`.**
   Create it at resend.com → **API Keys**.
   **Why:** emails you each brief the moment it's sent. The email's reply-to is the client's address, so hitting Reply goes straight to them. With both 2 and 3 set, a brief still gets through if one service is down.
 
-- [ ] **4. Verify `motionbyharsh.com` in Resend, then add `BRIEF_FROM_EMAIL`.**
+- [x] **4. Verify `motionbyharsh.com` in Resend, then add `BRIEF_FROM_EMAIL`.**
   In Resend → **Domains**, add the domain and copy the DNS records it gives you into your domain provider. Once it shows *Verified*, set `BRIEF_FROM_EMAIL` to something like `motion by harsh <briefs@motionbyharsh.com>`.
   **Why:** without a verified domain, Resend falls back to its test sender, which only delivers to the email you signed up to Resend with. Briefs to any other inbox would be silently dropped.
   **Shortcut:** if you sign up to Resend with `hello@motionbyharsh.com` itself, briefs reach that inbox without verifying the domain. Verifying is still better long term.
 
-- [ ] **5. Make sure `hello@motionbyharsh.com` receives mail, or add `BRIEF_TO_EMAIL`.**
+- [x] **5. Make sure `hello@motionbyharsh.com` receives mail, or add `BRIEF_TO_EMAIL`.**
   **Why:** briefs go to `hello@motionbyharsh.com` unless `BRIEF_TO_EMAIL` says otherwise. That address is also the public email button in the contact section and footer, so it needs to work either way.
 
-- [ ] **6. Redeploy in Vercel.**
+- [x] **6. Redeploy in Vercel.**
   Use **Deployments** → latest → *Redeploy*, or just merge task 1 after adding the variables.
   **Why:** Vercel only applies new environment variables to new deployments. The running site won't see them until it's rebuilt.
 
-- [ ] **7. Send yourself a test brief on the live site.**
+- [x] **7. Send yourself a test brief on the live site.**
   Fill in the form at motionbyharsh.com, then check that the email arrives and that the brief appears in Studio → Leads.
   **Why:** the delivery code couldn't be tested end to end, because the build sandbox has no access to Resend or Sanity. This is the only proof it works.
 
@@ -60,7 +60,7 @@ Add these in **Vercel → Project → Settings → Environment Variables**. Tick
   Use digits only, with country code and no `+`, spaces or dashes (e.g. `919876543210`).
   **Why:** the site builds WhatsApp links as `https://wa.me/<number>`, in the contact section, the project popup and the brief form's "WhatsApp me" button. A `+`, a space or a missing country code sends people to the wrong place or an error page. Studio only opens when you run the site locally (`npm run dev` → `localhost:3000/studio`), because `/studio` is blocked on the live site.
 
-- [ ] **9. Fix `NEXT_PUBLIC_SITE_URL` in Vercel.** Confirmed on 2026-10-12: the live site still uses `harshpowar.com`. Set it to `https://www.motionbyharsh.com`, or delete it.
+- [x] **9. Fix `NEXT_PUBLIC_SITE_URL` in Vercel.** Confirmed on 2026-10-12: the live site still uses `harshpowar.com`. Set it to `https://www.motionbyharsh.com`, or delete it.
   **Why:** it controls the canonical URL, sitemap and link previews. If it's still set to the old `harshpowar.com`, Google indexes the wrong domain.
 
 ### After it's live
