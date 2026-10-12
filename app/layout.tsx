@@ -22,7 +22,9 @@ const playfair = Playfair_Display({
   variable: '--font-playfair',
   subsets: ['latin'],
   weight: ['400', '700'],
-  style: ['normal', 'italic'],
+  // Only ever used in italic ("by" in the logo, the hero's last word); skipping the
+  // upright face saves a preloaded ~38 KB font file on every page.
+  style: ['italic'],
   display: 'swap',
 });
 
