@@ -50,7 +50,6 @@ export default defineType({
     // The site's contact email lives in lib/site.ts; this old field is kept only so existing data doesn't warn.
     defineField({ name: 'emailAddress', type: 'string', hidden: true }),
     defineField({ name: 'instagramUrl', type: 'url' }),
-    defineField({ name: 'linkedinUrl', type: 'url' }),
   ],
   preview: {
     prepare: () => ({ title: 'Site Settings' }),

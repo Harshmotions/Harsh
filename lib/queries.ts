@@ -76,8 +76,7 @@ export const SITE_SETTINGS_QUERY = groq`
     approachSteps[]{ title, description },
     contactHeadline,
     whatsappNumber,
-    instagramUrl,
-    linkedinUrl
+    instagramUrl
   }
 `;
 

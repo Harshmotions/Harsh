@@ -2,13 +2,11 @@ import Container from '@/components/ui/Container';
 
 interface FooterProps {
   instagramUrl?: string;
-  linkedinUrl?: string;
   emailAddress?: string;
 }
 
 export default function Footer({
   instagramUrl,
-  linkedinUrl,
   emailAddress,
 }: FooterProps) {
   const year = new Date().getFullYear();
@@ -37,16 +35,6 @@ export default function Footer({
                 className="hover:text-accent transition-colors"
               >
                 Instagram
-              </a>
-            )}
-            {linkedinUrl && (
-              <a
-                href={linkedinUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-accent transition-colors"
-              >
-                LinkedIn
               </a>
             )}
             {emailAddress && (

@@ -10,7 +10,7 @@ interface ContactSectionProps {
   emailAddress?: string;
 }
 
-const FALLBACK_HEADLINE = "If you're planning something cool, I should hear about it.";
+const FALLBACK_HEADLINE = "Got a project? Let's make it move.";
 
 const reveal = {
   initial: { opacity: 0, y: 16 },
@@ -45,13 +45,12 @@ export default function ContactSection({ headline, whatsappNumber, emailAddress 
               className="font-body text-text-muted mb-8 max-w-md"
               style={{ fontSize: '1rem', lineHeight: 1.65 }}
             >
-              Tell me what you&apos;re making. The more I know about the goal, the sharper the first cut.
-              I reply within a few hours.
+              Tell me the goal. I&apos;ll reply within a few hours.
             </motion.p>
 
             {(whatsappNumber || emailAddress) && (
               <motion.div {...reveal} transition={{ duration: 0.7, delay: 0.2 }} className="space-y-3">
-                <p className="font-body text-xs uppercase tracking-[0.18em] text-text-muted">Prefer to talk directly?</p>
+                <p className="font-body text-xs uppercase tracking-[0.18em] text-text-muted">Or reach me directly</p>
                 <div className="flex flex-wrap gap-3">
                   {whatsappNumber && (
                     <a

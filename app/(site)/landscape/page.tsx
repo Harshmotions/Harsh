@@ -30,7 +30,7 @@ export default async function LandscapePage() {
         projects={projects}
         variant="landscape"
         title="Landscape"
-        subline="Horizontal edits with room to breathe. YouTube, brand films, documentary."
+        subline="Room to breathe. Built to hold attention."
         filters={LANDSCAPE_FILTERS}
         whatsappNumber={settings?.whatsappNumber}
       />

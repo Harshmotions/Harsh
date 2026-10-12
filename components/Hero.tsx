@@ -23,7 +23,7 @@ interface HeroProps {
 
 const DEFAULT_HEADLINE = 'Motion that moves money.';
 const DEFAULT_SUBLINE =
-  'Video that earns attention and drives results, for brands that measure what works.';
+  'Edits built to stop the scroll and pay for themselves.';
 
 
 const CTA_TIMESTAMP_DESKTOP = 1.85; // ~150ms before the 2s mark

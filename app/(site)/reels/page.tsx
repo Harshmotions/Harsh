@@ -30,7 +30,7 @@ export default async function ReelsPage() {
         projects={projects}
         variant="reel"
         title="Reels"
-        subline="Vertical edits built for the feed. Performance ads, motion graphics, brand."
+        subline="Built for the feed. Made to convert."
         filters={REEL_FILTERS}
         whatsappNumber={settings?.whatsappNumber}
       />

@@ -52,7 +52,7 @@ export default function FeaturedStrip({ reels, landscape, onCardClick }: Feature
           className="font-display font-semibold text-text mb-10 md:mb-12"
           style={{ fontSize: 'clamp(30px, 4vw, 52px)', lineHeight: 1.02, letterSpacing: '-0.02em' }}
         >
-          Recent edits that moved the needle.
+          Proof, in motion.
         </motion.h2>
 
         {reels.length > 0 && (

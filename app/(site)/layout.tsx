@@ -22,7 +22,6 @@ export default async function SiteLayout({
         <PageTransition>{children}</PageTransition>
         <Footer
           instagramUrl={settings?.instagramUrl}
-          linkedinUrl={settings?.linkedinUrl}
           emailAddress={CONTACT_EMAIL}
         />
       </SmoothScroll>

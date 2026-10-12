@@ -88,5 +88,4 @@ export interface SiteSettings {
   contactHeadline?: string;
   whatsappNumber?: string;
   instagramUrl?: string;
-  linkedinUrl?: string;
 }

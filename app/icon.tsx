@@ -18,6 +18,8 @@ export default async function Icon() {
           display: 'flex',
         }}
       >
+        {/* ImageResponse renders plain <img>; next/image isn't supported here */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={src} width={180} height={180} style={{ objectFit: 'cover' }} alt="" />
       </div>
     ),

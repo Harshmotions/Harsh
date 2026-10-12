@@ -20,7 +20,7 @@ const FALLBACK_BODY: PortableTextBlock[] = [
       {
         _type: 'span',
         _key: '1a',
-        text: "I'm a video editor based in India with 4+ years of experience in professional video editing and motion graphics. I've worked with brands across fintech, wellness, and digital businesses, handling everything from creative campaigns to landscape content.",
+        text: 'Video editor and motion designer from India, 5+ years in.',
         marks: [],
       },
     ],
@@ -34,7 +34,7 @@ const FALLBACK_BODY: PortableTextBlock[] = [
       {
         _type: 'span',
         _key: '2a',
-        text: "Currently, my focus is on performance ads, premium SaaS-style motion graphics, and long-form landscape editing. I work with both retainer and project-based clients, creating content designed not just to look polished, but to drive attention, engagement, and ultimately contribute to growth and revenue.",
+        text: 'I make performance ads, SaaS motion graphics and long-form edits for fintech, wellness and digital brands, on retainer or per project.',
         marks: [],
       },
     ],
@@ -48,7 +48,7 @@ const FALLBACK_BODY: PortableTextBlock[] = [
       {
         _type: 'span',
         _key: '3a',
-        text: "I approach every project with the mindset that great videos shouldn't just perform visually, they should perform for the business too.",
+        text: 'Every cut has one job: make the business money.',
         marks: [],
       },
     ],
@@ -78,7 +78,7 @@ export default function AboutSection({ body, portraitUrl }: AboutSectionProps) {
         className="font-display font-semibold text-text mb-8"
         style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', lineHeight: 1.1, letterSpacing: '-0.02em' }}
       >
-        A real editor, not a template.
+        Hi, I&apos;m Harsh.
       </h2>
       <PortableText value={bodyContent} components={portableComponents} />
     </>

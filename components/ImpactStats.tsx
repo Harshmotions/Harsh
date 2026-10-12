@@ -6,23 +6,23 @@ import Container from '@/components/ui/Container';
 const STATS = [
   {
     value: '3M+',
-    label: 'Views Generated',
-    description: 'Total reach across all client content',
+    label: 'Views generated',
+    description: 'Across client channels',
   },
   {
     value: '400+',
-    label: 'Videos Delivered',
-    description: 'Across ads, motion, and landscape',
+    label: 'Videos delivered',
+    description: 'Ads, motion, long-form',
   },
   {
     value: '12+',
-    label: 'Brands Served',
+    label: 'Brands',
     description: 'Finance · SaaS · Gaming · Wellness',
   },
   {
-    value: '4+',
-    label: 'Years Editing',
-    description: 'Retainer and project-based work',
+    value: '5+',
+    label: 'Years editing',
+    description: 'Retainers and one-offs',
   },
 ] as const;
 
@@ -40,7 +40,7 @@ export default function ImpactStats() {
           transition={{ duration: 0.6 }}
           className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-8"
         >
-          Impact, not just output
+          By the numbers
         </motion.p>
 
         {/* Button-card grid: 4-col desktop, 2×2 mobile */}

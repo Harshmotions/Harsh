@@ -54,7 +54,8 @@ export default async function Image() {
             'radial-gradient(circle at 85% 15%, rgba(79,142,247,0.28), transparent 45%), radial-gradient(circle at 10% 100%, rgba(30,62,120,0.55), transparent 50%)',
         }}
       >
-        {/* Logo mark */}
+        {/* Logo mark (ImageResponse renders plain <img>; next/image isn't supported here) */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={logoSrc} width={96} height={96} style={{ borderRadius: 22, marginBottom: 44 }} alt="" />
 
         {/* Wordmark: motion (Sora 800, accent) · by (Playfair italic) · harsh (Sora 400) */}

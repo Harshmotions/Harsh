@@ -12,18 +12,15 @@ interface ApproachSectionProps {
 const FALLBACK_STEPS: ApproachStep[] = [
   {
     title: 'Brief',
-    description:
-      "We talk about what you're selling and who you need it to reach. No 40-question intake form. Just a real conversation about the goal.",
+    description: 'One real conversation about what you sell and who needs to see it.',
   },
   {
     title: 'Concept',
-    description:
-      'I figure out the hook, the angle, the structure. You see the idea before I touch the timeline, not after.',
+    description: 'Hook, angle, structure. You approve the idea before I edit.',
   },
   {
     title: 'Cut',
-    description:
-      'This is where the craft happens. Motion, sound, pacing, the small stuff most people skip. You get the first version usually within the week.',
+    description: 'Motion, sound, pacing. First version within a week.',
   },
 ];
 
@@ -90,7 +87,7 @@ export default function ApproachSection({ steps }: ApproachSectionProps) {
             letterSpacing: '-0.02em',
           }}
         >
-          How a project goes.
+          From brief to final cut.
         </motion.h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
