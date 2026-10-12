@@ -6,12 +6,26 @@ What's left to get the site fully working after the October 2026 update. Tasks a
 
 ### Go live
 
-- [ ] **1. Merge `claude/busy-albattani-2fjyx4` into `master`.**
-  **Why:** production deploys from `master`. The speed fixes, lint fixes and the `middleware.ts` → `proxy.ts` rename are only on this branch, so the live site doesn't have them yet. Vercel should also build a preview of the branch, so you can check it before merging.
+- [x] **1. Merge `claude/busy-albattani-2fjyx4` into `master`.**
+  Done on 2026-10-12 (fast-forward, production build verified).
+
+### Remove AI work (live right now)
+
+The site's code no longer mentions AI, but this content in Sanity still does, so it's still showing on motionbyharsh.com.
+
+- [ ] **A. Delete the 5 AI projects in Studio.**
+  Studio → Projects → open each → ⋯ → Delete: "AI AD (Following Trend)" (SharkFunded), "AI Ad UGC (Cinematic)" (SharkFunded), "AI Ad UGC (Cinematic)" (MaziFinance), "AI Ad Trailer" (ISGL), "AI Ad Promo" (KYM Yoga). To remove the video files too, delete them in Studio's **Videos** tool.
+  **Why:** 3 of these sit in the home page's reels row. Once they're gone, the row fills itself with your latest other reels.
+
+- [ ] **B. Edit the About text in Studio → Site Settings.**
+  It still says "my focus is on AI creative ads and films". Replace it with what you do now.
+
+- [ ] **C. (Optional) Upload a portrait in Studio → Site Settings → Portrait.**
+  **Why:** About shows it automatically. Clients hire a person, and there's no photo of you on the site yet.
 
 ### Make the project brief form deliver
 
-The new "Start a project" form sends each brief by email (Resend) and saves a copy in Sanity Studio under **Leads**. Right now neither is set up. Until at least one is, **every submission shows the visitor an error and the brief is lost.**
+The new "Start a project" form sends each brief by email (Resend) and saves a copy in Sanity Studio under **Leads**. Right now neither is set up. Until at least one is, **every submission fails.** The visitor sees an error with WhatsApp and email links instead, so they can still reach you, but whatever they typed isn't sent.
 
 Add these in **Vercel → Project → Settings → Environment Variables**. Tick both *Production* and *Preview*.
 
@@ -26,6 +40,7 @@ Add these in **Vercel → Project → Settings → Environment Variables**. Tick
 - [ ] **4. Verify `motionbyharsh.com` in Resend, then add `BRIEF_FROM_EMAIL`.**
   In Resend → **Domains**, add the domain and copy the DNS records it gives you into your domain provider. Once it shows *Verified*, set `BRIEF_FROM_EMAIL` to something like `motion by harsh <briefs@motionbyharsh.com>`.
   **Why:** without a verified domain, Resend falls back to its test sender, which only delivers to the email you signed up to Resend with. Briefs to any other inbox would be silently dropped.
+  **Shortcut:** if you sign up to Resend with `hello@motionbyharsh.com` itself, briefs reach that inbox without verifying the domain. Verifying is still better long term.
 
 - [ ] **5. Make sure `hello@motionbyharsh.com` receives mail, or add `BRIEF_TO_EMAIL`.**
   **Why:** briefs go to `hello@motionbyharsh.com` unless `BRIEF_TO_EMAIL` says otherwise. That address is also the public email button in the contact section and footer, so it needs to work either way.
@@ -40,12 +55,13 @@ Add these in **Vercel → Project → Settings → Environment Variables**. Tick
 
 ### Content and settings
 
-- [ ] **8. Check the WhatsApp number in Studio → Site Settings.**
+- [x] **8. Check the WhatsApp number in Studio → Site Settings.**
+  Checked on 2026-10-12: it's `918793689965`, which is the right format.
   Use digits only, with country code and no `+`, spaces or dashes (e.g. `919876543210`).
   **Why:** the site builds WhatsApp links as `https://wa.me/<number>`, in the contact section, the project popup and the brief form's "WhatsApp me" button. A `+`, a space or a missing country code sends people to the wrong place or an error page. Studio only opens when you run the site locally (`npm run dev` → `localhost:3000/studio`), because `/studio` is blocked on the live site.
 
-- [ ] **9. Keep `NEXT_PUBLIC_SANITY_PROJECT_ID` set in Vercel.** Also set `NEXT_PUBLIC_SANITY_DATASET` if your dataset isn't called `production`.
-  **Why:** without the project ID the build stops on purpose (`lib/sanity.ts` throws) and nothing deploys. It's almost certainly set already, since the site has deployed before. This is just a reminder not to remove it.
+- [ ] **9. Check `NEXT_PUBLIC_SITE_URL` in Vercel.** It should be `https://www.motionbyharsh.com`, or not set at all.
+  **Why:** it controls the canonical URL, sitemap and link previews. If it's still set to the old `harshpowar.com`, Google indexes the wrong domain.
 
 ### After it's live
 
