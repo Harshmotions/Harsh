@@ -70,11 +70,20 @@ Add these in **Vercel → Project → Settings → Environment Variables**. Tick
 
 ## Part 2: Code follow-ups (Claude can do these)
 
-- [ ] **11. Load the first row of thumbnails on `/reels` and `/landscape` right away.**
+- [x] **11. Load the first row of thumbnails on `/reels` and `/landscape` right away.**
   **Why:** on phones, the largest thing on `/reels` is the first thumbnail, and `/landscape` uses the same cards. Every card image is set to load lazily, so the browser waits before even requesting it. `/reels` takes about 5.3s to show its main content, against Google's 2.5s "good" target. Loading the first row eagerly is a small change with a direct speed win.
 
-- [ ] **12. Fix the logo link's accessible name in the nav.**
+- [x] **12. Fix the logo link's accessible name in the nav.**
   **Why:** the link shows "motionbyharsh" but tells assistive tech it's called "motion by harsh, home". People using voice control say what they see ("click motionbyharsh"), and that doesn't match, so the command fails. Lighthouse flags this on every page.
 
-- [ ] **13. Fix the heading order on `/reels` and `/landscape`.** *(Minor.)*
+- [x] **13. Fix the heading order on `/reels` and `/landscape`.** *(Minor.)*
   **Why:** the project card titles are `h3`s placed directly under the page's `h1`, skipping `h2`. Screen-reader users jump around pages by heading level, and a skipped level makes the page structure look broken. It's the only reason `/reels` scores 98 rather than 100 for accessibility.
+
+## Part 3: Speed follow-ups (for Harsh)
+
+- [ ] **14. Switch the site's DNS records in Cloudflare to "DNS only" (grey cloud).**
+  Cloudflare → motionbyharsh.com → **DNS** → the `A`/`CNAME` records for `motionbyharsh.com` and `www` → click the orange cloud so it turns grey. Leave the MX, TXT and Resend (`send`, `rsend`, `resend._domainkey`) records as they are.
+  **Why:** right now every visit goes through Cloudflare's proxy and then Vercel's. That's an extra network hop, and Cloudflare also injects an email-protection script into every page. Vercel recommends DNS only for domains it hosts; it already provides the CDN and SSL. Email forwarding isn't affected.
+
+- [ ] **15. If a deploy fails within a few seconds again, open its build log in Vercel and send it to Claude.**
+  **Why:** on 2026-10-12, two pushes were rejected by Vercel 3–6 seconds in (before any build step) and both succeeded on retry with identical code. The log isn't readable from this PC (the Vercel CLI here is signed in to a different account), so the cause is still unknown.
