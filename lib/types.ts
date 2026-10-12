@@ -46,8 +46,6 @@ export type ProjectCategory =
 export interface ClientRef {
   _id: string;
   name: string;
-  /** Pre-resolved logo URL (via `"logoUrl": logo.asset->url` projection). */
-  logoUrl?: string;
   isPublic: boolean;
 }
 

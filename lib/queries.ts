@@ -2,7 +2,7 @@ import { groq } from 'next-sanity';
 
 /**
  * Shared projection for Project documents. Resolves the Mux asset and
- * inlines a small client summary (with a flat logoUrl for easy <Image>).
+ * inlines a small client summary (name only; logos aren't shown on the site).
  */
 const projectProjection = groq`
   _id,
@@ -26,7 +26,6 @@ const projectProjection = groq`
   client->{
     _id,
     name,
-    "logoUrl": logo.asset->url,
     isPublic
   },
   roleTag,

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { urlForImage, sizedImageUrl } from '@/lib/sanity';
+import { urlForImage } from '@/lib/sanity';
 import { prefetchMuxPlayer } from '@/lib/muxPlayer';
 import type { Project } from '@/lib/types';
 
@@ -153,21 +153,6 @@ export default function ProjectCard({
             </svg>
           </div>
         </div>
-
-        {/* Client logo top-right */}
-        {project.client?.logoUrl && (
-          <div className="absolute top-3 right-3 md:top-4 md:right-4 h-8 md:h-10 w-14 md:w-16 flex items-center justify-end">
-            {/* Logos are user-supplied; keep <img> for SVG/url flexibility. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={sizedImageUrl(project.client.logoUrl, 40)}
-              loading="lazy"
-              decoding="async"
-              alt={project.client.name}
-              className="max-h-full max-w-full object-contain opacity-80"
-            />
-          </div>
-        )}
 
         {/* Role tag + Retainer — single bottom bar, wraps on narrow cards */}
         {(project.roleTag || project.isRetainer) && (
