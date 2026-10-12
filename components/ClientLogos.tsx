@@ -1,3 +1,4 @@
+import { sizedImageUrl } from '@/lib/sanity';
 import type { ClientRef } from '@/lib/types';
 
 export default function ClientLogos({ clients }: { clients: ClientRef[] }) {
@@ -31,7 +32,9 @@ export default function ClientLogos({ clients }: { clients: ClientRef[] }) {
                 {c.logoUrl ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
-                    src={c.logoUrl}
+                    src={sizedImageUrl(c.logoUrl, isSharkFunded ? 72 : 48)}
+                    loading="lazy"
+                    decoding="async"
                     alt={c.name}
                     style={{
                       height: isSharkFunded ? 72 : 48,

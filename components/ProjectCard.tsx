@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { urlForImage } from '@/lib/sanity';
+import { urlForImage, sizedImageUrl } from '@/lib/sanity';
+import { prefetchMuxPlayer } from '@/lib/muxPlayer';
 import type { Project } from '@/lib/types';
 
 interface ProjectCardProps {
@@ -38,9 +39,14 @@ export default function ProjectCard({
   const alt = project.thumbnail.alt || project.title;
 
   const playbackId = project.muxVideo?.asset?.playbackId;
-  const previewSrc = playbackId
-    ? `https://image.mux.com/${playbackId}/animated.webp?width=${isReel ? 320 : 480}&start=0.5&end=4.5&fps=15`
-    : null;
+  const previewSrc = playbackId ? `https://image.mux.com/${playbackId}/animated.webp` : null;
+  // Only called once a preview is wanted (always client-side). Phones get a smaller,
+  // lower-fps loop: the cards are half as wide and it's often mobile data.
+  const previewUrl = () => {
+    const touch = window.matchMedia('(hover: none)').matches;
+    const width = isReel ? (touch ? 240 : 320) : touch ? 360 : 480;
+    return `${previewSrc}?width=${width}&start=0.5&end=4.5&fps=${touch ? 12 : 15}`;
+  };
 
   const ref = useRef<HTMLButtonElement>(null);
   const [previewing, setPreviewing] = useState(false);
@@ -49,7 +55,11 @@ export default function ProjectCard({
   const [previewLoaded, setPreviewLoaded] = useState(false);
 
   const setPreview = (on: boolean) => {
-    if (on) setPreviewMounted(true);
+    if (on) {
+      setPreviewMounted(true);
+      // A preview playing is a good sign a video gets opened next: warm up the player
+      prefetchMuxPlayer();
+    }
     setPreviewing(on);
   };
 
@@ -59,7 +69,11 @@ export default function ProjectCard({
     const el = ref.current;
     if (!el || !previewSrc || !window.matchMedia('(hover: none)').matches) return;
     const io = new IntersectionObserver(
-      ([entry]) => setPreview(entry.isIntersecting),
+      ([entry]) => {
+        // Don't start downloading loops on page load, only once the visitor scrolls
+        if (entry.isIntersecting && window.scrollY < 1) return;
+        setPreview(entry.isIntersecting);
+      },
       { rootMargin: '-40% 0px -40% 0px' },
     );
     io.observe(el);
@@ -73,6 +87,7 @@ export default function ProjectCard({
       ref={ref}
       type="button"
       onClick={onClick}
+      onPointerDown={prefetchMuxPlayer}
       onMouseEnter={() => previewSrc && setPreview(true)}
       onMouseLeave={() => setPreview(false)}
       data-cursor="play"
@@ -103,7 +118,7 @@ export default function ProjectCard({
           /* Mux animated preview — a few hundred KB, far lighter than a player */
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
-            src={previewSrc}
+            src={previewUrl()}
             alt=""
             aria-hidden="true"
             onLoad={() => setPreviewLoaded(true)}
@@ -145,7 +160,9 @@ export default function ProjectCard({
             {/* Logos are user-supplied; keep <img> for SVG/url flexibility. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={project.client.logoUrl}
+              src={sizedImageUrl(project.client.logoUrl, 40)}
+              loading="lazy"
+              decoding="async"
               alt={project.client.name}
               className="max-h-full max-w-full object-contain opacity-80"
             />

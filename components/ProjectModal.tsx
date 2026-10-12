@@ -4,10 +4,11 @@ import { useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 import { lenisInstance } from '@/components/SmoothScroll';
+import { loadMuxPlayer } from '@/lib/muxPlayer';
 import type { Project } from '@/lib/types';
 
-// Only fetched once a project is opened — keeps ~1 MB of player JS off page load.
-const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), { ssr: false });
+// Not in the page bundle; cards prefetch it (prefetchMuxPlayer) when a preview starts.
+const MuxPlayer = dynamic(loadMuxPlayer, { ssr: false });
 
 interface ProjectModalProps {
   projects: Project[];
@@ -134,6 +135,8 @@ export default function ProjectModal({
                   key={playbackId}
                   playbackId={playbackId}
                   metadata={{ video_title: project.title, player_name: 'harsh-portfolio' }}
+                  // Phones: 720p is sharp at that size and starts/buffers much faster
+                  maxResolution={window.matchMedia('(max-width: 767px)').matches ? '720p' : undefined}
                   streamType="on-demand"
                   autoPlay
                   style={{

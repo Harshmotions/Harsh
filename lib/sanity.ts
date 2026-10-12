@@ -30,6 +30,15 @@ export function urlForImage(source: SanityImageSource) {
 }
 
 /**
+ * Resize a raw Sanity asset URL for display at `displayHeight` CSS px (2x for sharp
+ * screens) and let the CDN pick WebP/AVIF. Uploaded logos can be huge originals
+ * (one was a 2.2 MB, 13888px-tall PNG).
+ */
+export function sizedImageUrl(url: string, displayHeight: number) {
+  return `${url}?h=${displayHeight * 2}&fit=max&auto=format`;
+}
+
+/**
  * Typed Sanity fetch helper for server components.
  * In dev: revalidate: 0 (no cache) so Studio edits show immediately.
  * In prod: revalidate: 60s for fast page loads. Override per-call when needed.

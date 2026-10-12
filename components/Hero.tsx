@@ -10,10 +10,11 @@ import MagneticButton from '@/components/MagneticButton';
 import Button from '@/components/ui/Button';
 import { lenisInstance } from '@/components/SmoothScroll';
 import HeroGridCanvas from '@/components/HeroGridCanvas';
+import { loadMuxPlayer } from '@/lib/muxPlayer';
 
 // Mux player + hls.js is ~1 MB of JS — load it in its own chunk so the rest of
 // the hero hydrates first. Its glass frame is server-rendered, so no layout shift.
-const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), { ssr: false });
+const MuxPlayer = dynamic(loadMuxPlayer, { ssr: false });
 
 interface HeroProps {
   headline?: string;
@@ -70,6 +71,25 @@ export default function Hero({
   // Open connections to Mux early: images (poster) and the HLS video stream
   preconnect('https://image.mux.com');
   preconnect('https://stream.mux.com');
+
+  // Mount the player only once the page has loaded and the browser is idle: its JS
+  // (~300 KB + hls.js) and the video stream otherwise compete with first paint on
+  // phones. The server-rendered poster fills the frame until then.
+  const [playerReady, setPlayerReady] = useState(false);
+  useEffect(() => {
+    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 300));
+    const cancelIdle = window.cancelIdleCallback ?? window.clearTimeout;
+    let idleId: number | undefined;
+    const mount = () => {
+      idleId = idle(() => setPlayerReady(true), { timeout: 1500 });
+    };
+    if (document.readyState === 'complete') mount();
+    else window.addEventListener('load', mount, { once: true });
+    return () => {
+      window.removeEventListener('load', mount);
+      if (idleId !== undefined) cancelIdle(idleId);
+    };
+  }, []);
 
   const ctaControls = useAnimation();
   const triggered = useRef(false);
@@ -209,7 +229,7 @@ export default function Hero({
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                 </picture>
-                <MuxPlayer
+                {playerReady && <MuxPlayer
                   key={videoPlaybackId}
                   playbackId={videoPlaybackId}
                   poster={isMobile ? mobilePoster : desktopPoster}
@@ -232,7 +252,7 @@ export default function Hero({
                     '--controls': 'none',
                     '--media-object-fit': 'cover',
                   }}
-                />
+                />}
               </div>
             </div>
           )}

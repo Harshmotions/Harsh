@@ -2,10 +2,6 @@
 
 import { useEffect } from 'react';
 import Lenis from 'lenis';
-import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
 
 // Module-level ref so modal components can call lenisInstance.stop() / .start()
 // without needing a React context.
@@ -21,26 +17,16 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: !prefersReducedMotion,
       syncTouch: false, // never mimic smooth on touch devices
+      autoRaf: true,
     });
 
     lenisInstance = lenis;
     // Also expose on window for dev tooling (screenshots, debugging)
-    if (typeof window !== 'undefined') {
-      (window as unknown as { __lenis: Lenis }).__lenis = lenis;
-    }
-
-    // Sync Lenis scroll position with GSAP ScrollTrigger
-    lenis.on('scroll', ScrollTrigger.update);
-
-    // Drive Lenis via GSAP ticker (disables Lenis own RAF)
-    const rafCallback = (time: number) => lenis.raf(time * 1000);
-    gsap.ticker.add(rafCallback);
-    gsap.ticker.lagSmoothing(0);
+    (window as unknown as { __lenis: Lenis }).__lenis = lenis;
 
     return () => {
       lenis.destroy();
       lenisInstance = null;
-      gsap.ticker.remove(rafCallback);
     };
   }, []);
 
