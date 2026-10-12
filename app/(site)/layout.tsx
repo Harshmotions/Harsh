@@ -31,8 +31,10 @@ export default async function SiteLayout({
            Fixed, pointer-events-none, z-50.
            Sits BELOW the project modal backdrop (z-100) so video players
            are always grain-free. Opacity ~1.8% — invisible polish only. */}
+      {/* Desktop only: invisible on phone screens, but the full-screen noise filter still costs scroll performance */}
       <div
         aria-hidden="true"
+        className="hidden md:block"
         style={{
           position: 'fixed',
           inset: 0,

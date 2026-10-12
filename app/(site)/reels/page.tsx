@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import PortfolioClient from '@/components/PortfolioClient';
 import { sanityFetch } from '@/lib/sanity';
 import { REELS_QUERY, SITE_SETTINGS_QUERY } from '@/lib/queries';
@@ -25,15 +24,13 @@ export default async function ReelsPage() {
   ]);
 
   return (
-    <Suspense fallback={null}>
-      <PortfolioClient
-        projects={projects}
-        variant="reel"
-        title="Reels"
-        subline="Built for the feed. Made to convert."
-        filters={REEL_FILTERS}
-        whatsappNumber={settings?.whatsappNumber}
-      />
-    </Suspense>
+    <PortfolioClient
+      projects={projects}
+      variant="reel"
+      title="Reels"
+      subline="Built for the feed. Made to convert."
+      filters={REEL_FILTERS}
+      whatsappNumber={settings?.whatsappNumber}
+    />
   );
 }

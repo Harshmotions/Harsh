@@ -13,6 +13,10 @@ interface ProjectCardProps {
   variant?: 'reel' | 'landscape';
   /** Tailwind width class override. */
   widthClass?: string;
+  /** Above-the-fold cards: skip lazy loading ('high' also boosts fetch priority, for the LCP card). */
+  load?: 'lazy' | 'eager' | 'high';
+  /** Title heading level, so card titles fit the page's outline. */
+  titleAs?: 'h2' | 'h3';
 }
 
 export default function ProjectCard({
@@ -20,6 +24,8 @@ export default function ProjectCard({
   onClick,
   variant,
   widthClass,
+  load = 'lazy',
+  titleAs: Title = 'h3',
 }: ProjectCardProps) {
   const isReel = (variant ?? project.type) === 'reel';
   const aspectClass = isReel ? 'aspect-[9/16]' : 'aspect-[16/9]';
@@ -88,6 +94,8 @@ export default function ProjectCard({
           alt={alt}
           fill
           sizes={isReel ? '(max-width: 768px) 50vw, 25vw' : '(max-width: 768px) 100vw, 50vw'}
+          loading={load === 'lazy' ? 'lazy' : 'eager'}
+          fetchPriority={load === 'high' ? 'high' : undefined}
           className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
         />
 
@@ -149,7 +157,8 @@ export default function ProjectCard({
           <div className="absolute bottom-3 left-3 right-3 md:bottom-4 md:left-4 md:right-4 flex flex-row flex-wrap gap-2 items-end">
             {project.roleTag && (
               <span
-                className="inline-flex items-center px-3 py-1 rounded-full text-xs font-body font-medium"
+                // Half-width reel cards on phones are too small for a label; the title says it below
+                className={`${isReel ? 'hidden md:inline-flex' : 'inline-flex'} items-center px-3 py-1 rounded-full text-xs font-body font-medium`}
                 style={{
                   background: 'rgba(10,10,10,0.7)',
                   color: 'var(--text)',
@@ -164,7 +173,7 @@ export default function ProjectCard({
             )}
             {project.isRetainer && (
               <span
-                className="inline-flex items-center px-3 py-1 rounded-full text-xs font-body font-semibold"
+                className="inline-flex items-center px-2 py-0.5 text-[10px] md:px-3 md:py-1 md:text-xs rounded-full font-body font-semibold"
                 style={{ background: 'var(--accent)', color: 'var(--bg)', whiteSpace: 'nowrap' }}
               >
                 Retainer
@@ -174,9 +183,9 @@ export default function ProjectCard({
         )}
       </div>
 
-      <h3 className="mt-3 md:mt-4 font-display font-semibold text-text leading-tight text-base md:text-lg">
+      <Title className="mt-3 md:mt-4 font-display font-semibold text-text leading-tight text-base md:text-lg">
         {project.title}
-      </h3>
+      </Title>
       {caption && (
         <p className="mt-1 font-body text-text-muted text-sm line-clamp-1">{caption}</p>
       )}

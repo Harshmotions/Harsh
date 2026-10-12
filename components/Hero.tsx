@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { preconnect } from 'react-dom';
 import { motion, useAnimation } from 'framer-motion';
 import Container from '@/components/ui/Container';
 import MagneticButton from '@/components/MagneticButton';
@@ -59,6 +60,16 @@ export default function Hero({
   const videoPlaybackId = isMobile
     ? videoPlaybackIdMobile ?? videoPlaybackIdDesktop
     : videoPlaybackIdDesktop ?? videoPlaybackIdMobile;
+
+  // Both showreels open on black for ~3s; 4s in is the first strong frame to show while loading
+  const posterFor = (id: string | undefined, width: number) =>
+    id ? `https://image.mux.com/${id}/thumbnail.webp?time=4&width=${width}` : undefined;
+  const desktopPoster = posterFor(videoPlaybackIdDesktop ?? videoPlaybackIdMobile, 1280);
+  const mobilePoster = posterFor(videoPlaybackIdMobile ?? videoPlaybackIdDesktop, 720);
+
+  // Open connections to Mux early: images (poster) and the HLS video stream
+  preconnect('https://image.mux.com');
+  preconnect('https://stream.mux.com');
 
   const ctaControls = useAnimation();
   const triggered = useRef(false);
@@ -138,10 +149,8 @@ export default function Hero({
 
           {/* ── Showreel — glass-framed, always looping ─────────────── */}
           {videoPlaybackId && (
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            <div
+              className="hero-rise [--rise:24px] [--rise-opacity:1]"
               style={{
                 position: 'relative',
                 zIndex: 2,
@@ -186,9 +195,26 @@ export default function Hero({
                   background: '#04070d',
                 }}
               >
+                {/* First frame, server-rendered so it paints before the player's JS loads
+                    (it was the page's slowest element). <picture> means phones only
+                    download the mobile poster. The player shows the same image on top. */}
+                <picture>
+                  {mobilePoster && <source media="(max-width: 767px)" srcSet={mobilePoster} />}
+                  <img
+                    src={desktopPoster ?? mobilePoster}
+                    alt=""
+                    aria-hidden="true"
+                    fetchPriority="high"
+                    decoding="async"
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                </picture>
                 <MuxPlayer
                   key={videoPlaybackId}
                   playbackId={videoPlaybackId}
+                  poster={isMobile ? mobilePoster : desktopPoster}
+                  // A phone shows the reel ~340px wide, so 720p is plenty and buffers far less
+                  maxResolution={isMobile ? '720p' : '1080p'}
                   streamType="on-demand"
                   autoPlay
                   muted
@@ -200,6 +226,7 @@ export default function Hero({
                     player_name: 'harsh-portfolio-hero',
                   }}
                   style={{
+                    position: 'relative',
                     width: '100%',
                     height: '100%',
                     '--controls': 'none',
@@ -207,7 +234,7 @@ export default function Hero({
                   }}
                 />
               </div>
-            </motion.div>
+            </div>
           )}
 
           {/* ── Start a Project CTA — bounces out from under the video ── */}

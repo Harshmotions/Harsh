@@ -75,12 +75,14 @@ export default function FeaturedStrip({ reels, landscape, onCardClick }: Feature
         {landscape.length > 0 && (
           <div>
             <GroupHeader label="Landscape · 16:9" href="/landscape" linkLabel="All landscape" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-6">
+            {/* Phones: a swipeable row with the next card peeking in, instead of 4 tall stacked cards */}
+            <div className="flex md:grid md:grid-cols-2 gap-4 md:gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-6 px-6 md:mx-0 md:px-0 pb-2 md:pb-0 no-scrollbar">
               {landscape.map((p, i) => (
                 <motion.div
                   key={p._id}
                   {...reveal}
                   transition={{ duration: 0.55, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                  className="w-[85%] flex-shrink-0 snap-start scroll-ml-6 md:w-auto"
                 >
                   <ProjectCard project={p} onClick={() => onCardClick(p)} variant="landscape" widthClass="w-full" />
                 </motion.div>

@@ -119,12 +119,13 @@ export default function Navigation() {
                 }
               }}
               className="mr-4"
-              aria-label="motion by harsh, home"
               style={{ userSelect: 'none', display: 'inline-flex', alignItems: 'baseline', gap: '2px' }}
             >
-              <span style={{ fontFamily: 'var(--font-sora)', fontWeight: 800, color: 'var(--accent)', fontSize: '0.9rem', letterSpacing: '-0.025em' }}>motion</span>
-              <span style={{ fontFamily: 'var(--font-playfair)', fontStyle: 'italic', fontWeight: 400, color: 'rgba(255,255,255,0.80)', fontSize: '0.9rem' }}>by</span>
-              <span style={{ fontFamily: 'var(--font-sora)', fontWeight: 400, color: '#ffffff', fontSize: '0.9rem', letterSpacing: '-0.025em' }}>harsh</span>
+              {/* Spaced name for assistive tech and voice control; the styled words are visual only */}
+              <span className="sr-only">motion by harsh</span>
+              <span aria-hidden="true" style={{ fontFamily: 'var(--font-sora)', fontWeight: 800, color: 'var(--accent)', fontSize: '0.9rem', letterSpacing: '-0.025em' }}>motion</span>
+              <span aria-hidden="true" style={{ fontFamily: 'var(--font-playfair)', fontStyle: 'italic', fontWeight: 400, color: 'rgba(255,255,255,0.80)', fontSize: '0.9rem' }}>by</span>
+              <span aria-hidden="true" style={{ fontFamily: 'var(--font-sora)', fontWeight: 400, color: '#ffffff', fontSize: '0.9rem', letterSpacing: '-0.025em' }}>harsh</span>
             </Link>
 
             {/* Nav links — desktop only */}

@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import PortfolioClient from '@/components/PortfolioClient';
 import { sanityFetch } from '@/lib/sanity';
 import { LANDSCAPE_QUERY, SITE_SETTINGS_QUERY } from '@/lib/queries';
@@ -25,15 +24,13 @@ export default async function LandscapePage() {
   ]);
 
   return (
-    <Suspense fallback={null}>
-      <PortfolioClient
-        projects={projects}
-        variant="landscape"
-        title="Landscape"
-        subline="Room to breathe. Built to hold attention."
-        filters={LANDSCAPE_FILTERS}
-        whatsappNumber={settings?.whatsappNumber}
-      />
-    </Suspense>
+    <PortfolioClient
+      projects={projects}
+      variant="landscape"
+      title="Landscape"
+      subline="Room to breathe. Built to hold attention."
+      filters={LANDSCAPE_FILTERS}
+      whatsappNumber={settings?.whatsappNumber}
+    />
   );
 }

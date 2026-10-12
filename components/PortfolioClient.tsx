@@ -1,8 +1,6 @@
 'use client';
 
-import { useMemo, useState, useCallback } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { useMemo, useState, useCallback, useSyncExternalStore } from 'react';
 import Container from '@/components/ui/Container';
 import FilterTabs, { type FilterOption } from '@/components/FilterTabs';
 import ProjectGrid from '@/components/ProjectGrid';
@@ -18,6 +16,20 @@ interface PortfolioClientProps {
   whatsappNumber?: string;
 }
 
+// The ?filter= value is read straight from the URL rather than via useSearchParams,
+// which would make the whole page render client-side only (blank HTML, then a big
+// layout jump). The server renders "All"; a filter in the URL applies after hydration.
+const FILTER_EVENT = 'portfolio-filter-change';
+
+function subscribeToUrl(onChange: () => void) {
+  window.addEventListener('popstate', onChange);
+  window.addEventListener(FILTER_EVENT, onChange);
+  return () => {
+    window.removeEventListener('popstate', onChange);
+    window.removeEventListener(FILTER_EVENT, onChange);
+  };
+}
+
 export default function PortfolioClient({
   projects,
   variant,
@@ -26,34 +38,22 @@ export default function PortfolioClient({
   filters,
   whatsappNumber,
 }: PortfolioClientProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const basePath = variant === 'reel' ? '/reels' : '/landscape';
 
-  // Initialise active filter from ?filter= query param (validated against options).
-  const initialFilter = useMemo(() => {
-    const param = searchParams.get('filter');
+  const readFilter = useCallback(() => {
+    const param = new URLSearchParams(window.location.search).get('filter');
     return param && filters.some((f) => f.value === param) ? param : 'all';
-  }, [searchParams, filters]);
-
-  const [active, setActive] = useState<string>(initialFilter);
-  const [syncedFilter, setSyncedFilter] = useState<string>(initialFilter);
+  }, [filters]);
+  const active = useSyncExternalStore(subscribeToUrl, readFilter, () => 'all');
   const [selected, setSelected] = useState<number | null>(null);
-
-  // Re-sync state if URL changes externally (e.g. back/forward). Adjusting state
-  // during render rather than in an effect skips an extra render pass.
-  if (syncedFilter !== initialFilter) {
-    setSyncedFilter(initialFilter);
-    setActive(initialFilter);
-  }
 
   const setFilter = useCallback(
     (value: string) => {
-      setActive(value);
       const url = value === 'all' ? basePath : `${basePath}?filter=${value}`;
-      router.replace(url, { scroll: false });
+      window.history.replaceState(null, '', url);
+      window.dispatchEvent(new Event(FILTER_EVENT));
     },
-    [basePath, router],
+    [basePath],
   );
 
   const filteredProjects = useMemo(() => {
@@ -64,19 +64,12 @@ export default function PortfolioClient({
   return (
     <main className="pt-28 md:pt-32 pb-10 min-h-screen">
       <Container>
-        <motion.p
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-4"
-        >
+        {/* CSS entrance (.hero-rise) so the header paints before hydration */}
+        <p className="hero-rise [--rise:8px] [--rise-duration:0.6s] font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-4">
           {variant === 'reel' ? 'Vertical edits · 9:16' : 'Horizontal edits · 16:9'}
-        </motion.p>
-        <motion.h1
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="font-display font-bold text-text mb-6"
+        </p>
+        <h1
+          className="hero-rise [--rise:16px] [--rise-opacity:1] [--rise-duration:0.7s] font-display font-bold text-text mb-6"
           style={{
             fontSize: 'clamp(48px, 8vw, 110px)',
             lineHeight: 0.95,
@@ -90,16 +83,13 @@ export default function PortfolioClient({
               textShadow: '0 0 32px rgba(79,142,247,0.4)',
             }}
           >.</span>
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          className="font-body text-text-muted max-w-2xl mb-8"
+        </h1>
+        <p
+          className="hero-rise [--rise:12px] [--rise-duration:0.7s] [--rise-delay:0.1s] font-body text-text-muted max-w-2xl mb-8"
           style={{ fontSize: '1.0625rem' }}
         >
           {subline}
-        </motion.p>
+        </p>
 
         <FilterTabs options={filters} active={active} onChange={setFilter} />
 

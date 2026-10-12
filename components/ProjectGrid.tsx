@@ -17,8 +17,10 @@ export default function ProjectGrid({
 }: ProjectGridProps) {
   const gridClass =
     variant === 'reel'
-      ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8'
+      ? 'grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-7 md:gap-8'
       : 'grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10';
+  // Largest first row across breakpoints: 3 reels or 2 landscape cards.
+  const firstRow = variant === 'reel' ? 3 : 2;
 
   if (projects.length === 0) {
     return (
@@ -33,7 +35,9 @@ export default function ProjectGrid({
   return (
     <LayoutGroup>
       <motion.div layout className={gridClass}>
-        <AnimatePresence mode="popLayout">
+        {/* initial={false}: cards paint immediately on page load (no hydration-gated fade);
+            entry animations still run for cards added by a filter change. */}
+        <AnimatePresence mode="popLayout" initial={false}>
           {projects.map((p, i) => (
             <motion.div
               key={p._id}
@@ -53,6 +57,8 @@ export default function ProjectGrid({
                 variant={variant}
                 widthClass="w-full"
                 onClick={() => onCardClick(p)}
+                load={i === 0 ? 'high' : i < firstRow ? 'eager' : 'lazy'}
+                titleAs="h2"
               />
             </motion.div>
           ))}

@@ -34,6 +34,14 @@
   animation: hero-rise var(--rise-duration, 0.9s) cubic-bezier(0.22, 1, 0.36, 1) var(--rise-delay, 0s) both;
 }
 
+/* Horizontal swipe rows: keep native touch scrolling, hide the bar */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* ─── Logo ticker marquee ────────────────────────── */
 @keyframes logo-marquee {
   from { transform: translateX(0); }

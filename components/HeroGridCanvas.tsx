@@ -106,8 +106,41 @@ export default function HeroGridCanvas() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    let cleanup = () => {};
+    // Compile the shader after the page has painted and hydrated, so it doesn't
+    // compete with the first render (the canvas stays transparent until then).
+    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 200));
+    const cancelIdle = window.cancelIdleCallback ?? window.clearTimeout;
+    const idleId = idle(() => {
+      cleanup = start(canvas);
+    });
+
+    return () => {
+      cancelIdle(idleId);
+      cleanup();
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      style={{
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        display: 'block',
+        pointerEvents: 'none',
+        zIndex: 0,
+      }}
+    />
+  );
+}
+
+function start(canvas: HTMLCanvasElement): () => void {
     const gl = canvas.getContext('webgl', { antialias: false, alpha: false });
-    if (!gl) return;
+    if (!gl) return () => {};
 
     const mkShader = (type: number, src: string) => {
       const s = gl.createShader(type)!;
@@ -146,34 +179,48 @@ export default function HeroGridCanvas() {
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
 
-    const t0 = performance.now();
-    const frame = () => {
-      gl.uniform1f(uTime, (performance.now() - t0) * 0.001);
+    const draw = (now: number) => {
+      gl.uniform1f(uTime, (now - t0) * 0.001);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      raf = requestAnimationFrame(frame);
     };
-    frame();
+
+    const t0 = performance.now();
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      draw(t0 + 8000); // one still frame, no animation loop
+      return () => {
+        ro.disconnect();
+        gl.deleteProgram(prog);
+      };
+    }
+
+    // The waves move slowly, so 30fps looks the same on phones while halving GPU work.
+    const minFrameMs = window.matchMedia('(pointer: coarse)').matches ? 1000 / 30 : 0;
+    let last = 0;
+    let onScreen = true;
+    const loop = (now: number) => {
+      raf = requestAnimationFrame(loop);
+      if (now - last < minFrameMs) return;
+      last = now;
+      draw(now);
+    };
+    // Only animate while the hero is visible and the tab is in front
+    const sync = () => {
+      cancelAnimationFrame(raf);
+      if (onScreen && document.visibilityState === 'visible') raf = requestAnimationFrame(loop);
+    };
+    const io = new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      sync();
+    });
+    io.observe(canvas);
+    document.addEventListener('visibilitychange', sync);
+    sync();
 
     return () => {
       cancelAnimationFrame(raf);
+      io.disconnect();
+      document.removeEventListener('visibilitychange', sync);
       ro.disconnect();
       gl.deleteProgram(prog);
     };
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden="true"
-      style={{
-        position: 'absolute',
-        inset: 0,
-        width: '100%',
-        height: '100%',
-        display: 'block',
-        pointerEvents: 'none',
-        zIndex: 0,
-      }}
-    />
-  );
 }
