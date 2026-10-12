@@ -81,9 +81,13 @@ Add these in **Vercel → Project → Settings → Environment Variables**. Tick
 
 ## Part 3: Speed follow-ups (for Harsh)
 
-- [ ] **14. Switch the site's DNS records in Cloudflare to "DNS only" (grey cloud).**
+- [x] **14. Switch the site's DNS records in Cloudflare to "DNS only" (grey cloud).**
   Cloudflare → motionbyharsh.com → **DNS** → the `A`/`CNAME` records for `motionbyharsh.com` and `www` → click the orange cloud so it turns grey. Leave the MX, TXT and Resend (`send`, `rsend`, `resend._domainkey`) records as they are.
   **Why:** right now every visit goes through Cloudflare's proxy and then Vercel's. That's an extra network hop, and Cloudflare also injects an email-protection script into every page. Vercel recommends DNS only for domains it hosts; it already provides the CDN and SSL. Email forwarding isn't affected.
 
 - [ ] **15. If a deploy fails within a few seconds again, open its build log in Vercel and send it to Claude.**
   **Why:** on 2026-10-12, two pushes were rejected by Vercel 3–6 seconds in (before any build step) and both succeeded on retry with identical code. The log isn't readable from this PC (the Vercel CLI here is signed in to a different account), so the cause is still unknown.
+
+- [ ] **16. (Optional) Make the `motionbyharsh.com` → `www` redirect permanent.**
+  Vercel → project `harsh` → **Settings → Domains** → `motionbyharsh.com` → Edit → redirect to `www.motionbyharsh.com` with **308 Permanent** (it's currently 307 Temporary).
+  **Why:** a permanent redirect tells Google the `www` address is the real one, so ranking signals aren't split between the two.
