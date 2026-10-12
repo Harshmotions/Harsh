@@ -88,6 +88,6 @@ Add these in **Vercel → Project → Settings → Environment Variables**. Tick
 - [ ] **15. If a deploy fails within a few seconds again, open its build log in Vercel and send it to Claude.**
   **Why:** on 2026-10-12, two pushes were rejected by Vercel 3–6 seconds in (before any build step) and both succeeded on retry with identical code. The log isn't readable from this PC (the Vercel CLI here is signed in to a different account), so the cause is still unknown.
 
-- [ ] **16. (Optional) Make the `motionbyharsh.com` → `www` redirect permanent.**
+- [x] **16. (Optional) Make the `motionbyharsh.com` → `www` redirect permanent.**
   Vercel → project `harsh` → **Settings → Domains** → `motionbyharsh.com` → Edit → redirect to `www.motionbyharsh.com` with **308 Permanent** (it's currently 307 Temporary).
   **Why:** a permanent redirect tells Google the `www` address is the real one, so ranking signals aren't split between the two.
