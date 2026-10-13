@@ -6,6 +6,7 @@ import Container from '@/components/ui/Container';
 import ProjectCard from '@/components/ProjectCard';
 import RevealText from '@/components/motion/RevealText';
 import type { Project } from '@/lib/types';
+import ScrambleText from '@/components/motion/ScrambleText';
 
 interface FeaturedStripProps {
   reels: Project[];
@@ -36,7 +37,7 @@ const curtain = (i: number): Variants => ({
 function GroupHeader({ label, href, linkLabel }: { label: string; href: string; linkLabel: string }) {
   return (
     <div className="flex items-baseline justify-between gap-4 mb-5">
-      <p className="font-body text-text-muted text-xs uppercase tracking-[0.18em]">{label}</p>
+      <p className="font-body text-text-muted text-xs uppercase tracking-[0.18em]"><ScrambleText text={label} replayOnHover /></p>
       <Link
         href={href}
         className="group inline-flex items-center gap-1.5 font-body text-sm text-text-muted hover:text-accent transition-colors whitespace-nowrap"
@@ -59,7 +60,7 @@ export default function FeaturedStrip({ reels, landscape, onCardClick }: Feature
           transition={{ duration: 0.6 }}
           className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-3"
         >
-          Selected Work
+          <ScrambleText text="Selected Work" replayOnHover />
         </motion.p>
         <RevealText
           text="Proof, in motion."

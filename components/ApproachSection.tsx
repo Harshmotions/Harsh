@@ -6,6 +6,7 @@ import { motion, useScroll, useSpring, useTransform, type MotionValue } from 'fr
 import Container from '@/components/ui/Container';
 import RevealText from '@/components/motion/RevealText';
 import type { ApproachStep } from '@/lib/types';
+import ScrambleText from '@/components/motion/ScrambleText';
 
 interface ApproachSectionProps {
   steps?: ApproachStep[];
@@ -113,7 +114,7 @@ export default function ApproachSection({ steps }: ApproachSectionProps) {
           transition={{ duration: 0.6 }}
           className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-3"
         >
-          Approach
+          <ScrambleText text="Approach" replayOnHover />
         </motion.p>
 
         <RevealText

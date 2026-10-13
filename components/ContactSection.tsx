@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Container from '@/components/ui/Container';
 import ProjectBriefForm from '@/components/ProjectBriefForm';
 import RevealText from '@/components/motion/RevealText';
+import ScrambleText from '@/components/motion/ScrambleText';
 
 interface ContactSectionProps {
   headline?: string;
@@ -30,7 +31,7 @@ export default function ContactSection({ headline, whatsappNumber, emailAddress 
               transition={{ duration: 0.6 }}
               className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-5"
             >
-              Start a project
+              <ScrambleText text="Start a project" replayOnHover />
             </motion.p>
             <RevealText
               text={headline ?? FALLBACK_HEADLINE}

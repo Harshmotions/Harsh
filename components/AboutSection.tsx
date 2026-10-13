@@ -6,6 +6,7 @@ import type { PortableTextBlock } from '@portabletext/types';
 import Container from '@/components/ui/Container';
 import RevealText from '@/components/motion/RevealText';
 import ScrollHighlightText from '@/components/motion/ScrollHighlightText';
+import ScrambleText from '@/components/motion/ScrambleText';
 
 interface AboutSectionProps {
   body?: PortableTextBlock[];
@@ -82,7 +83,7 @@ export default function AboutSection({ body, portraitUrl }: AboutSectionProps) {
   );
 
   return (
-    <section id="about" className="py-14 md:py-20" style={{ borderTop: '1px solid var(--border)' }}>
+    <section id="about" className="py-14 md:py-20 overflow-x-clip" style={{ borderTop: '1px solid var(--border)' }}>
       <Container>
         <motion.p
           initial={{ opacity: 0, y: 8 }}
@@ -91,7 +92,7 @@ export default function AboutSection({ body, portraitUrl }: AboutSectionProps) {
           transition={{ duration: 0.6 }}
           className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-8"
         >
-          About
+          <ScrambleText text="About" replayOnHover />
         </motion.p>
 
         <div

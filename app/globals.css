@@ -31,16 +31,162 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 .hero-rise {
-  animation: hero-rise var(--rise-duration, 0.9s) cubic-bezier(0.22, 1, 0.36, 1) var(--rise-delay, 0s) both;
+  animation: hero-rise var(--rise-duration, 0.9s) cubic-bezier(0.22, 1, 0.36, 1) calc(var(--intro, 0s) + var(--rise-delay, 0s)) both;
+}
+
+/* Headline: each word rises out of its own mask, tipping upright as it lands */
+@keyframes hero-word {
+  from { transform: translateY(108%) rotate(7deg); }
+  to   { transform: translateY(0) rotate(0deg); }
+}
+.hero-word {
+  display: inline-block;
+  transform-origin: 0% 100%;
+  animation: hero-word 1.1s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--intro, 0s) + var(--word-delay, 0s)) both;
+}
+
+/* Light sweeping across the gradient word every few seconds */
+@keyframes hero-shimmer {
+  0%, 60% { background-position: 100% 0, 0 0; }
+  100%    { background-position: 0% 0, 0 0; }
+}
+.hero-shimmer {
+  background-image:
+    linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.95) 50%, transparent 58%),
+    linear-gradient(90deg, var(--accent) 0%, #ffffff 100%);
+  background-size: 250% 100%, 100% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: hero-shimmer 7s cubic-bezier(0.45, 0, 0.25, 1) 2s infinite;
+}
+
+/* Showreel: the picture opens out of a smaller window while the footage settles */
+@keyframes hero-unveil {
+  from { clip-path: inset(9% 7% 9% 7% round 26px); }
+  to   { clip-path: inset(0 0 0 0 round 26px); }
+}
+@keyframes hero-settle {
+  from { transform: scale(1.16); }
+  to   { transform: scale(1); }
+}
+.hero-unveil {
+  animation: hero-unveil 1.4s cubic-bezier(0.65, 0, 0.35, 1) calc(var(--intro, 0s) + 0.15s) both;
+}
+.hero-settle {
+  animation: hero-settle 2.2s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--intro, 0s) + 0.15s) both;
+}
+
+/* Showreel width: phones fill the column; larger screens also cap it by the
+   viewport height so the whole hero fits in ~80% of the screen */
+.hero-reel { max-width: 920px; }
+@media (min-width: 768px) {
+  .hero-reel { max-width: min(860px, max(420px, calc((80svh - 440px) * 16 / 9 + 12px))); }
+}
+@media (min-width: 1024px) {
+  .hero-reel { max-width: min(100%, max(440px, calc((80svh - 240px) * 16 / 9 + 12px))); }
+}
+
+/* ─── First-visit intro ──────────────────────────── */
+/* Server-rendered and hidden unless the inline script in the root layout marks
+   <html data-intro> (home page, once per session). Pure CSS so it is on screen
+   from the very first paint, with no flash of the page underneath. */
+.intro { display: none; }
+html[data-intro] .intro {
+  display: flex;
+  animation: intro-out 0.9s cubic-bezier(0.76, 0, 0.24, 1) 1.15s both;
+}
+@keyframes intro-out {
+  from { clip-path: inset(0 0 0 0); }
+  to   { clip-path: inset(0 0 100% 0); visibility: hidden; }
+}
+@keyframes intro-fill {
+  from { clip-path: inset(-20% 100% -20% 0); }
+  to   { clip-path: inset(-20% 0 -20% 0); }
+}
+@keyframes intro-bar {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes intro-lift {
+  to { transform: translateY(-40px); opacity: 0; }
+}
+@property --intro-count {
+  syntax: '<integer>';
+  inherits: false;
+  initial-value: 0;
+}
+@keyframes intro-count {
+  to { --intro-count: 100; }
+}
+.intro-mark-lit { animation: intro-fill 0.95s cubic-bezier(0.65, 0, 0.35, 1) 0.1s both; }
+.intro-mark { animation: intro-lift 0.7s cubic-bezier(0.76, 0, 0.24, 1) 1.15s both; }
+.intro-bar { transform-origin: left; animation: intro-bar 1.05s cubic-bezier(0.65, 0, 0.35, 1) both; }
+.intro-count {
+  font-variant-numeric: tabular-nums;
+  animation: intro-count 1.05s cubic-bezier(0.65, 0, 0.35, 1) both;
+  counter-reset: intro var(--intro-count);
+}
+.intro-count::before { content: counter(intro, decimal-leading-zero); }
+
+/* A point of light travelling round the showreel frame. The ring is a mask;
+   only the gradient behind it rotates, so it runs on the compositor. */
+@keyframes hero-orbit {
+  to { rotate: 360deg; }
+}
+.hero-orbit {
+  position: absolute;
+  inset: -1px;
+  border-radius: 33px;
+  padding: 1.5px;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.hero-orbit::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 160%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 230deg,
+    rgba(79, 142, 247, 0.6) 300deg,
+    rgba(201, 220, 255, 1) 345deg,
+    transparent 360deg
+  );
+  animation: hero-orbit 6s linear infinite;
+}
+.hero-orbit-bloom {
+  padding: 3px;
+  filter: blur(6px);
+  opacity: 0.8;
 }
 
 /* Scroll-lit text (ScrollHighlightText): each word blends from muted slate to
    full white over a 0.15 slice of the scroll progress, starting at its --s */
 /* Kept inside a custom property: the CSS build step drops a color-mix() whose
    percentage uses var(), but leaves custom property values untouched. */
+/* Each word also slides in from its spread-out spot (--dx, set from JS) as it lights up */
 .scroll-word {
-  --scroll-color: color-mix(in srgb, var(--text) calc(clamp(0, (var(--p, 0) - var(--s, 0)) / 0.15, 1) * 100%), #7a87a3);
+  --t: clamp(0, (var(--p, 0) - var(--s, 0)) / 0.15, 1);
+  --scroll-color: color-mix(in srgb, var(--text) calc(var(--t) * 100%), #7a87a3);
+  --scroll-shift: translate3d(calc((1 - var(--t)) * var(--dx, 0px) * var(--spread)), 0, 0);
+  --spread: 0.5;
+  display: inline-block;
   color: var(--scroll-color);
+  transform: var(--scroll-shift);
+}
+@media (min-width: 768px) {
+  .scroll-word { --spread: 1; }
 }
 
 /* Horizontal swipe rows: keep native touch scrolling, hide the bar */

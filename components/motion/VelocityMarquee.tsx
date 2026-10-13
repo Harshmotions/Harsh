@@ -71,15 +71,30 @@ export default function VelocityMarquee({ items, baseVelocity = -3 }: VelocityMa
             {items.map((item, i) => (
               <span key={i} className="flex items-center">
                 <span
-                  className="font-display font-bold px-[0.32em]"
+                  className="px-[0.32em]"
                   style={{
                     fontSize: 'clamp(44px, 8.5vw, 132px)',
-                    lineHeight: 1.05,
-                    letterSpacing: '-0.035em',
-                    // Alternate solid and outlined words
+                    lineHeight: 1.15,
+                    // Alternate solid Sora with Playfair italic in the brand gradient,
+                    // the same pairing as the hero headline
                     ...(i % 2 === 0
-                      ? { color: 'var(--text)' }
-                      : { color: 'transparent', WebkitTextStroke: '1.5px rgba(147,197,253,0.55)' }),
+                      ? {
+                          fontFamily: 'var(--font-sora)',
+                          fontWeight: 700,
+                          letterSpacing: '-0.035em',
+                          color: 'var(--text)',
+                        }
+                      : {
+                          fontFamily: 'var(--font-playfair)',
+                          fontStyle: 'italic',
+                          fontWeight: 400,
+                          letterSpacing: '-0.01em',
+                          background: 'linear-gradient(90deg, var(--accent) 0%, #c9dcff 60%, #ffffff 100%)',
+                          WebkitBackgroundClip: 'text',
+                          backgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          color: 'transparent',
+                        }),
                   }}
                 >
                   {item}

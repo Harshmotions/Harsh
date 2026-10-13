@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Container from '@/components/ui/Container';
 import CountUp from '@/components/motion/CountUp';
+import ScrambleText from '@/components/motion/ScrambleText';
 
 const STATS = [
   {
@@ -41,7 +42,7 @@ export default function ImpactStats() {
           transition={{ duration: 0.6 }}
           className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-8"
         >
-          By the numbers
+          <ScrambleText text="By the numbers" replayOnHover />
         </motion.p>
 
         {/* Button-card grid: 4-col desktop, 2×2 mobile */}

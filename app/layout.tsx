@@ -79,7 +79,19 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${sora.variable} ${inter.variable} ${playfair.variable}`}>
+    // The inline script below sets attributes on <html> before hydration
+    <html lang="en" className={`${sora.variable} ${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
+      <head>
+        {/* First visit to the home page in a session: show the intro (components/IntroLoader)
+            and hold the hero's entrance until it lifts. Runs before first paint so neither
+            the intro nor the hero flashes. --intro is cleared once everything has played,
+            so a later client-side visit to the home page starts the hero straight away. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(location.pathname==='/'&&!sessionStorage.getItem('mbh-intro')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){sessionStorage.setItem('mbh-intro','1');var d=document.documentElement;d.setAttribute('data-intro','');d.style.setProperty('--intro','1.45s');setTimeout(function(){d.removeAttribute('data-intro');d.style.removeProperty('--intro')},6500)}}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="antialiased">
         {children}
         <Analytics />
