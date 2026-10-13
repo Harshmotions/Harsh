@@ -34,6 +34,17 @@
   animation: hero-rise var(--rise-duration, 1.1s) cubic-bezier(0.16, 1, 0.3, 1) calc(var(--intro, 0s) + var(--rise-delay, 0s)) both;
 }
 
+/* Transform-only version for elements that hold a backdrop-filter (the hero reel):
+   any opacity animation on an ancestor, even one that stays at 1, starts a new
+   backdrop root and cuts the blur off from the page behind it.  */
+@keyframes hero-rise-t {
+  from { transform: translateY(var(--rise, 24px)); }
+  to   { transform: translateY(0); }
+}
+.hero-rise-t {
+  animation: hero-rise-t var(--rise-duration, 1.1s) cubic-bezier(0.16, 1, 0.3, 1) calc(var(--intro, 0s) + var(--rise-delay, 0s)) both;
+}
+
 /* Headline: each word rises out of its own mask, tipping upright as it lands */
 @keyframes hero-word {
   from { transform: translateY(108%) rotate(7deg); }

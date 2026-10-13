@@ -356,7 +356,7 @@ export default function Hero({
               <Eyebrow className="inline-flex lg:hidden mb-4" />
 
               {videoPlaybackId && (
-                <div className="hero-reel hero-rise [--rise:28px] [--rise-opacity:1] [--rise-duration:1.2s] relative w-full" style={{ perspective: 1400 }}>
+                <div className="hero-reel hero-rise-t [--rise:28px] [--rise-duration:1.2s] relative w-full" style={{ perspective: 1400 }}>
                   {/* Soft light pooling behind the frame */}
                   <div
                     aria-hidden="true"
@@ -377,16 +377,16 @@ export default function Hero({
                       position: 'relative',
                       borderRadius: 32,
                       padding: 6,
-                      // Sheen on a tinted navy base: reads as frosted glass from the first
-                      // frame, even before (or without) the backdrop blur, which Chrome can
-                      // skip while the frame is animating or tilted
+                      // Real glass: the backdrop blur frosts the grid behind it, with a light
+                      // sheen and a thin navy tint on top. (No ancestor may animate opacity,
+                      // or the blur loses sight of the page behind; see .hero-rise-t.)
                       background: [
-                        'linear-gradient(150deg, rgba(255,255,255,0.18) 0%, rgba(79,142,247,0.14) 45%, rgba(255,255,255,0.05) 100%)',
-                        'radial-gradient(120% 90% at 20% 0%, rgba(79,142,247,0.22), transparent 60%)',
-                        'linear-gradient(rgba(10,18,36,0.82), rgba(8,14,28,0.86))',
+                        'linear-gradient(150deg, rgba(255,255,255,0.16) 0%, rgba(79,142,247,0.12) 45%, rgba(255,255,255,0.04) 100%)',
+                        'radial-gradient(120% 90% at 20% 0%, rgba(79,142,247,0.18), transparent 60%)',
+                        'linear-gradient(rgba(10,18,36,0.30), rgba(8,14,28,0.38))',
                       ].join(', '),
-                      backdropFilter: 'blur(18px)',
-                      WebkitBackdropFilter: 'blur(18px)',
+                      backdropFilter: 'blur(22px) saturate(1.4)',
+                      WebkitBackdropFilter: 'blur(22px) saturate(1.4)',
                       border: '1px solid rgba(147,197,253,0.26)',
                       boxShadow: [
                         'inset 0 1px 0 rgba(255,255,255,0.18)',
