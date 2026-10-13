@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { urlForImage } from '@/lib/sanity';
 import { prefetchMuxPlayer } from '@/lib/muxPlayer';
+import { LiquidMelt, warmMelt } from '@/lib/liquidMelt';
 import type { Project } from '@/lib/types';
 
 interface ProjectCardProps {
@@ -80,6 +81,65 @@ export default function ProjectCard({
     return () => io.disconnect();
   }, [previewSrc]);
 
+  // Liquid melt between the still and the clip (see lib/liquidMelt). It melts from the
+  // still to the clip's first frame, then the live preview takes over from that same frame.
+  // The still is read through the site's own image optimizer: WebGL needs a same-origin
+  // (or CORS) image, and the Sanity CDN only allows CORS for listed origins.
+  const stillTex = `/_next/image?url=${encodeURIComponent(src)}&w=828&q=75`;
+  const firstFrame = playbackId
+    ? `https://image.mux.com/${playbackId}/thumbnail.jpg?time=0.5&width=${isReel ? 540 : 960}`
+    : null;
+  const innerRef = useRef<HTMLDivElement>(null);
+  const meltHostRef = useRef<HTMLDivElement>(null);
+  const liveRef = useRef<HTMLDivElement>(null);
+  const melt = useRef<LiquidMelt | null>(null);
+  // Where the melt starts from: the cursor (phones: bottom centre, as the card scrolls up)
+  const pointer = useRef({ x: 0.5, y: 1 });
+  const firstRun = useRef(true);
+  useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      return;
+    }
+    const live = liveRef.current;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!firstFrame || !meltHostRef.current || reduce) {
+      if (live) live.style.visibility = previewing ? 'visible' : 'hidden';
+      return;
+    }
+    melt.current ??= new LiquidMelt(meltHostRef.current, stillTex, firstFrame);
+    melt.current.pointer = pointer.current;
+    if (!previewing && live) live.style.visibility = 'hidden';
+    melt.current.to(previewing ? 1 : 0, (t) => {
+      if (t === 1 && liveRef.current) liveRef.current.style.visibility = 'visible';
+    });
+  }, [previewing, firstFrame, stillTex]);
+  useEffect(() => () => melt.current?.dispose(), []);
+
+  // Desktop: fetch the two melt frames once the card is near the screen, so even the
+  // first hover melts straight away
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !firstFrame || !window.matchMedia('(hover: hover)').matches) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        warmMelt(stillTex, firstFrame);
+        io.disconnect();
+      },
+      { rootMargin: '300px 0px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [firstFrame, stillTex]);
+
+  const trackPointer = (e: React.MouseEvent) => {
+    const r = innerRef.current?.getBoundingClientRect();
+    if (!r) return;
+    pointer.current.x = (e.clientX - r.left) / r.width;
+    pointer.current.y = (e.clientY - r.top) / r.height;
+  };
+
   const caption = project.strategicNote;
 
   return (
@@ -88,14 +148,23 @@ export default function ProjectCard({
       type="button"
       onClick={onClick}
       onPointerDown={prefetchMuxPlayer}
-      onMouseEnter={() => previewSrc && setPreview(true)}
-      onMouseLeave={() => setPreview(false)}
+      onMouseEnter={(e) => {
+        if (!previewSrc) return;
+        trackPointer(e);
+        setPreview(true);
+      }}
+      onMouseMove={trackPointer}
+      onMouseLeave={(e) => {
+        trackPointer(e);
+        setPreview(false);
+      }}
       data-cursor="play"
       whileHover={{ y: -6 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={`group relative flex-shrink-0 ${finalWidth} text-left`}
     >
       <div
+        ref={innerRef}
         className={`card-inner relative overflow-hidden rounded-2xl ${aspectClass}`}
         style={{
           background: 'var(--surface)',
@@ -111,48 +180,36 @@ export default function ProjectCard({
           sizes={isReel ? '(max-width: 768px) 50vw, 25vw' : '(max-width: 768px) 100vw, 50vw'}
           loading={load === 'lazy' ? 'lazy' : 'eager'}
           fetchPriority={load === 'high' ? 'high' : undefined}
-          className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+          className="object-cover"
         />
 
+        {/* The liquid melt draws its canvas in here while it runs */}
+        <div ref={meltHostRef} aria-hidden="true" className="absolute inset-0 pointer-events-none" />
+
         {previewMounted && previewSrc && (
-          /* Mux animated preview — a few hundred KB, far lighter than a player */
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
-            src={previewUrl()}
-            alt=""
-            aria-hidden="true"
-            onLoad={() => setPreviewLoaded(true)}
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-500"
-            style={{ opacity: previewing && previewLoaded ? 1 : 0 }}
-          />
+          /* Live layer, shown once the melt lands: the Mux animated preview (a few hundred
+             KB, far lighter than a player) over the clip's first frame, which is exactly
+             where the melt ended, for the moment before the preview has loaded */
+          <div ref={liveRef} aria-hidden="true" className="absolute inset-0" style={{ visibility: 'hidden' }}>
+            {firstFrame && (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img src={firstFrame} alt="" className="absolute inset-0 w-full h-full object-cover" />
+            )}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={previewUrl()}
+              alt=""
+              onLoad={() => setPreviewLoaded(true)}
+              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+              style={{ opacity: previewLoaded ? 1 : 0 }}
+            />
+          </div>
         )}
 
         <div
           className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
           style={{ background: 'rgba(79,142,247,0.08)' }}
         />
-
-        {/* Play affordance */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-          <div
-            style={{
-              width: 52,
-              height: 52,
-              borderRadius: '50%',
-              background: 'rgba(10,10,10,0.55)',
-              border: '1px solid rgba(79,142,247,0.50)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M4.5 2.5l9 5.5-9 5.5V2.5z" fill="var(--accent)" />
-            </svg>
-          </div>
-        </div>
 
         {/* Role tag + Retainer — single bottom bar, wraps on narrow cards */}
         {(project.roleTag || project.isRetainer) && (

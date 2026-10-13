@@ -38,22 +38,19 @@ export default function ProjectModal({
     onIndexChange((index + delta + count) % count);
   };
 
-  // Pause Lenis + lock body scroll + swap to native cursor while open.
-  // The `modal-open` body class tells globals.css to hide the custom cursor
-  // (which fights with Mux's controls) and restore the native one.
+  // Pause Lenis + lock body scroll while open. The custom cursor stays on: globals.css
+  // hides the system cursor over the player's controls too (--media-cursor).
   useEffect(() => {
     if (!isOpen) return;
 
     lenisInstance?.stop();
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    document.body.classList.add('modal-open');
     closeRef.current?.focus();
 
     return () => {
       lenisInstance?.start();
       document.body.style.overflow = prevOverflow;
-      document.body.classList.remove('modal-open');
     };
   }, [isOpen]);
 

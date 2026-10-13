@@ -9,7 +9,7 @@ interface ImageTrailProps {
   targetRef: React.RefObject<HTMLElement | null>;
 }
 
-const POOL = 14;
+const POOL = 26;
 const SPACING = 105; // px of pointer travel between frames
 
 // Life of one frame, in ms: it opens, keeps drifting with the cursor's momentum,
@@ -17,7 +17,12 @@ const SPACING = 105; // px of pointer travel between frames
 const OPEN = 520;
 const CLOSE_AT = 1350;
 const CLOSE = 650;
-const LIFE = CLOSE_AT + CLOSE;
+
+// With the cursor on the move, frames arrive faster than they expire. Past this
+// many open at once, the oldest starts shrinking early (and a bit quicker) so it
+// always zooms out; an image element is only reused once its frame has fully closed.
+const MAX_OPEN = 12;
+const CLOSE_EARLY = 420;
 
 // How much of the cursor's speed a frame inherits, and how fast that momentum fades
 const CARRY = 0.42;
@@ -34,6 +39,8 @@ interface Frame {
   vx: number; // px per ms
   vy: number;
   tilt: number;
+  closeAt: number; // when it starts shrinking
+  closeDur: number;
 }
 
 /**
@@ -58,7 +65,6 @@ export default function ImageTrail({ images, targetRef }: ImageTrailProps) {
     let prev: { x: number; y: number; t: number } | null = null;
     let vx = 0;
     let vy = 0;
-    let slot = 0;
     let shown = 0;
     let z = 1;
     let raf = 0;
@@ -66,10 +72,9 @@ export default function ImageTrail({ images, targetRef }: ImageTrailProps) {
 
     const render = (f: Frame, now: number) => {
       const age = now - f.born;
-      let scale: number;
-      if (age < OPEN) scale = easeOutExpo(age / OPEN);
-      else if (age < CLOSE_AT) scale = 1;
-      else scale = 1 - easeInOutCubic(Math.min(1, (age - CLOSE_AT) / CLOSE));
+      // Shrinks from whatever size it had reached, so an early close never jumps
+      let scale = age < OPEN ? easeOutExpo(age / OPEN) : 1;
+      if (now >= f.closeAt) scale *= 1 - easeInOutCubic(Math.min(1, (now - f.closeAt) / f.closeDur));
       // Tilt eases back towards level as the frame loses momentum
       const speed = Math.hypot(f.vx, f.vy);
       const rot = f.tilt * Math.min(1, 0.35 + speed * 1.2);
@@ -86,7 +91,7 @@ export default function ImageTrail({ images, targetRef }: ImageTrailProps) {
         f.y += f.vy * dt;
         f.vx *= decay;
         f.vy *= decay;
-        if (now - f.born >= LIFE) {
+        if (now >= f.closeAt + f.closeDur) {
           f.el.style.opacity = '0';
           live.splice(i, 1);
         } else {
@@ -121,11 +126,15 @@ export default function ImageTrail({ images, targetRef }: ImageTrailProps) {
       if (Math.hypot(x - lastSpawn.x, y - lastSpawn.y) < SPACING) return;
       lastSpawn = { x, y };
 
-      const el = pool.current[slot];
-      slot = (slot + 1) % POOL;
+      // Too many open: send the oldest still-open frames on their way out early
+      const open = live.filter((f) => now < f.closeAt);
+      for (let i = 0; i <= open.length - MAX_OPEN; i++) {
+        open[i].closeAt = now;
+        open[i].closeDur = CLOSE_EARLY;
+      }
+      // Only ever use an element whose frame has finished; never cut one off
+      const el = pool.current.find((img) => img && !live.some((f) => f.el === img));
       if (!el) return;
-      const reused = live.findIndex((f) => f.el === el);
-      if (reused !== -1) live.splice(reused, 1);
 
       el.src = images[shown++ % images.length];
       el.style.zIndex = String(z++);
@@ -141,6 +150,8 @@ export default function ImageTrail({ images, targetRef }: ImageTrailProps) {
         vx: vx * k * CARRY,
         vy: vy * k * CARRY,
         tilt: Math.max(-14, Math.min(14, vx * 9)) + (Math.random() - 0.5) * 5,
+        closeAt: now + CLOSE_AT,
+        closeDur: CLOSE,
       };
       live.push(f);
       render(f, now);

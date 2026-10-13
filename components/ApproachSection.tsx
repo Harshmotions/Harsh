@@ -117,7 +117,8 @@ export default function ApproachSection({ steps }: ApproachSectionProps) {
   const data = steps && steps.length === 3 ? steps : FALLBACK_STEPS;
 
   return (
-    <section className="py-14 md:py-20" id="approach">
+    // overflow-x-clip: the cards' glow reaches past the screen edge on phones
+    <section className="py-14 md:py-20 overflow-x-clip" id="approach">
       <Container>
         <Reveal as="p" y={10} className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-3">
           <ScrambleText text="Approach" replayOnHover />

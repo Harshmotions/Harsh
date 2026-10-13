@@ -471,13 +471,11 @@ button:focus-visible .card-inner {
   }
 }
 
-body.modal-open .site-shell,
-body.modal-open .site-shell * {
-  cursor: auto;
-}
-
-body.modal-open .custom-cursor {
-  display: none;
+/* Mux's player controls live in shadow DOM, out of reach of the rule above, but they
+   take their cursor from this variable. Fullscreen keeps the system cursor, since the
+   custom one can't be drawn over a fullscreen element. */
+.site-shell mux-player:not(:fullscreen) {
+  --media-cursor: none;
 }
 
 @media (hover: none) {
