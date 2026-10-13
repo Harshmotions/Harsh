@@ -377,8 +377,14 @@ export default function Hero({
                       position: 'relative',
                       borderRadius: 32,
                       padding: 6,
-                      background:
-                        'linear-gradient(150deg, rgba(255,255,255,0.20) 0%, rgba(79,142,247,0.14) 45%, rgba(255,255,255,0.05) 100%)',
+                      // Sheen on a tinted navy base: reads as frosted glass from the first
+                      // frame, even before (or without) the backdrop blur, which Chrome can
+                      // skip while the frame is animating or tilted
+                      background: [
+                        'linear-gradient(150deg, rgba(255,255,255,0.18) 0%, rgba(79,142,247,0.14) 45%, rgba(255,255,255,0.05) 100%)',
+                        'radial-gradient(120% 90% at 20% 0%, rgba(79,142,247,0.22), transparent 60%)',
+                        'linear-gradient(rgba(10,18,36,0.82), rgba(8,14,28,0.86))',
+                      ].join(', '),
                       backdropFilter: 'blur(18px)',
                       WebkitBackdropFilter: 'blur(18px)',
                       border: '1px solid rgba(147,197,253,0.26)',
