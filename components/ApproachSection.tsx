@@ -1,12 +1,14 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect } from 'react';
 import Image from 'next/image';
-import { motion, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion';
+import { motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion';
 import Container from '@/components/ui/Container';
 import RevealText from '@/components/motion/RevealText';
 import type { ApproachStep } from '@/lib/types';
 import ScrambleText from '@/components/motion/ScrambleText';
+import Reveal from '@/components/motion/Reveal';
+import { EASE_SETTLE, useReplayInView } from '@/components/motion/useReplayInView';
 
 interface ApproachSectionProps {
   steps?: ApproachStep[];
@@ -42,13 +44,14 @@ function PremiumCard({
   children: React.ReactNode;
   delay?: number;
 }) {
+  const [ref, inView] = useReplayInView<HTMLDivElement>('-80px');
   return (
     <motion.div
+      ref={ref}
       className="approach-card-wrapper"
-      initial={{ opacity: 0, y: 32 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, y: 40 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+      transition={{ duration: 1.2, delay, ease: EASE_SETTLE }}
     >
       <div aria-hidden="true" className="approach-card-bloom" />
       <div className="approach-card-edge">
@@ -80,9 +83,18 @@ function ProcessNode({ pos, progress }: { pos: number; progress: MotionValue<num
 }
 
 function ProcessLine() {
-  const ref = useRef<HTMLDivElement>(null);
+  const [ref, inView] = useReplayInView<HTMLDivElement>('0px');
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.85', 'start 0.35'] });
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 28, restDelta: 0.001 });
+  // Only ever draws forward: scrolling back up leaves it as it is, and it resets
+  // once it is below the screen so it draws again on the way back down
+  const furthest = useMotionValue(0);
+  useMotionValueEvent(scrollYProgress, 'change', (v) => {
+    if (v > furthest.get()) furthest.set(v);
+  });
+  useEffect(() => {
+    if (!inView) furthest.jump(0);
+  }, [inView, furthest]);
+  const progress = useSpring(furthest, { stiffness: 55, damping: 20, restDelta: 0.001 });
   return (
     <div ref={ref} aria-hidden="true" className="hidden md:block relative h-6 mb-8">
       <div className="absolute inset-x-0 top-1/2 h-px" style={{ background: 'var(--border)' }} />
@@ -107,15 +119,9 @@ export default function ApproachSection({ steps }: ApproachSectionProps) {
   return (
     <section className="py-14 md:py-20" id="approach">
       <Container>
-        <motion.p
-          initial={{ opacity: 0, y: 8 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6 }}
-          className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-3"
-        >
+        <Reveal as="p" y={10} className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-3">
           <ScrambleText text="Approach" replayOnHover />
-        </motion.p>
+        </Reveal>
 
         <RevealText
           text="From brief to final cut."

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion, type Variants } from 'framer-motion';
+import { EASE_SETTLE, useReplayInView } from '@/components/motion/useReplayInView';
 
 interface RevealTextProps {
   text: string;
@@ -13,12 +14,12 @@ interface RevealTextProps {
 
 const container: Variants = {
   hidden: {},
-  show: (delay: number) => ({ transition: { staggerChildren: 0.07, delayChildren: delay } }),
+  show: (delay: number) => ({ transition: { staggerChildren: 0.08, delayChildren: delay } }),
 };
 
 const word: Variants = {
-  hidden: { y: '110%' },
-  show: { y: '0%', transition: { duration: 0.85, ease: [0.22, 1, 0.36, 1] } },
+  hidden: { y: '110%', rotate: 4 },
+  show: { y: '0%', rotate: 0, transition: { duration: 1.3, ease: EASE_SETTLE } },
 };
 
 const tags = { h1: motion.h1, h2: motion.h2, h3: motion.h3, p: motion.p };
@@ -30,14 +31,16 @@ const tags = { h1: motion.h1, h2: motion.h2, h3: motion.h3, p: motion.p };
 export default function RevealText({ text, as = 'h2', className, style, delay = 0 }: RevealTextProps) {
   const Tag = tags[as];
   const words = text.split(/\s+/).filter(Boolean);
+  const [ref, inView] = useReplayInView<HTMLHeadingElement>('-80px');
 
   return (
     <Tag
       className={className}
       style={style}
+      // All four tags are block text elements; the ref type only differs nominally
+      ref={ref as React.Ref<HTMLHeadingElement & HTMLParagraphElement>}
       initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, margin: '-80px' }}
+      animate={inView ? 'show' : 'hidden'}
       variants={container}
       custom={delay}
     >
@@ -46,7 +49,7 @@ export default function RevealText({ text, as = 'h2', className, style, delay = 
         <span key={i} aria-hidden="true">
           {/* Padding + negative margin keep descenders (g, y, p) inside the mask */}
           <span className="inline-block overflow-hidden align-bottom pb-[0.14em] -mb-[0.14em]">
-            <motion.span className="inline-block" variants={word}>
+            <motion.span className="inline-block origin-bottom-left" variants={word}>
               {w}
             </motion.span>
           </span>

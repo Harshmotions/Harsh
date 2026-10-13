@@ -9,13 +9,39 @@ interface ImageTrailProps {
   targetRef: React.RefObject<HTMLElement | null>;
 }
 
-const POOL = 12;
-const SPACING = 110; // px of pointer travel between frames
+const POOL = 14;
+const SPACING = 105; // px of pointer travel between frames
+
+// Life of one frame, in ms: it opens, keeps drifting with the cursor's momentum,
+// then shrinks away to nothing.
+const OPEN = 520;
+const CLOSE_AT = 1350;
+const CLOSE = 650;
+const LIFE = CLOSE_AT + CLOSE;
+
+// How much of the cursor's speed a frame inherits, and how fast that momentum fades
+const CARRY = 0.42;
+const FRICTION_MS = 520; // time constant of the exponential slow-down
+
+const easeOutExpo = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
+const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+interface Frame {
+  el: HTMLImageElement;
+  born: number;
+  x: number;
+  y: number;
+  vx: number; // px per ms
+  vy: number;
+  tilt: number;
+}
 
 /**
- * Frames from real projects that open up along the cursor's path and drift
- * after it before closing again. Desktop (mouse) only; the images load the
- * first time the pointer enters, so they never compete with the page load.
+ * Frames from real projects that open along the cursor's path. Each one picks up
+ * the cursor's velocity and keeps drifting the way it was going, slowing down
+ * smoothly, so a quick flick throws frames further than a slow glide. After a
+ * short hold it shrinks to zero. Desktop (mouse) only; the images load the first
+ * time the pointer enters, so they never compete with the page load.
  */
 export default function ImageTrail({ images, targetRef }: ImageTrailProps) {
   const pool = useRef<(HTMLImageElement | null)[]>([]);
@@ -27,10 +53,49 @@ export default function ImageTrail({ images, targetRef }: ImageTrailProps) {
     if (!target || images.length === 0 || reduceMotion) return;
     if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
-    let last: { x: number; y: number } | null = null;
+    const live: Frame[] = [];
+    let lastSpawn: { x: number; y: number } | null = null;
+    let prev: { x: number; y: number; t: number } | null = null;
+    let vx = 0;
+    let vy = 0;
     let slot = 0;
     let shown = 0;
     let z = 1;
+    let raf = 0;
+    let lastTick = 0;
+
+    const render = (f: Frame, now: number) => {
+      const age = now - f.born;
+      let scale: number;
+      if (age < OPEN) scale = easeOutExpo(age / OPEN);
+      else if (age < CLOSE_AT) scale = 1;
+      else scale = 1 - easeInOutCubic(Math.min(1, (age - CLOSE_AT) / CLOSE));
+      // Tilt eases back towards level as the frame loses momentum
+      const speed = Math.hypot(f.vx, f.vy);
+      const rot = f.tilt * Math.min(1, 0.35 + speed * 1.2);
+      f.el.style.transform = `translate3d(${f.x}px, ${f.y}px, 0) translate(-50%, -50%) scale(${scale}) rotate(${rot}deg)`;
+    };
+
+    const tick = (now: number) => {
+      const dt = Math.min(48, now - (lastTick || now));
+      lastTick = now;
+      const decay = Math.exp(-dt / FRICTION_MS);
+      for (let i = live.length - 1; i >= 0; i--) {
+        const f = live[i];
+        f.x += f.vx * dt;
+        f.y += f.vy * dt;
+        f.vx *= decay;
+        f.vy *= decay;
+        if (now - f.born >= LIFE) {
+          f.el.style.opacity = '0';
+          live.splice(i, 1);
+        } else {
+          render(f, now);
+        }
+      }
+      raf = live.length ? requestAnimationFrame(tick) : 0;
+      if (!raf) lastTick = 0;
+    };
 
     const onEnter = () => setActive(true);
 
@@ -39,45 +104,61 @@ export default function ImageTrail({ images, targetRef }: ImageTrailProps) {
       const rect = target.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      if (!last) {
-        last = { x, y };
+      const now = performance.now();
+
+      // Smoothed cursor velocity (px/ms)
+      if (prev) {
+        const dt = Math.max(1, now - prev.t);
+        vx = vx * 0.6 + ((x - prev.x) / dt) * 0.4;
+        vy = vy * 0.6 + ((y - prev.y) / dt) * 0.4;
+      }
+      prev = { x, y, t: now };
+
+      if (!lastSpawn) {
+        lastSpawn = { x, y };
         return;
       }
-      const dx = x - last.x;
-      const dy = y - last.y;
-      if (Math.hypot(dx, dy) < SPACING) return;
-      last = { x, y };
+      if (Math.hypot(x - lastSpawn.x, y - lastSpawn.y) < SPACING) return;
+      lastSpawn = { x, y };
 
       const el = pool.current[slot];
       slot = (slot + 1) % POOL;
       if (!el) return;
+      const reused = live.findIndex((f) => f.el === el);
+      if (reused !== -1) live.splice(reused, 1);
+
       el.src = images[shown++ % images.length];
       el.style.zIndex = String(z++);
-
-      // Lean into the direction of travel, then drift on along it while closing
-      const tilt = Math.max(-12, Math.min(12, dx * 0.08)) + (Math.random() - 0.5) * 6;
-      const at = (ox: number, oy: number, s: number, r: number) =>
-        `translate3d(${x + ox}px, ${y + oy}px, 0) translate(-50%, -50%) scale(${s}) rotate(${r}deg)`;
-      el.getAnimations().forEach((a) => a.cancel());
-      el.animate(
-        [
-          { transform: at(0, 0, 0.7, tilt * 1.6), clipPath: 'inset(50% 50% 50% 50% round 14px)', opacity: 1 },
-          { transform: at(dx * 0.15, dy * 0.15, 1, tilt), clipPath: 'inset(0% 0% 0% 0% round 14px)', opacity: 1, offset: 0.28 },
-          { transform: at(dx * 0.45, dy * 0.45, 1, tilt * 0.6), clipPath: 'inset(0% 0% 0% 0% round 14px)', opacity: 1, offset: 0.62 },
-          { transform: at(dx * 0.7, dy * 0.7 + 24, 0.86, tilt * 0.4), clipPath: 'inset(50% 50% 50% 50% round 14px)', opacity: 0.6 },
-        ],
-        { duration: 1400, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' },
-      );
+      el.style.opacity = '1';
+      // Cap the throw so a violent flick doesn't fling frames off screen
+      const cap = 2.6;
+      const k = Math.min(1, cap / Math.max(0.001, Math.hypot(vx, vy)));
+      const f: Frame = {
+        el,
+        born: now,
+        x,
+        y,
+        vx: vx * k * CARRY,
+        vy: vy * k * CARRY,
+        tilt: Math.max(-14, Math.min(14, vx * 9)) + (Math.random() - 0.5) * 5,
+      };
+      live.push(f);
+      render(f, now);
+      if (!raf) raf = requestAnimationFrame(tick);
     };
 
     const onLeave = () => {
-      last = null;
+      lastSpawn = null;
+      prev = null;
+      vx = 0;
+      vy = 0;
     };
 
     target.addEventListener('pointerenter', onEnter);
     target.addEventListener('pointermove', onMove);
     target.addEventListener('pointerleave', onLeave);
     return () => {
+      cancelAnimationFrame(raf);
       target.removeEventListener('pointerenter', onEnter);
       target.removeEventListener('pointermove', onMove);
       target.removeEventListener('pointerleave', onLeave);
@@ -111,6 +192,7 @@ export default function ImageTrail({ images, targetRef }: ImageTrailProps) {
             aspectRatio: '4 / 5',
             borderRadius: 14,
             opacity: 0,
+            transform: 'scale(0)',
             boxShadow: '0 18px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(147,197,253,0.18)',
             willChange: 'transform',
           }}

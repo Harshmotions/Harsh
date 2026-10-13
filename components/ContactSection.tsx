@@ -1,10 +1,10 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import Container from '@/components/ui/Container';
 import ProjectBriefForm from '@/components/ProjectBriefForm';
 import RevealText from '@/components/motion/RevealText';
 import ScrambleText from '@/components/motion/ScrambleText';
+import Reveal from '@/components/motion/Reveal';
 
 interface ContactSectionProps {
   headline?: string;
@@ -14,41 +14,32 @@ interface ContactSectionProps {
 
 const FALLBACK_HEADLINE = "Got a project? Let's make it move.";
 
-const reveal = {
-  initial: { opacity: 0, y: 16 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-80px' },
-};
-
 export default function ContactSection({ headline, whatsappNumber, emailAddress }: ContactSectionProps) {
   return (
     <section id="contact" className="py-14 md:py-20" style={{ borderTop: '1px solid var(--border)' }}>
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           <div className="lg:col-span-5 lg:sticky lg:top-28">
-            <motion.p
-              {...reveal}
-              transition={{ duration: 0.6 }}
-              className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-5"
-            >
+            <Reveal as="p" y={10} margin="-80px" className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-5">
               <ScrambleText text="Start a project" replayOnHover />
-            </motion.p>
+            </Reveal>
             <RevealText
               text={headline ?? FALLBACK_HEADLINE}
               className="font-display font-semibold text-text mb-6 text-balance"
               style={{ fontSize: 'clamp(32px, 3.8vw, 54px)', lineHeight: 1.05, letterSpacing: '-0.02em' }}
             />
-            <motion.p
-              {...reveal}
-              transition={{ duration: 0.7, delay: 0.1 }}
+            <Reveal
+              as="p"
+              margin="-80px"
+              delay={0.15}
               className="font-body text-text-muted mb-8 max-w-md"
               style={{ fontSize: '1rem', lineHeight: 1.65 }}
             >
               Tell me the goal. I&apos;ll reply within a few hours.
-            </motion.p>
+            </Reveal>
 
             {(whatsappNumber || emailAddress) && (
-              <motion.div {...reveal} transition={{ duration: 0.7, delay: 0.2 }} className="space-y-3">
+              <Reveal margin="-80px" delay={0.25} className="space-y-3">
                 <p className="font-body text-xs uppercase tracking-[0.18em] text-text-muted">Or reach me directly</p>
                 <div className="flex flex-wrap gap-3">
                   {whatsappNumber && (
@@ -72,17 +63,13 @@ export default function ContactSection({ headline, whatsappNumber, emailAddress 
                     </a>
                   )}
                 </div>
-              </motion.div>
+              </Reveal>
             )}
           </div>
 
-          <motion.div
-            {...reveal}
-            transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-7"
-          >
+          <Reveal y={32} duration={1.2} delay={0.1} margin="-80px" className="lg:col-span-7">
             <ProjectBriefForm whatsappNumber={whatsappNumber} emailAddress={emailAddress} />
-          </motion.div>
+          </Reveal>
         </div>
       </Container>
     </section>

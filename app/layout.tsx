@@ -91,6 +91,16 @@ export default function RootLayout({
             __html: `try{if(location.pathname==='/'&&!sessionStorage.getItem('mbh-intro')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){sessionStorage.setItem('mbh-intro','1');var d=document.documentElement;d.setAttribute('data-intro','');d.style.setProperty('--intro','1.45s');setTimeout(function(){d.removeAttribute('data-intro');d.style.removeProperty('--intro')},6500)}}catch(e){}`,
           }}
         />
+        {/* Zoom for the hero composition on screens past 1440px (see .hero-grid in
+            globals.css): as large as fits a centred box about 76% of the screen wide
+            (never less than the 1344px design) and the full-screen hero's height
+            (412px design height, minus ~170px for the nav and breathing room).
+            Set before first paint so the hero never jumps. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var d=document.documentElement;function z(){var w=innerWidth,h=innerHeight,s=1;if(w>=1440){var box=Math.min(w-96,Math.max(1344,0.76*w));s=Math.max(1,Math.min(box/1344,(h-170)/412,1.8))}d.style.setProperty('--hero-zoom',s.toFixed(4))}z();addEventListener('resize',z)})();`,
+          }}
+        />
       </head>
       <body className="antialiased">
         {children}

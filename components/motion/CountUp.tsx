@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { animate, motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'framer-motion';
+import { useEffect } from 'react';
+import { animate, motion, useMotionValue, useReducedMotion, useTransform } from 'framer-motion';
+import { EASE_SETTLE, useReplayInView } from '@/components/motion/useReplayInView';
 
 /**
  * Counts a stat like "400+" or "3M+" up from 0 when it scrolls into view.
@@ -12,8 +13,7 @@ export default function CountUp({ value }: { value: string }) {
   const target = match ? Number(match[1]) : 0;
   const suffix = match ? match[2] : value;
 
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const [ref, inView] = useReplayInView<HTMLSpanElement>();
   const reduceMotion = useReducedMotion();
   const count = useMotionValue(target);
   const text = useTransform(count, (v) => `${Math.round(v)}${suffix}`);
@@ -21,7 +21,7 @@ export default function CountUp({ value }: { value: string }) {
   useEffect(() => {
     if (!inView || reduceMotion || !target) return;
     count.set(0);
-    const controls = animate(count, target, { duration: 1.6, ease: [0.16, 1, 0.3, 1] });
+    const controls = animate(count, target, { duration: 2, ease: EASE_SETTLE });
     return () => controls.stop();
   }, [inView, reduceMotion, target, count]);
 

@@ -1,7 +1,6 @@
 'use client';
 
 import { Fragment, useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { preconnect } from 'react-dom';
 import {
@@ -14,9 +13,7 @@ import {
   useSpring,
   useTransform,
 } from 'framer-motion';
-import Container from '@/components/ui/Container';
 import MagneticButton from '@/components/MagneticButton';
-import Button from '@/components/ui/Button';
 import { lenisInstance } from '@/components/SmoothScroll';
 import HeroGridCanvas from '@/components/HeroGridCanvas';
 import ImageTrail from '@/components/motion/ImageTrail';
@@ -55,7 +52,7 @@ const introSeconds = () =>
 function Eyebrow({ className = '' }: { className?: string }) {
   return (
     <p
-      className={`hero-rise [--rise:8px] [--rise-duration:0.7s] items-center gap-2.5 rounded-full font-body uppercase whitespace-nowrap text-[10.5px] md:text-[11px] tracking-[0.14em] md:tracking-[0.2em] px-3.5 py-1.5 ${className}`}
+      className={`hero-rise [--rise:8px] [--rise-duration:0.7s] items-center gap-2.5 rounded-full font-body uppercase whitespace-nowrap text-[10.5px] md:text-[11px] tracking-[0.14em] md:tracking-[0.2em] px-3.5 py-1.5 lg:text-[8.25px] lg:px-[10.5px] lg:py-[4.5px] lg:gap-[7.5px] ${className}`}
       style={{
         color: 'rgba(240,237,232,0.78)',
         background: 'rgba(255,255,255,0.03)',
@@ -68,9 +65,77 @@ function Eyebrow({ className = '' }: { className?: string }) {
         <span className="absolute inset-0 rounded-full animate-ping" style={{ background: 'var(--accent)', opacity: 0.6 }} />
         <span className="relative rounded-full" style={{ width: 6, height: 6, background: 'var(--accent)', boxShadow: '0 0 10px rgba(79,142,247,0.8)' }} />
       </span>
-      <ScrambleText className="md:hidden" text="Ads · SaaS motion · Long-form" trigger="mount" delay={0.2} />
-      <ScrambleText className="hidden md:inline" text="Performance ads · SaaS motion · Long-form edits" trigger="mount" delay={0.2} duration={1} />
+      {/* Short version on phones and on narrower desktops, where the copy column is tight */}
+      <ScrambleText className="md:hidden lg:inline xl:hidden" text="Ads · SaaS motion · Long-form" trigger="mount" delay={0.2} />
+      <ScrambleText className="hidden md:inline lg:hidden xl:inline" text="Performance ads · SaaS motion · Long-form edits" trigger="mount" delay={0.2} duration={1} />
     </p>
+  );
+}
+
+/** The one call to action in the hero: an ember-lit pill that scrolls to the brief form. */
+function CtaButton() {
+  return (
+    <motion.button
+      onClick={() => {
+        const el = document.getElementById('contact');
+        if (el) lenisInstance?.scrollTo(el, { duration: 1.2 });
+      }}
+      whileHover={{
+        borderColor: 'rgba(255,107,43,0.92)',
+        boxShadow: [
+          '0 6px 24px rgba(0,0,0,0.65)',
+          '0 0 38px rgba(255,107,43,0.45)',
+          '0 0 14px rgba(255,107,43,0.30)',
+          'inset 0 1px 0 rgba(255,255,255,0.09)',
+        ].join(', '),
+        filter: 'brightness(1.16)',
+      }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ duration: 0.22, ease: 'easeOut' }}
+      className="font-body group"
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        fontSize: 'var(--cta-size, 0.875rem)',
+        fontWeight: 600,
+        letterSpacing: '0.03em',
+        borderRadius: 9999,
+        border: '1px solid rgba(255,107,43,0.62)',
+        padding: 'var(--cta-pad, 13px 32px)',
+        color: 'rgba(255,240,228,0.97)',
+        background: 'linear-gradient(170deg, #110805 0%, #060B14 55%)',
+        boxShadow: [
+          '0 4px 18px rgba(0,0,0,0.58)',
+          '0 0 24px rgba(255,107,43,0.22)',
+          'inset 0 1px 0 rgba(255,255,255,0.07)',
+          'inset 0 -1px 0 rgba(255,107,43,0.12)',
+        ].join(', '),
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {/* Pulsing glow rising from bottom-center — clipped inside pill */}
+      <motion.div
+        aria-hidden="true"
+        animate={{ opacity: [0.45, 1, 0.45] }}
+        transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '85%',
+          height: '180%',
+          background:
+            'radial-gradient(ellipse at 50% 100%, rgba(255,107,43,0.70), rgba(255,107,43,0.32) 32%, transparent 65%)',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
+      <span className="relative z-[1] inline-flex items-center gap-2">
+        Start a Project
+        <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+      </span>
+    </motion.button>
   );
 }
 
@@ -199,13 +264,15 @@ export default function Hero({
   const dim = useTransform(scrollY, [0, 700], [0, reduceMotion ? 0 : 0.65]);
 
   const lastWord = words.length - 1;
-  const textDelay = 0.12 + words.length * 0.08 + 0.35;
+  const textDelay = 0.12 + words.length * 0.09 + 0.4;
 
   return (
     <section
       ref={sectionRef}
-      // Bottom padding leaves room for the next panel, which overlaps the hero's bottom edge
-      className="relative flex items-center overflow-hidden min-h-[80svh] pb-14 md:pb-[clamp(72px,9svh,104px)]"
+      // Bottom padding leaves room for the next panel, which overlaps the hero's bottom edge.
+      // Desktop: the hero owns the whole first screen. It is 48px taller than the viewport
+      // to absorb that overlap, so the next section starts exactly at the fold.
+      className="relative flex items-center overflow-hidden min-h-[80svh] lg:min-h-[calc(100svh+48px)] pb-14 md:pb-[clamp(72px,9svh,104px)] lg:pb-[100px]"
       style={{ paddingTop: 'clamp(80px, 7vw, 100px)' }}
     >
       <HeroGridCanvas />
@@ -223,17 +290,18 @@ export default function Hero({
       />
 
       <motion.div className="w-full relative z-10" style={{ y: sinkY, scale: sinkScale }}>
-        <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-12 items-center lg:gap-x-12 xl:gap-x-16">
+        {/* Centred composition; on desktop the column sizes come from .hero-grid in globals.css */}
+        <div className="mx-auto max-w-[1440px] min-[1440px]:max-w-none px-6 md:px-12">
+          <div className="hero-grid grid grid-cols-1 items-center">
 
             {/* ── Copy ─────────────────────────────────────────────────── */}
-            <div className="order-2 lg:order-1 lg:col-span-5 text-center lg:text-left">
-              <Eyebrow className="hidden lg:inline-flex mb-7" />
+            <div className="order-2 lg:order-1 text-center lg:text-left">
+              <Eyebrow className="hidden lg:inline-flex mb-4" />
 
               {/* The headline only slides, never fades: Chrome doesn't count text first
                   painted at opacity 0 as the Largest Contentful Paint. */}
               <h1
-                className="font-display font-bold text-[length:clamp(40px,11vw,64px)] lg:text-[length:clamp(44px,min(5.3vw,9.6svh),90px)]"
+                className="hero-title font-display font-bold text-[length:clamp(40px,11vw,64px)]"
                 style={{ color: '#ffffff', lineHeight: 0.98, letterSpacing: '-0.035em' }}
               >
                 {words.map((w, i) => (
@@ -241,7 +309,7 @@ export default function Hero({
                     <span className="inline-block overflow-hidden align-bottom pt-[0.08em] -mt-[0.08em] pb-[0.16em] -mb-[0.16em] pr-[0.1em] -mr-[0.1em]">
                       <span
                         className="hero-word"
-                        style={{ '--word-delay': `${0.12 + i * 0.08}s` } as React.CSSProperties}
+                        style={{ '--word-delay': `${0.12 + i * 0.09}s` } as React.CSSProperties}
                       >
                         {i === lastWord && words.length > 1 ? (
                           <span
@@ -261,10 +329,9 @@ export default function Hero({
               </h1>
 
               <p
-                className="hero-rise [--rise:16px] [--rise-duration:0.8s] font-body mt-4 lg:mt-6 mx-auto lg:mx-0 max-w-xl lg:max-w-md line-clamp-2 md:line-clamp-none"
+                className="hero-rise [--rise:18px] [--rise-duration:1.2s] font-body mt-4 lg:mt-3 mx-auto lg:mx-0 max-w-xl lg:max-w-md line-clamp-2 md:line-clamp-none text-[length:clamp(0.9375rem,1.25vw,1.125rem)] lg:text-[13.5px]"
                 style={{
                   color: 'rgba(255,255,255,0.72)',
-                  fontSize: 'clamp(0.9375rem, 1.25vw, 1.125rem)',
                   lineHeight: 1.55,
                   '--rise-delay': `${textDelay}s`,
                 } as React.CSSProperties}
@@ -272,25 +339,20 @@ export default function Hero({
                 {subline ?? DEFAULT_SUBLINE}
               </p>
 
-              <div
-                className="hero-rise [--rise:12px] [--rise-duration:0.8s] flex flex-wrap justify-center lg:justify-start gap-3 md:gap-4 mt-5 lg:mt-9"
-                style={{ '--rise-delay': `${textDelay + 0.12}s` } as React.CSSProperties}
+              {/* Desktop: the CTA rises in under the copy (the nav already links to the work) */}
+              <motion.div
+                initial={{ y: 28, opacity: 0 }}
+                animate={ctaControls}
+                className="hidden lg:flex mt-5 [--cta-pad:10px_25px] [--cta-size:0.75rem]"
               >
-                <MagneticButton>
-                  <Link href="/reels">
-                    <Button variant="ghost">View Reels</Button>
-                  </Link>
+                <MagneticButton strength={0.25}>
+                  <CtaButton />
                 </MagneticButton>
-                <MagneticButton>
-                  <Link href="/landscape">
-                    <Button variant="ghost">View Landscape</Button>
-                  </Link>
-                </MagneticButton>
-              </div>
+              </motion.div>
             </div>
 
             {/* ── Showreel ─────────────────────────────────────────────── */}
-            <div className="order-1 lg:order-2 lg:col-span-7 flex flex-col items-center">
+            <div className="order-1 lg:order-2 flex flex-col items-center">
               <Eyebrow className="inline-flex lg:hidden mb-4" />
 
               {videoPlaybackId && (
@@ -392,78 +454,19 @@ export default function Hero({
                 </div>
               )}
 
+              {/* Phones: the CTA bounces out from under the reel */}
               <motion.div
                 initial={{ y: videoPlaybackId ? -64 : 0, opacity: 0 }}
                 animate={ctaControls}
-                className="flex justify-center mt-5 mb-6 lg:mb-0 lg:mt-7"
+                className="flex lg:hidden justify-center mt-5 mb-6"
                 style={{ position: 'relative', zIndex: 1 }}
               >
-                <motion.button
-                  onClick={() => {
-                    const el = document.getElementById('contact');
-                    if (el) lenisInstance?.scrollTo(el, { duration: 1.2 });
-                  }}
-                  whileHover={{
-                    borderColor: 'rgba(255,107,43,0.92)',
-                    boxShadow: [
-                      '0 6px 24px rgba(0,0,0,0.65)',
-                      '0 0 38px rgba(255,107,43,0.45)',
-                      '0 0 14px rgba(255,107,43,0.30)',
-                      'inset 0 1px 0 rgba(255,255,255,0.09)',
-                    ].join(', '),
-                    filter: 'brightness(1.16)',
-                  }}
-                  whileTap={{ scale: 0.97 }}
-                  transition={{ duration: 0.22, ease: 'easeOut' }}
-                  className="font-body group"
-                  style={{
-                    position: 'relative',
-                    overflow: 'hidden',
-                    fontSize: '0.875rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.03em',
-                    borderRadius: 9999,
-                    border: '1px solid rgba(255,107,43,0.62)',
-                    padding: '13px 32px',
-                    color: 'rgba(255,240,228,0.97)',
-                    background: 'linear-gradient(170deg, #110805 0%, #060B14 55%)',
-                    boxShadow: [
-                      '0 4px 18px rgba(0,0,0,0.58)',
-                      '0 0 24px rgba(255,107,43,0.22)',
-                      'inset 0 1px 0 rgba(255,255,255,0.07)',
-                      'inset 0 -1px 0 rgba(255,107,43,0.12)',
-                    ].join(', '),
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {/* Pulsing glow rising from bottom-center — clipped inside pill */}
-                  <motion.div
-                    aria-hidden="true"
-                    animate={{ opacity: [0.45, 1, 0.45] }}
-                    transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
-                    style={{
-                      position: 'absolute',
-                      bottom: 0,
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      width: '85%',
-                      height: '180%',
-                      background:
-                        'radial-gradient(ellipse at 50% 100%, rgba(255,107,43,0.70), rgba(255,107,43,0.32) 32%, transparent 65%)',
-                      pointerEvents: 'none',
-                      zIndex: 0,
-                    }}
-                  />
-                  <span className="relative z-[1] inline-flex items-center gap-2">
-                    Start a Project
-                    <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
-                  </span>
-                </motion.button>
+                <CtaButton />
               </motion.div>
             </div>
 
           </div>
-        </Container>
+        </div>
       </motion.div>
     </section>
   );

@@ -1,12 +1,12 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { toPlainText } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/types';
 import Container from '@/components/ui/Container';
 import RevealText from '@/components/motion/RevealText';
 import ScrollHighlightText from '@/components/motion/ScrollHighlightText';
 import ScrambleText from '@/components/motion/ScrambleText';
+import Reveal from '@/components/motion/Reveal';
 
 interface AboutSectionProps {
   body?: PortableTextBlock[];
@@ -85,15 +85,9 @@ export default function AboutSection({ body, portraitUrl }: AboutSectionProps) {
   return (
     <section id="about" className="py-14 md:py-20 overflow-x-clip" style={{ borderTop: '1px solid var(--border)' }}>
       <Container>
-        <motion.p
-          initial={{ opacity: 0, y: 8 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6 }}
-          className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-8"
-        >
+        <Reveal as="p" y={10} className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-8">
           <ScrambleText text="About" replayOnHover />
-        </motion.p>
+        </Reveal>
 
         <div
           className={portraitUrl ? 'grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center' : 'max-w-4xl'}

@@ -1,9 +1,9 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import Container from '@/components/ui/Container';
 import CountUp from '@/components/motion/CountUp';
 import ScrambleText from '@/components/motion/ScrambleText';
+import Reveal from '@/components/motion/Reveal';
 
 const STATS = [
   {
@@ -35,25 +35,18 @@ export default function ImpactStats() {
       style={{ borderTop: '1px solid var(--border)' }}
     >
       <Container>
-        <motion.p
-          initial={{ opacity: 0, y: 8 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.6 }}
-          className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-8"
-        >
+        <Reveal as="p" y={10} className="font-body text-text-muted text-xs uppercase tracking-[0.2em] mb-8">
           <ScrambleText text="By the numbers" replayOnHover />
-        </motion.p>
+        </Reveal>
 
         {/* Button-card grid: 4-col desktop, 2×2 mobile */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {STATS.map(({ value, label, description }, i) => (
-            <motion.div
+            <Reveal
               key={label}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.55, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              y={24}
+              duration={1.1}
+              delay={i * 0.09}
               className="flex flex-col gap-1.5 rounded-xl p-4 md:p-5"
               style={{
                 border: '1px solid var(--border)',
@@ -83,7 +76,7 @@ export default function ImpactStats() {
               >
                 {description}
               </span>
-            </motion.div>
+            </Reveal>
           ))}
         </div>
       </Container>

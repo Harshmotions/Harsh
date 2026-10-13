@@ -31,7 +31,7 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 .hero-rise {
-  animation: hero-rise var(--rise-duration, 0.9s) cubic-bezier(0.22, 1, 0.36, 1) calc(var(--intro, 0s) + var(--rise-delay, 0s)) both;
+  animation: hero-rise var(--rise-duration, 1.1s) cubic-bezier(0.16, 1, 0.3, 1) calc(var(--intro, 0s) + var(--rise-delay, 0s)) both;
 }
 
 /* Headline: each word rises out of its own mask, tipping upright as it lands */
@@ -42,7 +42,7 @@
 .hero-word {
   display: inline-block;
   transform-origin: 0% 100%;
-  animation: hero-word 1.1s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--intro, 0s) + var(--word-delay, 0s)) both;
+  animation: hero-word 1.5s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--intro, 0s) + var(--word-delay, 0s)) both;
 }
 
 /* Light sweeping across the gradient word every few seconds */
@@ -73,10 +73,10 @@
   to   { transform: scale(1); }
 }
 .hero-unveil {
-  animation: hero-unveil 1.4s cubic-bezier(0.65, 0, 0.35, 1) calc(var(--intro, 0s) + 0.15s) both;
+  animation: hero-unveil 1.8s cubic-bezier(0.77, 0, 0.18, 1) calc(var(--intro, 0s) + 0.15s) both;
 }
 .hero-settle {
-  animation: hero-settle 2.2s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--intro, 0s) + 0.15s) both;
+  animation: hero-settle 2.8s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--intro, 0s) + 0.15s) both;
 }
 
 /* Showreel width: phones fill the column; larger screens also cap it by the
@@ -86,7 +86,32 @@
   .hero-reel { max-width: min(860px, max(420px, calc((80svh - 440px) * 16 / 9 + 12px))); }
 }
 @media (min-width: 1024px) {
-  .hero-reel { max-width: min(100%, max(440px, calc((80svh - 240px) * 16 / 9 + 12px))); }
+  .hero-reel { max-width: min(100%, max(480px, calc((80svh - 200px) * 16 / 9 + 12px))); }
+}
+
+/* Desktop hero: copy and reel are sized against each other so the copy block
+   (eyebrow, two-line headline, subline, CTA) stands about 90% as tall as the reel
+   at every width. The reel column grows more slowly than the copy column; the
+   headline fills its column in exactly two lines ("moves money." is ~6.5em wide).
+   Both stop growing once the layout reaches 1440px. */
+@media (min-width: 1024px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) min(722px, calc(37vw + 189px));
+    column-gap: 64px;
+  }
+  .hero-title { font-size: clamp(40px, calc(9.55vw - 54.7px), 82px); }
+}
+/* Past 1440px the composition keeps its 1440px design (1344px wide, reel 722px)
+   and is zoomed up as a whole to fill the larger screen, so every proportion holds.
+   --hero-zoom is set before first paint by the inline script in the root layout:
+   the largest factor at which it still fits the width and the 80%-high hero. */
+@media (min-width: 1440px) {
+  .hero-grid {
+    width: 1344px;
+    margin-inline: auto;
+    grid-template-columns: minmax(0, 1fr) 722px;
+    zoom: var(--hero-zoom, 1);
+  }
 }
 
 /* ─── First-visit intro ──────────────────────────── */
@@ -175,11 +200,14 @@ html[data-intro] .intro {
    full white over a 0.15 slice of the scroll progress, starting at its --s */
 /* Kept inside a custom property: the CSS build step drops a color-mix() whose
    percentage uses var(), but leaves custom property values untouched. */
-/* Each word also slides in from its spread-out spot (--dx, set from JS) as it lights up */
+/* Each word also slides in from its spread-out spot (--dx, set from JS) as it lights up.
+   --t is the word's linear progress over a 0.3 slice; --u = 1 - t, and u³ is a cubic
+   ease-out, so each word decelerates into place instead of stopping dead. */
 .scroll-word {
-  --t: clamp(0, (var(--p, 0) - var(--s, 0)) / 0.15, 1);
-  --scroll-color: color-mix(in srgb, var(--text) calc(var(--t) * 100%), #7a87a3);
-  --scroll-shift: translate3d(calc((1 - var(--t)) * var(--dx, 0px) * var(--spread)), 0, 0);
+  --t: clamp(0, (var(--p, 0) - var(--s, 0)) / 0.3, 1);
+  --u: calc(1 - var(--t));
+  --scroll-color: color-mix(in srgb, var(--text) calc((1 - var(--u) * var(--u)) * 100%), #7a87a3);
+  --scroll-shift: translate3d(calc(var(--u) * var(--u) * var(--u) * var(--dx, 0px) * var(--spread)), 0, 0);
   --spread: 0.5;
   display: inline-block;
   color: var(--scroll-color);

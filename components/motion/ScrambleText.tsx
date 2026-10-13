@@ -1,7 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
-import { useInView, useReducedMotion } from 'framer-motion';
+import { useReducedMotion } from 'framer-motion';
+import { useReplayInView } from '@/components/motion/useReplayInView';
 
 const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*+=/<>';
 
@@ -33,10 +34,9 @@ export default function ScrambleText({
   trigger = 'view',
   replayOnHover = false,
 }: ScrambleTextProps) {
-  const ref = useRef<HTMLSpanElement>(null);
+  const [ref, inView] = useReplayInView<HTMLSpanElement>('-40px');
   const out = useRef<HTMLSpanElement>(null);
   const frame = useRef(0);
-  const inView = useInView(ref, { once: true, margin: '-40px' });
   const reduceMotion = useReducedMotion();
 
   const run = useCallback(() => {
