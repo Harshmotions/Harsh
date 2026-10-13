@@ -34,6 +34,15 @@
   animation: hero-rise var(--rise-duration, 0.9s) cubic-bezier(0.22, 1, 0.36, 1) var(--rise-delay, 0s) both;
 }
 
+/* Scroll-lit text (ScrollHighlightText): each word blends from muted slate to
+   full white over a 0.15 slice of the scroll progress, starting at its --s */
+/* Kept inside a custom property: the CSS build step drops a color-mix() whose
+   percentage uses var(), but leaves custom property values untouched. */
+.scroll-word {
+  --scroll-color: color-mix(in srgb, var(--text) calc(clamp(0, (var(--p, 0) - var(--s, 0)) / 0.15, 1) * 100%), #7a87a3);
+  color: var(--scroll-color);
+}
+
 /* Horizontal swipe rows: keep native touch scrolling, hide the bar */
 .no-scrollbar {
   scrollbar-width: none;
