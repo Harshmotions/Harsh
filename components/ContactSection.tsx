@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Container from '@/components/ui/Container';
 import ProjectBriefForm from '@/components/ProjectBriefForm';
+import RevealText from '@/components/motion/RevealText';
 
 interface ContactSectionProps {
   headline?: string;
@@ -31,14 +32,11 @@ export default function ContactSection({ headline, whatsappNumber, emailAddress 
             >
               Start a project
             </motion.p>
-            <motion.h2
-              {...reveal}
-              transition={{ duration: 0.8 }}
+            <RevealText
+              text={headline ?? FALLBACK_HEADLINE}
               className="font-display font-semibold text-text mb-6 text-balance"
               style={{ fontSize: 'clamp(32px, 3.8vw, 54px)', lineHeight: 1.05, letterSpacing: '-0.02em' }}
-            >
-              {headline ?? FALLBACK_HEADLINE}
-            </motion.h2>
+            />
             <motion.p
               {...reveal}
               transition={{ duration: 0.7, delay: 0.1 }}

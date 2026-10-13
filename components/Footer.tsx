@@ -1,4 +1,5 @@
 import Container from '@/components/ui/Container';
+import FooterWordmark from '@/components/motion/FooterWordmark';
 
 interface FooterProps {
   instagramUrl?: string;
@@ -48,6 +49,11 @@ export default function Footer({
           <div className="font-body text-xs text-text-muted">
             © {year} Harshwardhan Powar. All rights reserved.
           </div>
+        </div>
+
+        {/* Desktop: the giant wordmark sits flush on the page's bottom edge */}
+        <div className="mt-10 md:mt-16 md:-mb-8 overflow-hidden">
+          <FooterWordmark />
         </div>
       </Container>
     </footer>

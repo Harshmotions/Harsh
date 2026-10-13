@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import Container from '@/components/ui/Container';
 import ProjectCard from '@/components/ProjectCard';
+import RevealText from '@/components/motion/RevealText';
 import type { Project } from '@/lib/types';
 
 interface FeaturedStripProps {
@@ -17,6 +18,20 @@ const reveal = {
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: '-60px' },
 };
+
+// Cards open like a curtain from the bottom edge. The final inset is negative so
+// the clip never cuts off hover lift or shadows once revealed. The clip lives on an
+// inner element: Chrome treats a fully clipped element as not visible, so observing
+// it directly would never trigger the reveal.
+const curtainTrigger = { initial: 'hidden', whileInView: 'show', viewport: { once: true, margin: '-60px' } };
+const curtain = (i: number): Variants => ({
+  hidden: { clipPath: 'inset(100% -20% -20% -20%)', y: 40 },
+  show: {
+    clipPath: 'inset(-20% -20% -20% -20%)',
+    y: 0,
+    transition: { duration: 1, delay: i * 0.09, ease: [0.22, 1, 0.36, 1] },
+  },
+});
 
 function GroupHeader({ label, href, linkLabel }: { label: string; href: string; linkLabel: string }) {
   return (
@@ -46,26 +61,21 @@ export default function FeaturedStrip({ reels, landscape, onCardClick }: Feature
         >
           Selected Work
         </motion.p>
-        <motion.h2
-          {...reveal}
-          transition={{ duration: 0.7 }}
+        <RevealText
+          text="Proof, in motion."
           className="font-display font-semibold text-text mb-10 md:mb-12"
           style={{ fontSize: 'clamp(30px, 4vw, 52px)', lineHeight: 1.02, letterSpacing: '-0.02em' }}
-        >
-          Proof, in motion.
-        </motion.h2>
+        />
 
         {reels.length > 0 && (
           <div className="mb-14 md:mb-16">
             <GroupHeader label="Vertical · 9:16" href="/reels" linkLabel="All reels" />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
               {reels.map((p, i) => (
-                <motion.div
-                  key={p._id}
-                  {...reveal}
-                  transition={{ duration: 0.55, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <ProjectCard project={p} onClick={() => onCardClick(p)} variant="reel" widthClass="w-full" />
+                <motion.div key={p._id} {...curtainTrigger}>
+                  <motion.div variants={curtain(i)}>
+                    <ProjectCard project={p} onClick={() => onCardClick(p)} variant="reel" widthClass="w-full" />
+                  </motion.div>
                 </motion.div>
               ))}
             </div>
@@ -80,11 +90,12 @@ export default function FeaturedStrip({ reels, landscape, onCardClick }: Feature
               {landscape.map((p, i) => (
                 <motion.div
                   key={p._id}
-                  {...reveal}
-                  transition={{ duration: 0.55, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                  {...curtainTrigger}
                   className="w-[85%] flex-shrink-0 snap-start scroll-ml-6 md:w-auto"
                 >
-                  <ProjectCard project={p} onClick={() => onCardClick(p)} variant="landscape" widthClass="w-full" />
+                  <motion.div variants={curtain(i)}>
+                    <ProjectCard project={p} onClick={() => onCardClick(p)} variant="landscape" widthClass="w-full" />
+                  </motion.div>
                 </motion.div>
               ))}
             </div>

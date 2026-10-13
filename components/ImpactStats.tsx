@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Container from '@/components/ui/Container';
+import CountUp from '@/components/motion/CountUp';
 
 const STATS = [
   {
@@ -67,7 +68,7 @@ export default function ImpactStats() {
                   color: 'var(--accent)',
                 }}
               >
-                {value}
+                <CountUp value={value} />
               </span>
               <span
                 className="font-display font-semibold text-text"

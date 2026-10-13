@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   },
 };
 import HomeFeaturedClient from '@/components/HomeFeaturedClient';
+import VelocityMarquee from '@/components/motion/VelocityMarquee';
 import ImpactStats from '@/components/ImpactStats';
 import AboutSection from '@/components/AboutSection';
 import ApproachSection from '@/components/ApproachSection';
@@ -41,6 +42,7 @@ export default async function Home() {
         videoPlaybackIdMobile={heroVideoMobile?.muxVideo?.asset?.playbackId}
       />
       <HomeFeaturedClient projects={featured} whatsappNumber={settings?.whatsappNumber} />
+      <VelocityMarquee items={['Performance ads', 'SaaS motion', 'Long-form edits', 'Brand films']} />
       <ImpactStats />
       <AboutSection body={settings?.aboutBody} portraitUrl={settings?.portraitUrl} />
       <ApproachSection steps={settings?.approachSteps} />

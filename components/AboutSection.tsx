@@ -1,9 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { PortableText, type PortableTextComponents } from '@portabletext/react';
+import { toPlainText } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/types';
 import Container from '@/components/ui/Container';
+import RevealText from '@/components/motion/RevealText';
+import ScrollHighlightText from '@/components/motion/ScrollHighlightText';
 
 interface AboutSectionProps {
   body?: PortableTextBlock[];
@@ -55,32 +57,27 @@ const FALLBACK_BODY: PortableTextBlock[] = [
   },
 ];
 
-const portableComponents: PortableTextComponents = {
-  block: {
-    normal: ({ children }) => (
-      <p className="font-body text-text mb-5 last:mb-0" style={{ fontSize: '1.0625rem', lineHeight: 1.7 }}>
-        {children}
-      </p>
-    ),
-  },
-  marks: {
-    em: ({ children }) => <em style={{ fontStyle: 'italic', color: 'var(--text)' }}>{children}</em>,
-    strong: ({ children }) => <strong className="font-semibold text-text">{children}</strong>,
-  },
-};
-
 export default function AboutSection({ body, portraitUrl }: AboutSectionProps) {
   const bodyContent = body && body.length > 0 ? body : FALLBACK_BODY;
 
+  // Studio text can be separate blocks or one block with line breaks; treat both as paragraphs
+  const paragraphs = bodyContent
+    .flatMap((block) => toPlainText(block).split(/\n+/))
+    .map((p) => p.trim())
+    .filter(Boolean);
+
   const text = (
     <>
-      <h2
+      <RevealText
+        text="Hi, I'm Harsh."
         className="font-display font-semibold text-text mb-8"
         style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', lineHeight: 1.1, letterSpacing: '-0.02em' }}
-      >
-        Hi, I&apos;m Harsh.
-      </h2>
-      <PortableText value={bodyContent} components={portableComponents} />
+      />
+      <ScrollHighlightText
+        paragraphs={paragraphs}
+        className="font-display text-text mb-6 last:mb-0"
+        style={{ fontSize: 'clamp(19px, 2.1vw, 27px)', fontWeight: 500, lineHeight: 1.4, letterSpacing: '-0.01em' }}
+      />
     </>
   );
 
@@ -97,12 +94,8 @@ export default function AboutSection({ body, portraitUrl }: AboutSectionProps) {
           About
         </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className={portraitUrl ? 'grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center' : 'max-w-3xl'}
+        <div
+          className={portraitUrl ? 'grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center' : 'max-w-4xl'}
         >
           {portraitUrl ? (
             <>
@@ -120,7 +113,7 @@ export default function AboutSection({ body, portraitUrl }: AboutSectionProps) {
           ) : (
             text
           )}
-        </motion.div>
+        </div>
       </Container>
     </section>
   );
