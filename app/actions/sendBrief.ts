@@ -1,7 +1,5 @@
 'use server';
 
-import { createClient } from 'next-sanity';
-import { projectId, dataset, apiVersion } from '@/lib/sanity';
 import { CONTACT_EMAIL } from '@/lib/site';
 import {
   SERVICES,
@@ -81,15 +79,17 @@ export async function sendBrief(formData: FormData): Promise<BriefResult> {
   }
 
   const resendKey = process.env.RESEND_API_KEY;
-  const writeToken = process.env.SANITY_API_WRITE_TOKEN;
-  if (!resendKey && !writeToken) {
-    console.error('[sendBrief] Neither RESEND_API_KEY nor SANITY_API_WRITE_TOKEN is set');
+  const notionToken = process.env.NOTION_TOKEN;
+  const leadsDb = process.env.NOTION_LEADS_DB;
+  if (!resendKey && !(notionToken && leadsDb)) {
+    console.error('[sendBrief] Neither RESEND_API_KEY nor NOTION_TOKEN + NOTION_LEADS_DB is set');
     return { ok: false, error: DELIVERY_ERROR };
   }
 
+  // The email reaches the inbox; the Notion row is the lead tracker
   const results = await Promise.allSettled([
     resendKey ? emailBrief(brief, resendKey) : Promise.reject(new Error('email not configured')),
-    writeToken ? saveLead(brief, writeToken) : Promise.reject(new Error('lead storage not configured')),
+    notionToken && leadsDb ? saveLead(brief, notionToken, leadsDb) : Promise.reject(new Error('Notion leads not configured')),
   ]);
   results.forEach((r) => {
     if (r.status === 'rejected') console.error('[sendBrief]', r.reason);
@@ -145,7 +145,50 @@ async function emailBrief(brief: Brief, apiKey: string) {
   if (!res.ok) throw new Error(`Resend ${res.status}: ${await res.text()}`);
 }
 
-async function saveLead(brief: Brief, token: string) {
-  const writeClient = createClient({ projectId, dataset, apiVersion, token, useCdn: false });
-  await writeClient.create({ _type: 'lead', ...brief, submittedAt: new Date().toISOString() });
+// ---------- Notion lead tracker (database made by scripts/setup-notion-leads.mjs) ----------
+
+// Notion caps each text run at 2000 characters
+const richText = (value: string) =>
+  (value.match(/[\s\S]{1,2000}/g) ?? []).slice(0, 100).map((content) => ({ type: 'text' as const, text: { content } }));
+const select = (name: string) => (name ? { select: { name: name.replace(/,/g, ' ').slice(0, 100) } } : { select: null });
+
+async function saveLead(brief: Brief, token: string, databaseId: string) {
+  const budget =
+    brief.budget === BIG_PROJECT ? `Bigger project${brief.projectBudget ? `: ${brief.projectBudget}` : ''}` : brief.budget;
+  const res = await fetch('https://api.notion.com/v1/pages', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Notion-Version': '2022-06-28',
+    },
+    body: JSON.stringify({
+      parent: { database_id: databaseId },
+      properties: {
+        Name: { title: richText(brief.name) },
+        Status: { select: { name: 'New' } },
+        Email: { email: brief.email },
+        WhatsApp: { phone_number: brief.whatsapp || null },
+        Brand: { rich_text: richText(brief.company) },
+        Needs: { multi_select: brief.services.map((s) => ({ name: s.replace(/,/g, ' ') })) },
+        Format: select(brief.format),
+        Videos: select(brief.videoCount),
+        Footage: select(brief.footage),
+        Budget: select(budget),
+        Timeline: select(brief.timeline),
+        Details: { rich_text: richText(brief.details) },
+        Submitted: { date: { start: new Date().toISOString() } },
+      },
+      // the full brief in the page body too, easy to read when the row is opened
+      children: [
+        { object: 'block', type: 'heading_3', heading_3: { rich_text: richText('Project details') } },
+        ...brief.details
+          .split(/\n{2,}/)
+          .filter(Boolean)
+          .slice(0, 90)
+          .map((p) => ({ object: 'block', type: 'paragraph', paragraph: { rich_text: richText(p) } })),
+      ],
+    }),
+  });
+  if (!res.ok) throw new Error(`Notion ${res.status}: ${await res.text()}`);
 }

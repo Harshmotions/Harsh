@@ -469,6 +469,49 @@ button:focus-visible .card-inner {
     inset 0 1px 0 rgba(255,255,255,0.06) !important;
 }
 
+/* ─── Text selection ─────────────────────────────── */
+/* Locked across the site, so dragging over copy or cards never highlights it; images and
+   links can't be dragged out either. Selectable where copying is the point: what visitors
+   type into fields, and the contact email (.copyable). The Studio isn't in .site-shell. */
+.site-shell {
+  -webkit-user-select: none;
+  user-select: none;
+}
+.site-shell :is(input, textarea, select, [contenteditable='true'], .copyable),
+.site-shell :is(input, textarea, [contenteditable='true'], .copyable) * {
+  -webkit-user-select: text;
+  user-select: text;
+}
+.site-shell :is(img, a, video) {
+  -webkit-user-drag: none;
+}
+
+/* ─── Video player volume slider (components/work/VideoPlayer) ─── */
+.player-volume {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--accent) var(--vol, 100%), rgba(255, 255, 255, 0.25) var(--vol, 100%));
+  outline: none;
+  cursor: none;
+}
+.player-volume::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+}
+.player-volume::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+}
+
 /* ─── Custom cursor ──────────────────────────────── */
 .site-shell,
 .site-shell * {
@@ -482,24 +525,23 @@ button:focus-visible .card-inner {
   }
 }
 
-/* Mux's player controls live in shadow DOM, out of reach of the rule above, but they
-   take their cursor from this variable. Fullscreen keeps the system cursor, since the
-   custom one can't be drawn over a fullscreen element. */
-.site-shell mux-player:not(:fullscreen) {
-  --media-cursor: none;
-}
-
 @media (hover: none) {
   .custom-cursor {
     display: none !important;
   }
 }
 
+/* Fullscreen shows the system cursor (the custom one can't be drawn over a fullscreen
+   element), hidden again while the video player's controls are hidden */
 :fullscreen,
 :fullscreen *,
 :-webkit-full-screen,
 :-webkit-full-screen * {
   cursor: auto;
+}
+.player-idle,
+.player-idle * {
+  cursor: none !important;
 }
 
 /* ─── Focus Rings ────────────────────────────────── */

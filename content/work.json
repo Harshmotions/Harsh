@@ -1,0 +1,139 @@
+{
+  "hero": {
+    "mobile": {
+      "slug": "showreel-mobile",
+      "width": 1920,
+      "height": 1080,
+      "duration": 24.9,
+      "poster": "work/showreel-mobile-e48ff953/poster-0.jpg",
+      "hd": "work/showreel-mobile-e48ff953/hd.mp4",
+      "sd": "work/showreel-mobile-e48ff953/sd.mp4",
+      "source": "Final ShowReel.mp4",
+      "hash": "e48ff953",
+      "hero": "mobile"
+    },
+    "desktop": {
+      "slug": "showreel-desktop",
+      "width": 1920,
+      "height": 1080,
+      "duration": 24.9,
+      "poster": "work/showreel-desktop-2d39f34e/poster-0.jpg",
+      "hd": "work/showreel-desktop-2d39f34e/hd.mp4",
+      "sd": "work/showreel-desktop-2d39f34e/sd.mp4",
+      "source": "Website Showreel.mp4",
+      "hash": "2d39f34e",
+      "hero": "desktop"
+    }
+  },
+  "items": [
+    {
+      "slug": "claude",
+      "title": "Claude UI",
+      "width": 1440,
+      "height": 1080,
+      "duration": 16.3,
+      "poster": "work/claude-2f5164f2/poster-7.17.jpg",
+      "hd": "work/claude-2f5164f2/hd.mp4",
+      "sd": "work/claude-2f5164f2/sd.mp4",
+      "source": "Claude.mp4",
+      "hash": "2f5164f2",
+      "trail": [
+        "work/claude-2f5164f2/trail-0-0.70c.webp",
+        "work/claude-2f5164f2/trail-1-5.10e.webp",
+        "work/claude-2f5164f2/trail-2-7.30s.webp",
+        "work/claude-2f5164f2/trail-3-11.60c.webp"
+      ]
+    },
+    {
+      "slug": "drive-ui",
+      "title": "Drive UI",
+      "width": 1080,
+      "height": 1350,
+      "duration": 15.5,
+      "poster": "work/drive-ui-fe3e3be4/poster-5.58.jpg",
+      "hd": "work/drive-ui-fe3e3be4/hd.mp4",
+      "sd": "work/drive-ui-fe3e3be4/sd.mp4",
+      "source": "Drive UI.mp4",
+      "hash": "fe3e3be4",
+      "trail": [
+        "work/drive-ui-fe3e3be4/trail-0-1.40c.webp",
+        "work/drive-ui-fe3e3be4/trail-1-4.40c.webp",
+        "work/drive-ui-fe3e3be4/trail-2-5.20c.webp",
+        "work/drive-ui-fe3e3be4/trail-3-9.00c.webp",
+        "work/drive-ui-fe3e3be4/trail-4-9.50c.webp",
+        "work/drive-ui-fe3e3be4/trail-5-11.40e.webp"
+      ]
+    },
+    {
+      "slug": "higgs-remake",
+      "title": "Higgsfield",
+      "width": 1920,
+      "height": 1080,
+      "duration": 17.1,
+      "poster": "work/higgs-remake-88048727/poster-6.16.jpg",
+      "hd": "work/higgs-remake-88048727/hd.mp4",
+      "sd": "work/higgs-remake-88048727/sd.mp4",
+      "source": "Higgs Remake.mp4",
+      "hash": "88048727",
+      "trail": [
+        "work/higgs-remake-88048727/trail-0-1.90c.webp",
+        "work/higgs-remake-88048727/trail-1-5.20c.webp",
+        "work/higgs-remake-88048727/trail-2-6.70c.webp"
+      ]
+    },
+    {
+      "slug": "ios-look-up",
+      "title": "iOS Look Up",
+      "width": 1080,
+      "height": 1440,
+      "duration": 17,
+      "poster": "work/ios-look-up-d9c5148f/poster-6.12.jpg",
+      "hd": "work/ios-look-up-d9c5148f/hd.mp4",
+      "sd": "work/ios-look-up-d9c5148f/sd.mp4",
+      "source": "iOS Look Up.mp4",
+      "hash": "d9c5148f",
+      "trail": [
+        "work/ios-look-up-d9c5148f/trail-0-4.20c.webp",
+        "work/ios-look-up-d9c5148f/trail-1-6.00c.webp",
+        "work/ios-look-up-d9c5148f/trail-2-12.20c.webp"
+      ]
+    },
+    {
+      "slug": "notion",
+      "title": "Notion UI",
+      "width": 1080,
+      "height": 1440,
+      "duration": 27,
+      "poster": "work/notion-f329171f/poster-18.36.jpg",
+      "hd": "work/notion-f329171f/hd.mp4",
+      "sd": "work/notion-f329171f/sd.mp4",
+      "source": "Notion.mp4",
+      "hash": "f329171f",
+      "trail": [
+        "work/notion-f329171f/trail-0-3.90c.webp",
+        "work/notion-f329171f/trail-1-8.30c.webp",
+        "work/notion-f329171f/trail-2-9.30c.webp",
+        "work/notion-f329171f/trail-3-18.40c.webp",
+        "work/notion-f329171f/trail-4-21.90c.webp"
+      ]
+    },
+    {
+      "slug": "spotify-taste",
+      "title": "Spotify Taste+",
+      "width": 1080,
+      "height": 1080,
+      "duration": 28.6,
+      "poster": "work/spotify-taste-be289eaf/poster-5.72.jpg",
+      "hd": "work/spotify-taste-be289eaf/hd.mp4",
+      "sd": "work/spotify-taste-be289eaf/sd.mp4",
+      "source": "Spotify Taste+.mp4",
+      "hash": "be289eaf",
+      "trail": [
+        "work/spotify-taste-be289eaf/trail-0-5.60c.webp",
+        "work/spotify-taste-be289eaf/trail-1-12.20c.webp",
+        "work/spotify-taste-be289eaf/trail-2-13.30c.webp",
+        "work/spotify-taste-be289eaf/trail-3-19.40c.webp"
+      ]
+    }
+  ]
+}

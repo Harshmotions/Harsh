@@ -1,0 +1,64 @@
+{
+  "_help": "Per-file settings for scripts/publish-work.mjs, keyed by the file name in Exports/Portfolio. title: what the site shows. note: optional one-liner. hero: 'desktop' or 'mobile' makes the file the home page showreel instead of a piece in the grid. trail: hand-picked hero trail frames as '<seconds><s|c|e>' (crop the square from the start, centre or end of the frame's long side); without it the script picks frames itself.",
+  "Claude.mp4": {
+    "title": "Claude UI",
+    "trail": [
+      "0.6c",
+      "4.9e",
+      "7.1s",
+      "11.5c"
+    ]
+  },
+  "Drive UI.mp4": {
+    "title": "Drive UI",
+    "trail": [
+      "1.6c",
+      "4.2c",
+      "5.2c",
+      "8.8c",
+      "9.3c",
+      "11.4e"
+    ]
+  },
+  "Higgs Remake.mp4": {
+    "title": "Higgsfield",
+    "trail": [
+      "1.8c",
+      "5.2c",
+      "6.9c"
+    ]
+  },
+  "iOS Look Up.mp4": {
+    "title": "iOS Look Up",
+    "trail": [
+      "4.0c",
+      "6.2c",
+      "12.0c"
+    ]
+  },
+  "Notion.mp4": {
+    "title": "Notion UI",
+    "trail": [
+      "3.7c",
+      "8.2c",
+      "9.1c",
+      "18.2c",
+      "21.8c"
+    ]
+  },
+  "Spotify Taste+.mp4": {
+    "title": "Spotify Taste+",
+    "trail": [
+      "5.4c",
+      "12.2c",
+      "13.4c",
+      "19.2c"
+    ]
+  },
+  "Website Showreel.mp4": {
+    "hero": "desktop"
+  },
+  "Final ShowReel.mp4": {
+    "hero": "mobile"
+  }
+}

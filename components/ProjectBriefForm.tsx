@@ -417,10 +417,24 @@ export default function ProjectBriefForm({ whatsappNumber, emailAddress }: Proje
                   <p className="font-body text-sm text-text mb-3">Format</p>
                   <Chips name="format" options={FORMATS} type="radio" />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-                  <div>
-                    <Label htmlFor="videoCount">How many videos?</Label>
+                <div>
+                  <Label htmlFor="videoCount">How many videos?</Label>
+                  {/* The note sits in the same row as the dropdown and stretches to its exact
+                      height, so the two boxes line up; on phones it drops below */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5 items-stretch">
                     <Select id="videoCount" name="videoCount" options={VIDEO_COUNTS} placeholder="Select" />
+                    <p
+                      className="flex items-center gap-2.5 rounded-xl px-3.5 py-2 font-body text-xs text-text-muted"
+                      style={{ border: '1px solid var(--border)', background: 'rgba(79,142,247,0.05)', lineHeight: 1.35 }}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" aria-hidden="true" className="shrink-0">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M12 7v5l3 2" />
+                      </svg>
+                      <span>
+                        <span className="text-text">One video = 30 to 50 seconds.</span> Longer edits are quoted separately.
+                      </span>
+                    </p>
                   </div>
                 </div>
                 <div>
@@ -529,7 +543,7 @@ export default function ProjectBriefForm({ whatsappNumber, emailAddress }: Proje
                           </a>
                         )}
                         {emailAddress && (
-                          <a href={`mailto:${emailAddress}`} className="underline underline-offset-4">
+                          <a href={`mailto:${emailAddress}`} className="copyable underline underline-offset-4">
                             {emailAddress}
                           </a>
                         )}

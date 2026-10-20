@@ -59,7 +59,7 @@ export default function ContactSection({ headline, whatsappNumber, emailAddress 
                       className="inline-flex items-center gap-2 rounded-full px-4 py-2 font-body text-sm text-text transition-colors hover:border-[rgba(79,142,247,0.55)]"
                       style={{ border: '1px solid var(--border)', background: 'rgba(10,16,32,0.6)' }}
                     >
-                      <MailIcon /> {emailAddress}
+                      <MailIcon /> <span className="copyable">{emailAddress}</span>
                     </a>
                   )}
                 </div>

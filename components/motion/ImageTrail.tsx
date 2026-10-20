@@ -65,7 +65,22 @@ export default function ImageTrail({ images, targetRef }: ImageTrailProps) {
     let prev: { x: number; y: number; t: number } | null = null;
     let vx = 0;
     let vy = 0;
-    let shown = 0;
+    // A shuffled deck of every frame: each one shows once before any repeats, and a new deck
+    // never starts with the frame that just showed
+    let deck: string[] = [];
+    let lastSrc = '';
+    const nextImage = () => {
+      if (deck.length === 0) {
+        deck = [...images];
+        for (let i = deck.length - 1; i > 0; i--) {
+          const j = (Math.random() * (i + 1)) | 0;
+          [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+        if (deck.length > 1 && deck[deck.length - 1] === lastSrc) [deck[0], deck[deck.length - 1]] = [deck[deck.length - 1], deck[0]];
+      }
+      lastSrc = deck.pop()!;
+      return lastSrc;
+    };
     let z = 1;
     let raf = 0;
     let lastTick = 0;
@@ -136,7 +151,7 @@ export default function ImageTrail({ images, targetRef }: ImageTrailProps) {
       const el = pool.current.find((img) => img && !live.some((f) => f.el === img));
       if (!el) return;
 
-      el.src = images[shown++ % images.length];
+      el.src = nextImage();
       el.style.zIndex = String(z++);
       el.style.opacity = '1';
       // Cap the throw so a violent flick doesn't fling frames off screen
@@ -199,8 +214,8 @@ export default function ImageTrail({ images, targetRef }: ImageTrailProps) {
           decoding="async"
           className="absolute top-0 left-0 object-cover"
           style={{
-            width: 'clamp(130px, 11vw, 170px)',
-            aspectRatio: '4 / 5',
+            width: 'clamp(120px, 10vw, 156px)',
+            aspectRatio: '1 / 1',
             borderRadius: 14,
             opacity: 0,
             transform: 'scale(0)',

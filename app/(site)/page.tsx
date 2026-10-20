@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Hero from '@/components/Hero';
 import IntroLoader from '@/components/IntroLoader';
+import WorkSection from '@/components/work/WorkSection';
+import { mediaUrl, posterUrl, work } from '@/lib/work';
 
 export const metadata: Metadata = {
   title: { absolute: 'Harsh Powar | Video Editor & Motion Designer' },
@@ -10,44 +12,41 @@ export const metadata: Metadata = {
     canonical: '/',
   },
 };
-import HomeFeaturedClient from '@/components/HomeFeaturedClient';
 import VelocityMarquee from '@/components/motion/VelocityMarquee';
 import ImpactStats from '@/components/ImpactStats';
 import AboutSection from '@/components/AboutSection';
 import ApproachSection from '@/components/ApproachSection';
 import ContactSection from '@/components/ContactSection';
-import { sanityFetch, urlForImage } from '@/lib/sanity';
-import { CONTACT_EMAIL } from '@/lib/site';
-import {
-  FEATURED_PROJECTS_QUERY,
-  SITE_SETTINGS_QUERY,
-  HERO_VIDEO_DESKTOP_QUERY,
-  HERO_VIDEO_MOBILE_QUERY,
-} from '@/lib/queries';
-import type { Project, SiteSettings, HeroVideo } from '@/lib/types';
+import { CONTACT_EMAIL, site } from '@/lib/site';
 
-export default async function Home() {
-  const [featured, settings, heroVideoDesktop, heroVideoMobile] = await Promise.all([
-    sanityFetch<Project[]>({ query: FEATURED_PROJECTS_QUERY }),
-    sanityFetch<SiteSettings | null>({ query: SITE_SETTINGS_QUERY }),
-    sanityFetch<HeroVideo | null>({ query: HERO_VIDEO_DESKTOP_QUERY }),
-    sanityFetch<HeroVideo | null>({ query: HERO_VIDEO_MOBILE_QUERY }),
-  ]);
+export default function Home() {
 
-  // Stills from the work for the hero's cursor trail, cropped to one shape
-  const trailImages = featured
-    .filter((p) => p.thumbnail?.asset)
-    .slice(0, 10)
-    .map((p) => urlForImage(p.thumbnail).width(340).height(425).fit('crop').quality(72).auto('format').url());
+  // The home page shows the first six pieces; /work has them all
+  const featured = work.slice(0, 6);
+
+  // Square stills from across every piece, for the hero's cursor trail
+  const trailImages = work.flatMap((item) => (item.trail ?? []).map(mediaUrl));
+
+  // Desktop: fetch the featured posters (what the hover melt draws) while the intro plays.
+  // The clips themselves start buffering once the page is idle (see WorkCard).
+  const warm = featured.map((item) => posterUrl(item));
 
   return (
     <main>
       <IntroLoader />
+      {/* Runs as the HTML arrives (no waiting for hydration), on mouse devices only and not
+          for visitors who asked to save data. Low priority, so the hero's poster and reel
+          still load first. Repeat visits hit the browser cache. */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `(function(){try{var c=navigator.connection;if(!matchMedia('(hover: hover) and (pointer: fine)').matches||(c&&c.saveData))return;${JSON.stringify(
+            warm,
+          )}.forEach(function(s){var i=new Image();i.fetchPriority='low';i.decoding='async';i.src=s})}catch(e){}})();`,
+        }}
+      />
       <Hero
-        headline={settings?.heroHeadline}
-        subline={settings?.heroSubline}
-        videoPlaybackIdDesktop={heroVideoDesktop?.muxVideo?.asset?.playbackId}
-        videoPlaybackIdMobile={heroVideoMobile?.muxVideo?.asset?.playbackId}
+        headline={site.heroHeadline}
+        subline={site.heroSubline}
         trailImages={trailImages}
       />
       {/* The rest of the page is one panel that slides up over the hero */}
@@ -58,14 +57,14 @@ export default async function Home() {
           boxShadow: '0 -30px 60px rgba(0,0,0,0.45), inset 0 1px 0 rgba(147,197,253,0.16)',
         }}
       >
-      <HomeFeaturedClient projects={featured} whatsappNumber={settings?.whatsappNumber} />
+      <WorkSection items={featured} total={work.length} whatsappNumber={site.whatsappNumber} />
       <VelocityMarquee items={['Performance ads', 'SaaS motion', 'Long-form edits', 'Brand films']} />
       <ImpactStats />
-      <AboutSection body={settings?.aboutBody} portraitUrl={settings?.portraitUrl} />
-      <ApproachSection steps={settings?.approachSteps} />
+      <AboutSection paragraphs={site.about} portrait={site.portrait} />
+      <ApproachSection steps={site.approachSteps} />
       <ContactSection
-        headline={settings?.contactHeadline}
-        whatsappNumber={settings?.whatsappNumber}
+        headline={site.contactHeadline}
+        whatsappNumber={site.whatsappNumber}
         emailAddress={CONTACT_EMAIL}
       />
       </div>

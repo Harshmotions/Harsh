@@ -2,6 +2,25 @@
 
 What's left to get the site fully working after the October 2026 update. Tasks are in the order to do them. Tick each box once it's done.
 
+## Part 0: After the 21 October update (open)
+
+Sanity and Mux are gone. Videos and the showreel now come from Cloudflare R2 (`npm run publish-work`), site text lives in `content/site.json`, and leads go to Notion. Tasks below that mention Studio or Sanity are history.
+
+- [ ] **N1. Set up Notion lead tracking.**
+  1. notion.so/profile/integrations → **New integration** → name `motionbyharsh leads`, your workspace, type **Internal** → Save → copy the **Internal Integration Secret**.
+  2. Make a Notion page (e.g. "Website") → **•••** → **Connections** → add `motionbyharsh leads`.
+  3. In `portfolio/.env.local` add `NOTION_TOKEN=<secret>` and `NOTION_PARENT_PAGE=<page link>`.
+  4. Ask Claude to run `node scripts/setup-notion-leads.mjs` (creates the **Leads** database and saves `NOTION_LEADS_DB`), then `--test` for a sample lead.
+  5. Vercel → Settings → Environment Variables: add `NOTION_TOKEN` and `NOTION_LEADS_DB` (Production and Preview), then redeploy.
+  **Why:** until then, briefs still arrive by email (Resend) but aren't logged anywhere you can track them.
+
+- [ ] **N2. Remove the Sanity variables from Vercel.** Delete `SANITY_API_WRITE_TOKEN` and any `NEXT_PUBLIC_SANITY_*`.
+  **Why:** nothing reads them any more; it keeps old keys out of the project.
+
+- [ ] **N3. (Optional) Delete the Sanity project** at sanity.io/manage. Permanent; it still holds 4 stale leads and the old projects.
+
+- [ ] **N4. Delete the empty `F:\Exports` folder.** Claude made it by mistake and isn't allowed to delete folders at the top of a drive. The real export folder is `F:\Editing Heavy\MY OWN WEBSITE\Exports\Portfolio`.
+
 ## Part 1: For Harsh (needs your accounts)
 
 ### Go live

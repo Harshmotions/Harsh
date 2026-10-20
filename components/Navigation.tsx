@@ -8,8 +8,7 @@ import { lenisInstance } from '@/components/SmoothScroll';
 
 const links = [
   { href: '/', label: 'Home' },
-  { href: '/reels', label: 'Reels' },
-  { href: '/landscape', label: 'Landscape' },
+  { href: '/work', label: 'Work' },
 ];
 
 export default function Navigation() {
@@ -41,7 +40,7 @@ export default function Navigation() {
 
   const contactHref = pathname === '/' ? '#contact' : '/#contact';
 
-  // After navigating in from /reels or /landscape, the contact section
+  // After navigating in from /work, the contact section
   // doesn't exist until the home page finishes mounting — poll for it
   // instead of relying on the browser's native (Lenis-unaware) hash
   // scroll, which silently no-ops on a client-side route change. Also

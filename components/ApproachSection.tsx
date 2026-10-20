@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion';
 import Container from '@/components/ui/Container';
 import RevealText from '@/components/motion/RevealText';
-import type { ApproachStep } from '@/lib/types';
+import type { ApproachStep } from '@/lib/site';
 import ScrambleText from '@/components/motion/ScrambleText';
 import Reveal from '@/components/motion/Reveal';
 import { EASE_SETTLE, useReplayInView } from '@/components/motion/useReplayInView';

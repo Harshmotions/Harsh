@@ -16,7 +16,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
     hasHydrated = true;
   }, []);
 
-  // When navigating from /reels or /landscape to /#contact, clean the hash
+  // When navigating from /work to /#contact, clean the hash
   // from the URL and scroll via Lenis so the URL stays motionbyharsh.com/
   useEffect(() => {
     if (pathname === '/' && window.location.hash === '#contact') {

@@ -4,18 +4,11 @@ import Navigation from '@/components/Navigation';
 import PageTransition from '@/components/PageTransition';
 import Footer from '@/components/Footer';
 import MotionProvider from '@/components/motion/MotionProvider';
-import { sanityFetch } from '@/lib/sanity';
-import { SITE_SETTINGS_QUERY } from '@/lib/queries';
-import { CONTACT_EMAIL } from '@/lib/site';
-import type { SiteSettings } from '@/lib/types';
+import { CONTACT_EMAIL, site } from '@/lib/site';
 
-export default async function SiteLayout({
+export default function SiteLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const settings = await sanityFetch<SiteSettings | null>({
-    query: SITE_SETTINGS_QUERY,
-  });
-
   return (
     <div className="site-shell">
       <SmoothScroll>
@@ -23,7 +16,7 @@ export default async function SiteLayout({
           <Navigation />
           <PageTransition>{children}</PageTransition>
           <Footer
-            instagramUrl={settings?.instagramUrl}
+            instagramUrl={site.instagramUrl}
             emailAddress={CONTACT_EMAIL}
           />
         </MotionProvider>

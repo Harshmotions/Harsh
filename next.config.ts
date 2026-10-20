@@ -3,19 +3,20 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
-      // Sanity CDN
+      // Work and showreel posters on Cloudflare R2 (lib/work.ts)
       {
         protocol: 'https',
-        hostname: 'cdn.sanity.io',
-        pathname: '/**',
-      },
-      // Mux thumbnail / poster images
-      {
-        protocol: 'https',
-        hostname: 'image.mux.com',
+        hostname: 'media.motionbyharsh.com',
         pathname: '/**',
       },
     ],
+  },
+  // Reels and landscape became one /work page
+  async redirects() {
+    return [
+      { source: '/reels', destination: '/work', permanent: true },
+      { source: '/landscape', destination: '/work', permanent: true },
+    ];
   },
 };
 

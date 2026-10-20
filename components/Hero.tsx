@@ -1,7 +1,6 @@
 'use client';
 
 import { Fragment, useEffect, useRef, useState } from 'react';
-import dynamic from 'next/dynamic';
 import { preconnect } from 'react-dom';
 import {
   motion,
@@ -18,17 +17,11 @@ import { lenisInstance } from '@/components/SmoothScroll';
 import HeroGridCanvas from '@/components/HeroGridCanvas';
 import ImageTrail from '@/components/motion/ImageTrail';
 import ScrambleText from '@/components/motion/ScrambleText';
-import { loadMuxPlayer } from '@/lib/muxPlayer';
-
-// Mux player + hls.js is ~1 MB of JS — load it in its own chunk so the rest of
-// the hero hydrates first. Its glass frame is server-rendered, so no layout shift.
-const MuxPlayer = dynamic(loadMuxPlayer, { ssr: false });
+import { MEDIA_BASE, mediaUrl, showreel } from '@/lib/work';
 
 interface HeroProps {
   headline?: string;
   subline?: string;
-  videoPlaybackIdDesktop?: string;
-  videoPlaybackIdMobile?: string;
   /** Project stills that follow the cursor around the hero (desktop). */
   trailImages?: string[];
 }
@@ -142,8 +135,6 @@ function CtaButton() {
 export default function Hero({
   headline,
   subline,
-  videoPlaybackIdDesktop,
-  videoPlaybackIdMobile,
   trailImages = [],
 }: HeroProps) {
   const words = (headline ?? DEFAULT_HEADLINE).split(/\s+/).filter(Boolean);
@@ -161,23 +152,24 @@ export default function Hero({
     return () => mq.removeEventListener('change', update);
   }, []);
 
-  const videoPlaybackId = isMobile
-    ? videoPlaybackIdMobile ?? videoPlaybackIdDesktop
-    : videoPlaybackIdDesktop ?? videoPlaybackIdMobile;
+  // Two cuts of the showreel (scripts/publish-work.mjs): the desktop one at up to 1080p, and on
+  // phones the mobile cut in its light 720p file (the reel shows ~340px wide there)
+  const desk = showreel.desktop ?? showreel.mobile;
+  const mob = showreel.mobile ?? showreel.desktop;
+  const reelSrc = isMobile ? mob && mediaUrl(mob.sd) : desk && mediaUrl(desk.hd);
 
-  // Both showreels open on black for ~3s; 4s in is the first strong frame to show while loading
-  const posterFor = (id: string | undefined, width: number) =>
-    id ? `https://image.mux.com/${id}/thumbnail.webp?time=4&width=${width}` : undefined;
-  const desktopPoster = posterFor(videoPlaybackIdDesktop ?? videoPlaybackIdMobile, 1280);
-  const mobilePoster = posterFor(videoPlaybackIdMobile ?? videoPlaybackIdDesktop, 720);
+  // Posters are each cut's exact first frame, so the poster hands over to the video seamlessly.
+  // Through the image optimizer: right-sized, and phones get a much smaller file.
+  const posterFor = (path: string | undefined, width: number) =>
+    path ? `/_next/image?url=${encodeURIComponent(mediaUrl(path))}&w=${width}&q=75` : undefined;
+  const desktopPoster = posterFor(desk?.poster, 1920);
+  const mobilePoster = posterFor(mob?.poster, 828);
 
-  // Open connections to Mux early: images (poster) and the HLS video stream
-  preconnect('https://image.mux.com');
-  preconnect('https://stream.mux.com');
+  // Open the connection to the media domain early, for the video stream
+  preconnect(MEDIA_BASE);
 
-  // Mount the player only once the page has loaded and the browser is idle: its JS
-  // (~300 KB + hls.js) and the video stream otherwise compete with first paint on
-  // phones. The server-rendered poster fills the frame until then.
+  // Start the video only once the page has loaded and the browser is idle, so the stream
+  // doesn't compete with first paint on phones. The server-rendered poster fills the frame.
   const [playerReady, setPlayerReady] = useState(false);
   useEffect(() => {
     const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 300));
@@ -355,7 +347,7 @@ export default function Hero({
             <div className="order-1 lg:order-2 flex flex-col items-center">
               <Eyebrow className="inline-flex lg:hidden mb-4" />
 
-              {videoPlaybackId && (
+              {reelSrc && (
                 <div className="hero-reel hero-rise-t [--rise:28px] [--rise-duration:1.2s] relative w-full" style={{ perspective: 1400 }}>
                   {/* Soft light pooling behind the frame */}
                   <div
@@ -410,9 +402,8 @@ export default function Hero({
                       }}
                     >
                       <div className="hero-settle absolute inset-0">
-                        {/* First frame, server-rendered so it paints before the player's JS loads
-                            (it was the page's slowest element). <picture> means phones only
-                            download the mobile poster. The player shows the same image on top. */}
+                        {/* First frame, server-rendered so it paints straight away (it's the page's
+                            largest element). <picture> means phones only download the mobile poster. */}
                         <picture>
                           {mobilePoster && <source media="(max-width: 767px)" srcSet={mobilePoster} />}
                           <img
@@ -424,30 +415,21 @@ export default function Hero({
                             className="absolute inset-0 w-full h-full object-cover"
                           />
                         </picture>
-                        {playerReady && <MuxPlayer
-                          key={videoPlaybackId}
-                          playbackId={videoPlaybackId}
-                          poster={isMobile ? mobilePoster : desktopPoster}
-                          // A phone shows the reel ~340px wide, so 720p is plenty and buffers far less
-                          maxResolution={isMobile ? '720p' : '1080p'}
-                          streamType="on-demand"
-                          autoPlay
-                          muted
-                          loop
-                          playsInline
-                          onTimeUpdate={handleTimeUpdate}
-                          metadata={{
-                            video_title: 'Hero Showreel',
-                            player_name: 'harsh-portfolio-hero',
-                          }}
-                          style={{
-                            position: 'relative',
-                            width: '100%',
-                            height: '100%',
-                            '--controls': 'none',
-                            '--media-object-fit': 'cover',
-                          }}
-                        />}
+                        {playerReady && (
+                          <video
+                            key={reelSrc}
+                            src={reelSrc}
+                            poster={isMobile ? mobilePoster : desktopPoster}
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            preload="auto"
+                            disablePictureInPicture
+                            onTimeUpdate={(e) => handleTimeUpdate(e.nativeEvent)}
+                            className="absolute inset-0 w-full h-full object-cover"
+                          />
+                        )}
                       </div>
                       {/* Glare that follows the cursor across the glass */}
                       <motion.div
@@ -462,7 +444,7 @@ export default function Hero({
 
               {/* Phones: the CTA bounces out from under the reel */}
               <motion.div
-                initial={{ y: videoPlaybackId ? -64 : 0, opacity: 0 }}
+                initial={{ y: reelSrc ? -64 : 0, opacity: 0 }}
                 animate={ctaControls}
                 className="flex lg:hidden justify-center mt-5 mb-6"
                 style={{ position: 'relative', zIndex: 1 }}
