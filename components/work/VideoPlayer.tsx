@@ -17,8 +17,16 @@ interface VideoPlayerProps {
 }
 
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2];
-const HIDE_AFTER = 2600;
+const HIDE_AFTER = 2500;
 const FRAME = 1 / 30;
+// on resume the centre badge holds, then fades: RESUME_HOLD + RESUME_FADE = 1s
+const RESUME_HOLD = 400;
+const RESUME_FADE = 600;
+const GLASS: React.CSSProperties = {
+  background: 'rgba(6,11,20,0.45)',
+  backdropFilter: 'blur(10px)',
+  WebkitBackdropFilter: 'blur(10px)',
+};
 
 const fmt = (s: number) => {
   if (!Number.isFinite(s) || s < 0) s = 0;
@@ -136,8 +144,13 @@ export default function VideoPlayer({ hd, sd, poster, title, preferSd = false, o
   const [fullscreen, setFullscreen] = useState(false);
   const [menu, setMenu] = useState<null | 'speed'>(null);
   const [visible, setVisible] = useState(true);
+  const [pointerInside, setPointerInside] = useState(false);
   const [hover, setHover] = useState<{ x: number; t: number } | null>(null);
-  const [flash, setFlash] = useState<null | 'play' | 'pause' | string>(null);
+  // seek / volume feedback ("+5s", "60%"); play / pause has its own centre badge
+  const [flash, setFlash] = useState<null | { text: string; id: number }>(null);
+  // centre badge: pause icon while paused, play icon for a moment on resume
+  const [centre, setCentre] = useState<'hidden' | 'paused' | 'resuming'>('hidden');
+  const centreTimer = useRef(0);
   const [needsTap, setNeedsTap] = useState(false);
   const scrubbing = useRef(false);
   // where to pick up after switching quality, and whether to keep playing
@@ -155,11 +168,17 @@ export default function VideoPlayer({ hd, sd, poster, title, preferSd = false, o
       if (!scrubbing.current) setVisible(false);
     }, HIDE_AFTER);
   }, []);
-  useEffect(() => () => window.clearTimeout(hideTimer.current), []);
+  useEffect(
+    () => () => {
+      window.clearTimeout(hideTimer.current);
+      window.clearTimeout(centreTimer.current);
+    },
+    [],
+  );
   const showControls = visible || !playing || menu !== null;
 
-  const showFlash = (f: string) => {
-    setFlash(f);
+  const showFlash = (text: string) => {
+    setFlash((f) => ({ text, id: (f?.id ?? 0) + 1 }));
     window.clearTimeout(flashTimer.current);
     flashTimer.current = window.setTimeout(() => setFlash(null), 550);
   };
@@ -168,13 +187,8 @@ export default function VideoPlayer({ hd, sd, poster, title, preferSd = false, o
   const toggle = useCallback(() => {
     const el = v();
     if (!el) return;
-    if (el.paused) {
-      el.play().catch(() => {});
-      showFlash('play');
-    } else {
-      el.pause();
-      showFlash('pause');
-    }
+    if (el.paused) el.play().catch(() => {});
+    else el.pause();
     poke();
   }, [poke]);
 
@@ -280,7 +294,7 @@ export default function VideoPlayer({ hd, sd, poster, title, preferSd = false, o
       el.muted = true;
       setMuted(true);
       setNeedsTap(true);
-      el.play().catch(() => {});
+      el.play().catch(() => setCentre('paused'));
     });
   };
   const onProgress = () => {
@@ -355,16 +369,23 @@ export default function VideoPlayer({ hd, sd, poster, title, preferSd = false, o
 
   // ---------- render ----------
   const pct = duration ? (time / duration) * 100 : 0;
-  const pointerIdle = fullscreen && !showControls;
+  // only hide the cursor while it sits on the video, never elsewhere on the page
+  const pointerIdle = !showControls && (pointerInside || fullscreen);
 
   return (
     <div
       ref={wrapRef}
       className={`relative w-full h-full select-none ${pointerIdle ? 'player-idle' : ''}`}
       style={{ background: '#000' }}
-      onPointerMove={poke}
+      onPointerMove={(e) => {
+        if (e.pointerType === 'mouse') setPointerInside(true);
+        poke();
+      }}
       onPointerDown={poke}
-      onMouseLeave={() => playing && setVisible(false)}
+      onMouseLeave={() => {
+        setPointerInside(false);
+        if (playing) setVisible(false);
+      }}
     >
       <video
         ref={videoRef}
@@ -379,8 +400,19 @@ export default function VideoPlayer({ hd, sd, poster, title, preferSd = false, o
         className="absolute inset-0 w-full h-full"
         style={{ objectFit: 'contain' }}
         onLoadedMetadata={onLoadedMetadata}
-        onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
+        onPlay={() => {
+          setPlaying(true);
+          poke(); // start the hide timer even if the pointer never moves (autoplay)
+          // coming back from a pause: swap to the pause bars, hold, then fade (1s in all)
+          window.clearTimeout(centreTimer.current);
+          setCentre((c) => (c === 'hidden' ? c : 'resuming'));
+          centreTimer.current = window.setTimeout(() => setCentre('hidden'), RESUME_HOLD);
+        }}
+        onPause={() => {
+          setPlaying(false);
+          window.clearTimeout(centreTimer.current);
+          setCentre('paused');
+        }}
         onWaiting={() => setWaiting(true)}
         onPlaying={() => setWaiting(false)}
         onCanPlay={() => setWaiting(false)}
@@ -405,39 +437,64 @@ export default function VideoPlayer({ hd, sd, poster, title, preferSd = false, o
         </div>
       )}
 
-      {/* Centre feedback for play / pause / seek / volume */}
+      {/* Seek / volume feedback while playing. Only opacity animates: scaling a
+          backdrop blur forces a re-blur every frame, which is what stuttered. */}
       <AnimatePresence>
-        {flash && (
+        {flash && playing && (
           <motion.div
-            key={flash + time.toFixed(1)}
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.12 }}
-            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            key={flash.id}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
             className="absolute inset-0 grid place-items-center pointer-events-none"
           >
             <span
-              className="grid place-items-center rounded-full font-body text-sm font-semibold text-white"
-              style={{ minWidth: 64, height: 64, padding: '0 14px', background: 'rgba(6,11,20,0.55)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
+              className="grid place-items-center rounded-full font-body text-sm font-semibold tabular-nums text-white"
+              style={{ minWidth: 64, height: 64, padding: '0 14px', ...GLASS }}
             >
-              {flash === 'play' ? <Icon d={I.play} size={26} /> : flash === 'pause' ? <Icon d={I.pause} size={26} /> : flash}
+              {flash.text}
             </span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Paused: a big play button */}
-      {!playing && !waiting && !flash && (
-        <button
-          type="button"
-          onClick={toggle}
-          aria-label="Play"
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center rounded-full text-white transition-transform hover:scale-105"
-          style={{ width: 72, height: 72, background: 'rgba(6,11,20,0.55)', border: '1px solid rgba(147,197,253,0.45)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', boxShadow: '0 0 30px rgba(79,142,247,0.35)' }}
-        >
-          <Icon d={I.play} size={28} />
-        </button>
-      )}
+      {/* Centre badge: always mounted so the blur layer is never rebuilt; it only fades.
+          Paused shows the play triangle (click to resume), resuming swaps to the pause bars and fades off. */}
+      <button
+        type="button"
+        onClick={toggle}
+        aria-label="Play"
+        tabIndex={centre === 'paused' ? 0 : -1}
+        aria-hidden={centre !== 'paused'}
+        className="absolute left-1/2 top-1/2 -ml-9 -mt-9 grid place-items-center rounded-full text-white transition-opacity duration-200 ease-out"
+        style={{
+          width: 72,
+          height: 72,
+          ...GLASS,
+          border: '1px solid rgba(147,197,253,0.45)',
+          boxShadow: '0 0 28px rgba(79,142,247,0.3)',
+          opacity: centre !== 'hidden' && !(waiting && playing) ? 1 : 0,
+          transitionDuration: centre === 'hidden' ? `${RESUME_FADE}ms` : '200ms',
+          pointerEvents: centre === 'paused' ? 'auto' : 'none',
+          transform: 'translateZ(0)',
+          willChange: 'opacity',
+        }}
+      >
+        {(['pause', 'play'] as const).map((icon) => {
+          // keep the bars while fading out after a resume, so the icon doesn't flip mid-fade
+          const on = icon === (centre === 'paused' ? 'play' : 'pause');
+          return (
+            <span
+              key={icon}
+              className="absolute inset-0 grid place-items-center transition-[opacity,transform] duration-200 ease-out"
+              style={{ opacity: on ? 1 : 0, transform: on ? 'scale(1)' : 'scale(0.7)' }}
+            >
+              <Icon d={I[icon]} size={28} />
+            </span>
+          );
+        })}
+      </button>
 
       {/* Sound was blocked by the browser */}
       {needsTap && (
@@ -453,7 +510,7 @@ export default function VideoPlayer({ hd, sd, poster, title, preferSd = false, o
 
       {/* Controls */}
       <div
-        className="absolute inset-x-0 bottom-0 transition-opacity duration-300"
+        className="absolute inset-x-0 bottom-0 transition-opacity duration-500"
         style={{ opacity: showControls ? 1 : 0, pointerEvents: showControls ? 'auto' : 'none' }}
       >
         <div
@@ -523,7 +580,7 @@ export default function VideoPlayer({ hd, sd, poster, title, preferSd = false, o
                   setNeedsTap(false);
                 }}
                 aria-label="Volume"
-                className="player-volume hidden md:block w-0 group-hover/vol:w-20 focus:w-20 transition-[width] duration-200"
+                className="player-volume hidden md:block w-0 opacity-0 pointer-events-none group-hover/vol:w-20 group-hover/vol:ml-1 group-hover/vol:mr-2 group-hover/vol:opacity-100 group-hover/vol:pointer-events-auto focus:w-20 focus:ml-1 focus:mr-2 focus:opacity-100 focus:pointer-events-auto transition-[width,margin,opacity] duration-200"
                 style={{ '--vol': `${(muted ? 0 : volume) * 100}%` } as React.CSSProperties}
               />
             </div>

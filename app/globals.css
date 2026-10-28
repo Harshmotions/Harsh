@@ -498,15 +498,15 @@ button:focus-visible .card-inner {
 }
 .player-volume::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #fff;
   border: none;
 }
 .player-volume::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #fff;
   border: none;
@@ -532,7 +532,7 @@ button:focus-visible .card-inner {
 }
 
 /* Fullscreen shows the system cursor (the custom one can't be drawn over a fullscreen
-   element), hidden again while the video player's controls are hidden */
+   element). Both are hidden while the video player's controls are hidden */
 :fullscreen,
 :fullscreen *,
 :-webkit-full-screen,
@@ -542,6 +542,9 @@ button:focus-visible .card-inner {
 .player-idle,
 .player-idle * {
   cursor: none !important;
+}
+body:has(.player-idle) .custom-cursor {
+  opacity: 0 !important;
 }
 
 /* ─── Focus Rings ────────────────────────────────── */
