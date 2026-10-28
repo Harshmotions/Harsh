@@ -459,42 +459,45 @@ export default function VideoPlayer({ hd, sd, poster, title, preferSd = false, o
         )}
       </AnimatePresence>
 
-      {/* Centre badge: always mounted so the blur layer is never rebuilt; it only fades.
-          Paused shows the play triangle (click to resume), resuming swaps to the pause bars and fades off. */}
-      <button
-        type="button"
-        onClick={toggle}
-        aria-label="Play"
-        tabIndex={centre === 'paused' ? 0 : -1}
-        aria-hidden={centre !== 'paused'}
-        className="absolute left-1/2 top-1/2 -ml-9 -mt-9 grid place-items-center rounded-full text-white transition-opacity duration-200 ease-out"
-        style={{
-          width: 72,
-          height: 72,
-          ...GLASS,
-          border: '1px solid rgba(147,197,253,0.45)',
-          boxShadow: '0 0 28px rgba(79,142,247,0.3)',
-          opacity: centre !== 'hidden' && !(waiting && playing) ? 1 : 0,
-          transitionDuration: centre === 'hidden' ? `${RESUME_FADE}ms` : '200ms',
-          pointerEvents: centre === 'paused' ? 'auto' : 'none',
-          transform: 'translateZ(0)',
-          willChange: 'opacity',
-        }}
-      >
-        {(['pause', 'play'] as const).map((icon) => {
-          // keep the bars while fading out after a resume, so the icon doesn't flip mid-fade
-          const on = icon === (centre === 'paused' ? 'play' : 'pause');
-          return (
-            <span
-              key={icon}
-              className="absolute inset-0 grid place-items-center transition-[opacity,transform] duration-200 ease-out"
-              style={{ opacity: on ? 1 : 0, transform: on ? 'scale(1)' : 'scale(0.7)' }}
-            >
-              <Icon d={I[icon]} size={28} />
-            </span>
-          );
-        })}
-      </button>
+      {/* Centre badge: paused shows the play triangle (click to resume), resuming swaps to
+          the pause bars and fades off. Mounted only while shown: a blur layer left on the
+          page invisibly can be misdrawn by Chrome as a blurred band across the video. */}
+      <AnimatePresence>
+        {centre !== 'hidden' && !(waiting && playing) && (
+          <motion.button
+            key="centre"
+            type="button"
+            onClick={toggle}
+            aria-label="Play"
+            tabIndex={centre === 'paused' ? 0 : -1}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.2, ease: 'easeOut' } }}
+            exit={{ opacity: 0, transition: { duration: RESUME_FADE / 1000, ease: 'easeOut' } }}
+            className="absolute left-1/2 top-1/2 -ml-9 -mt-9 grid place-items-center rounded-full text-white"
+            style={{
+              width: 72,
+              height: 72,
+              ...GLASS,
+              border: '1px solid rgba(147,197,253,0.45)',
+              boxShadow: '0 0 28px rgba(79,142,247,0.3)',
+              pointerEvents: centre === 'paused' ? 'auto' : 'none',
+            }}
+          >
+            {(['pause', 'play'] as const).map((icon) => {
+              const on = icon === (centre === 'paused' ? 'play' : 'pause');
+              return (
+                <span
+                  key={icon}
+                  className="absolute inset-0 grid place-items-center transition-[opacity,transform] duration-200 ease-out"
+                  style={{ opacity: on ? 1 : 0, transform: on ? 'scale(1)' : 'scale(0.7)' }}
+                >
+                  <Icon d={I[icon]} size={28} />
+                </span>
+              );
+            })}
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Sound was blocked by the browser */}
       {needsTap && (
