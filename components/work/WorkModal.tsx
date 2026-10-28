@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useSyncExternalStore } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { lenisInstance } from '@/components/SmoothScroll';
 import VideoPlayer from '@/components/work/VideoPlayer';
@@ -13,6 +14,8 @@ interface WorkModalProps {
   onIndexChange: (index: number | null) => void;
   whatsappNumber?: string;
 }
+
+const noop = () => () => {};
 
 const navBtn =
   'font-body text-sm px-4 py-2 rounded-full transition-colors text-text-muted hover:text-text';
@@ -27,6 +30,8 @@ export default function WorkModal({ items, index, onIndexChange, whatsappNumber 
   const item = index !== null ? items[index] ?? null : null;
   const isOpen = item !== null;
   const count = items.length;
+  // Server snapshot is false, so SSR and hydration render nothing (the portal needs document)
+  const mounted = useSyncExternalStore(noop, () => true, () => false);
 
   const close = () => onIndexChange(null);
   const step = (delta: number) => {
@@ -66,7 +71,12 @@ export default function WorkModal({ items, index, onIndexChange, whatsappNumber 
         )}`
       : null;
 
-  return (
+  if (!mounted) return null;
+
+  // Rendered straight into .site-shell (keeps its cursor rules, creates no stacking of its
+  // own): inside the page, a section's stacking (the home hero sits above the work section)
+  // would paint over the fixed modal as a band that moves with scroll
+  return createPortal(
     <AnimatePresence>
       {item && (
         <motion.div
@@ -189,6 +199,7 @@ export default function WorkModal({ items, index, onIndexChange, whatsappNumber 
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.querySelector('.site-shell') ?? document.body,
   );
 }
