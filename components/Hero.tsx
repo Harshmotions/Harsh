@@ -152,9 +152,9 @@ export default function Hero({
     return () => mq.removeEventListener('change', update);
   }, []);
 
-  // Two cuts of the showreel (scripts/publish-work.mjs): the desktop one at up to 1080p, and on
-  // phones the mobile cut in its light 720p file (the reel shows ~340px wide there)
-  const desk = showreel.desktop ?? showreel.mobile;
+  // Both screens play the mobile cut (scripts/publish-work.mjs): its 1080p file on desktop, and on
+  // phones its light 720p file (the reel shows ~340px wide there)
+  const desk = showreel.mobile ?? showreel.desktop;
   const mob = showreel.mobile ?? showreel.desktop;
   const reelSrc = isMobile ? mob && mediaUrl(mob.sd) : desk && mediaUrl(desk.hd);
 
